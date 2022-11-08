@@ -4,7 +4,7 @@
 	// import { piecewise } from 'd3-interpolate'
 	// import { interpolateWarm } from 'd3-scale-chromatic'
 
-	export let lat, lon
+	export let lat, lon, amount
 	
 	// const pieces = piecewise([ 
 	// 	{ r: .005, alpha: 0.1 },
@@ -18,7 +18,7 @@
         context.fillStyle ="#4e3cc2"
         // context.globalAlpha = alpha;
         context.beginPath();
-        context.arc(lat, lon, 2, 0, Math.PI * 2);
+        context.arc(lat, lon, amount, 0, Math.PI * 2);
         context.fill();
 	}
 </script>

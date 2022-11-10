@@ -9,9 +9,6 @@
     // import data from './geocoded.tsv';
 	
 	let width = 1000;
-
-    $: playing = false;
-    $: toggle = true;
 	$: height = width * .6256;
 
 	$: projection = geoIdentity().scale(width / 975)
@@ -32,7 +29,7 @@
     const loopPadding = 300; // time to wait between loops
     const loop = time => {
         timeout = setTimeout(() => {
-        ticker = ticker < 2020 ? ticker + 1 : 2010
+        ticker = ticker < 2021 ? ticker + 1 : 2010
         
         loop(duration + loopPadding);
         }, time);
@@ -40,6 +37,7 @@
     const startPlaying = () => loop(0)
     const stopPlaying = () => clearTimeout(timeout)
 
+    $: playing = false;
     $: playing ? startPlaying() : stopPlaying();
 
 	onMount(async () => {
@@ -59,8 +57,6 @@
             d.year = +d.year
         })
     }
-
-    // $: console.log(donors)
 
     $: points = data !== undefined ? data.map(d => {
 		var latlon = albers([d.long, d.lat])

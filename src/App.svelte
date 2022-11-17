@@ -29,7 +29,7 @@
     const loopPadding = 300; // time to wait between loops
     const loop = time => {
         timeout = setTimeout(() => {
-        ticker = ticker < 2021 ? ticker + 1 : 2010
+        ticker = ticker < 2022 ? ticker + 1 : 2010
         
         loop(duration + loopPadding);
         }, time);

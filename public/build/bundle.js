@@ -4979,18 +4979,9 @@ var app = (function () {
 
     	$$self.$$.update = () => {
     		if ($$self.$$.dirty & /*lat, lon, amount*/ 14) {
-    			// const pieces = piecewise([ 
-    			// 	{ r: .005, alpha: 0.1 },
-    			// 	{ r: .02, alpha: 0.9 },
-    			// 	{ r: .005, alpha: 0.1 },
-    			// ])
-    			// const scale = t => pieces(quadInOut(t))
-    			$$invalidate(0, render = ({ context, width }) => {
+    			$$invalidate(0, render = ({ context }) => {
     				context.fillStyle = "#4e3cc2";
-
-    				// context.globalAlpha = alpha;
     				context.beginPath();
-
     				context.arc(lat, lon, amount, 0, Math.PI * 2);
     				context.fill();
     			});
@@ -5058,14 +5049,14 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[19] = list[i].lat;
-    	child_ctx[20] = list[i].lon;
-    	child_ctx[21] = list[i].amount;
-    	child_ctx[22] = list[i].show;
+    	child_ctx[18] = list[i].lat;
+    	child_ctx[19] = list[i].lon;
+    	child_ctx[20] = list[i].amount;
+    	child_ctx[21] = list[i].show;
     	return child_ctx;
     }
 
-    // (97:2) {#if us}
+    // (93:2) {#if us}
     function create_if_block_1(ctx) {
     	let path_1;
     	let path_1_d_value;
@@ -5075,7 +5066,7 @@ var app = (function () {
     			path_1 = svg_element("path");
     			attr_dev(path_1, "d", path_1_d_value = /*path*/ ctx[6](mesh(/*us*/ ctx[4], /*us*/ ctx[4].objects.states)));
     			attr_dev(path_1, "class", "svelte-1bm984y");
-    			add_location(path_1, file, 97, 3, 2351);
+    			add_location(path_1, file, 93, 3, 2297);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, path_1, anchor);
@@ -5094,23 +5085,23 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(97:2) {#if us}",
+    		source: "(93:2) {#if us}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (103:12) {#if show}
+    // (99:12) {#if show}
     function create_if_block(ctx) {
     	let donor;
     	let current;
 
     	donor = new Donor({
     			props: {
-    				lat: /*lat*/ ctx[19],
-    				lon: /*lon*/ ctx[20],
-    				amount: /*amount*/ ctx[21]
+    				lat: /*lat*/ ctx[18],
+    				lon: /*lon*/ ctx[19],
+    				amount: /*amount*/ ctx[20]
     			},
     			$$inline: true
     		});
@@ -5125,9 +5116,9 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const donor_changes = {};
-    			if (dirty & /*points*/ 32) donor_changes.lat = /*lat*/ ctx[19];
-    			if (dirty & /*points*/ 32) donor_changes.lon = /*lon*/ ctx[20];
-    			if (dirty & /*points*/ 32) donor_changes.amount = /*amount*/ ctx[21];
+    			if (dirty & /*points*/ 32) donor_changes.lat = /*lat*/ ctx[18];
+    			if (dirty & /*points*/ 32) donor_changes.lon = /*lon*/ ctx[19];
+    			if (dirty & /*points*/ 32) donor_changes.amount = /*amount*/ ctx[20];
     			donor.$set(donor_changes);
     		},
     		i: function intro(local) {
@@ -5148,18 +5139,18 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(103:12) {#if show}",
+    		source: "(99:12) {#if show}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (102:8) {#each points as {lat, lon, amount, show}}
+    // (98:8) {#each points as {lat, lon, amount, show}}
     function create_each_block(ctx) {
     	let if_block_anchor;
     	let current;
-    	let if_block = /*show*/ ctx[22] && create_if_block(ctx);
+    	let if_block = /*show*/ ctx[21] && create_if_block(ctx);
 
     	const block = {
     		c: function create() {
@@ -5172,7 +5163,7 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (/*show*/ ctx[22]) {
+    			if (/*show*/ ctx[21]) {
     				if (if_block) {
     					if_block.p(ctx, dirty);
 
@@ -5214,14 +5205,14 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(102:8) {#each points as {lat, lon, amount, show}}",
+    		source: "(98:8) {#each points as {lat, lon, amount, show}}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (101:1) <Canvas on:click ={() => playing = !playing} {width} {height} style="position: absolute">
+    // (97:1) <Canvas on:click ={() => playing = !playing} {width} {height} style="position: absolute">
     function create_default_slot(ctx) {
     	let each_1_anchor;
     	let current;
@@ -5310,7 +5301,7 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(101:1) <Canvas on:click ={() => playing = !playing} {width} {height} style=\\\"position: absolute\\\">",
+    		source: "(97:1) <Canvas on:click ={() => playing = !playing} {width} {height} style=\\\"position: absolute\\\">",
     		ctx
     	});
 
@@ -5355,10 +5346,10 @@ var app = (function () {
     			attr_dev(svg, "width", /*width*/ ctx[0]);
     			attr_dev(svg, "height", /*height*/ ctx[3]);
     			attr_dev(svg, "class", "svelte-1bm984y");
-    			add_location(svg, file, 95, 1, 2314);
+    			add_location(svg, file, 91, 1, 2260);
     			add_render_callback(() => /*div_elementresize_handler*/ ctx[11].call(div));
-    			add_location(div, file, 94, 0, 2282);
-    			add_location(p, file, 108, 4, 2685);
+    			add_location(div, file, 90, 0, 2228);
+    			add_location(p, file, 104, 4, 2631);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -5401,7 +5392,7 @@ var app = (function () {
     			if (dirty & /*width*/ 1) canvas_changes.width = /*width*/ ctx[0];
     			if (dirty & /*height*/ 8) canvas_changes.height = /*height*/ ctx[3];
 
-    			if (dirty & /*$$scope, points*/ 33554464) {
+    			if (dirty & /*$$scope, points*/ 16777248) {
     				canvas_changes.$$scope = { dirty, ctx };
     			}
 
@@ -5441,12 +5432,11 @@ var app = (function () {
     const loopPadding = 300; // time to wait between loops
 
     function instance($$self, $$props, $$invalidate) {
-    	let playing;
-    	let toggle;
     	let height;
     	let projection;
     	let albers;
     	let path;
+    	let playing;
     	let points;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('App', slots, []);
@@ -5464,7 +5454,7 @@ var app = (function () {
     	const loop = time => {
     		timeout = setTimeout(
     			() => {
-    				$$invalidate(1, ticker = ticker < 2020 ? ticker + 1 : 2010);
+    				$$invalidate(1, ticker = ticker < 2022 ? ticker + 1 : 2010);
     				loop(duration + loopPadding);
     			},
     			time
@@ -5520,15 +5510,14 @@ var app = (function () {
     		playing,
     		projection,
     		path,
-    		height,
-    		toggle
+    		height
     	});
 
     	$$self.$inject_state = $$props => {
     		if ('width' in $$props) $$invalidate(0, width = $$props.width);
     		if ('us' in $$props) $$invalidate(4, us = $$props.us);
     		if ('data' in $$props) $$invalidate(7, data = $$props.data);
-    		if ('amount_scale' in $$props) $$invalidate(14, amount_scale = $$props.amount_scale);
+    		if ('amount_scale' in $$props) $$invalidate(13, amount_scale = $$props.amount_scale);
     		if ('ticker' in $$props) $$invalidate(1, ticker = $$props.ticker);
     		if ('timeout' in $$props) timeout = $$props.timeout;
     		if ('duration' in $$props) duration = $$props.duration;
@@ -5538,7 +5527,6 @@ var app = (function () {
     		if ('projection' in $$props) $$invalidate(9, projection = $$props.projection);
     		if ('path' in $$props) $$invalidate(6, path = $$props.path);
     		if ('height' in $$props) $$invalidate(3, height = $$props.height);
-    		if ('toggle' in $$props) toggle = $$props.toggle;
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -5579,7 +5567,6 @@ var app = (function () {
     		}
 
     		if ($$self.$$.dirty & /*data, albers, ticker*/ 386) {
-    			// $: console.log(donors)
     			$$invalidate(5, points = data !== undefined
     			? data.map(d => {
     					var latlon = albers([d.long, d.lat]);
@@ -5595,7 +5582,6 @@ var app = (function () {
     	};
 
     	$$invalidate(2, playing = false);
-    	toggle = true;
 
     	return [
     		width,

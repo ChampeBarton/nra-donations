@@ -5,7 +5,7 @@
 	import { geoIdentity, geoPath, geoAlbersUsa } from "d3-geo"
     import {scaleLinear} from 'd3-scale';
     import { csv } from "d3-fetch"
-	import Donor from './Donor.svelte'
+	import Point from './Point.svelte'
     // import data from './geocoded.tsv';
 	
 	let width = 1000;
@@ -21,7 +21,7 @@
     // console.log(data)
 
 
-    let amount_scale = scaleLinear().domain([0, 6000]).range([0.75, 10])
+    let amount_scale = scaleLinear().domain([0, 45000]).range([0, 20])
 
     let ticker = 2010;
     let timeout;
@@ -41,7 +41,7 @@
     $: playing ? startPlaying() : stopPlaying();
 
 	onMount(async () => {
-		const shape = await fetch("https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json")
+		const shape = await fetch("https://cdn.jsdelivr.net/npm/us-atlas@3/counties-albers-10m.json")
 		us = await shape.json()
 
         data = await csv("https://raw.githubusercontent.com/ChampeBarton/nra-donations/main/geocoded.csv")
@@ -52,14 +52,14 @@
     $: if(data !== undefined) {
         data.forEach((d) => {
             d.lat = +d.lat
-            d.long = +d.long
+            d.lon = +d.lon
             d.amount = amount_scale(+d.amount)
             d.year = +d.year
         })
     }
 
     $: points = data !== undefined ? data.map(d => {
-		var latlon = albers([d.long, d.lat])
+		var latlon = albers([d.lon, d.lat])
         var lat = latlon !== null ? latlon[0] : null
         var lon = latlon !== null ? latlon[1] : null 
 
@@ -91,13 +91,13 @@
 <div bind:clientWidth={width}>
 	<svg {width} {height}>
 		{#if us}
-			<path d={path(mesh(us, us.objects.states))} />
+			<path d={path(mesh(us, us.objects.counties))} />
 		{/if}
 	</svg>
 	<Canvas on:click ={() => playing = !playing} {width} {height} style="position: absolute">
         {#each points as {lat, lon, amount, show}}
             {#if show}
-                <Donor {lat} {lon} {amount} />
+                <Point {lat} {lon} {amount}/>
             {/if}
         {/each}
 	</Canvas>   

@@ -4,7 +4,9 @@
 	export let lat, lon, amount
 		
 	$: render = ({ context }) => {
-        context.fillStyle ="#4e3cc2"
+        context.fillStyle ="rgba(78, 60, 194, 0.7)"
+        context.strokeStyle = "#FFFFFF"
+        context.stroke();
         context.beginPath();
         context.arc(lat, lon, amount, 0, Math.PI * 2);
         context.fill();

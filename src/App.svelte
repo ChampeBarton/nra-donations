@@ -17,11 +17,12 @@
 	
 	let us;
     let data;
+    let features;
 
     // console.log(data)
 
 
-    let amount_scale = scaleLinear().domain([0, 45000]).range([0, 20])
+    let amount_scale = scaleLinear().domain([0, 30000]).range([1, 50])
 
     let ticker = 2010;
     let timeout;
@@ -41,10 +42,12 @@
     $: playing ? startPlaying() : stopPlaying();
 
 	onMount(async () => {
-		const shape = await fetch("https://cdn.jsdelivr.net/npm/us-atlas@3/counties-albers-10m.json")
+		const shape = await fetch("https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json")
 		us = await shape.json()
 
-        data = await csv("https://raw.githubusercontent.com/ChampeBarton/nra-donations/main/geocoded.csv")
+        features = feature(us, us.objects.states).features
+
+        data = await csv("https://raw.githubusercontent.com/ChampeBarton/nra-donations/main/counties_ready.csv")
 	})
 
     // $: console.log(data)
@@ -53,7 +56,7 @@
         data.forEach((d) => {
             d.lat = +d.lat
             d.lon = +d.lon
-            d.amount = amount_scale(+d.amount)
+            d.amount = d.amount == 0 ? 0 : amount_scale(+d.amount)
             d.year = +d.year
         })
     }
@@ -67,6 +70,7 @@
 		var amount = d.amount
         
         var show = ticker == year ? true : false
+
 
 		return({lat, lon, year, amount, show})
 	}) : []
@@ -84,14 +88,21 @@
 	
 	path {
 		stroke: #000000;
-		fill: transparent;
+		/* fill: transparent; */
 	}
+
+
 </style>
 
 <div bind:clientWidth={width}>
 	<svg {width} {height}>
 		{#if us}
-			<path d={path(mesh(us, us.objects.counties))} />
+            <g fill="rgb(233,233,233)">
+                {#each features as feature}
+                    <path d={path(feature)}/>
+                {/each}
+            </g>
+			
 		{/if}
 	</svg>
 	<Canvas on:click ={() => playing = !playing} {width} {height} style="position: absolute">

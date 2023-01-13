@@ -20,6 +20,7 @@
 	let us;
     let data;
     let features;
+    let points = [];
 
 
     // console.log(data)
@@ -27,7 +28,7 @@
 
     let amount_scale = scaleLinear().domain([0, 30000]).range([1, 50])
 
-    let ticker = 2018;
+    let ticker = 2022;
     // let timeout;
     // let duration = 1500;
     // const loopPadding = 300; // time to wait between loops
@@ -50,33 +51,55 @@
 
         features = feature(us, us.objects.states).features
 
-        data = await csv("https://raw.githubusercontent.com/ChampeBarton/nra-donations/main/counties_ready.csv")
+        csv("https://raw.githubusercontent.com/ChampeBarton/nra-donations/main/counties_ready.csv")
+            .then(data =>
+                points = data.filter(d => +d.amount != 0 && +d.year == ticker).map((d, id) => {
+                    var latlon = albers([+d.lon, +d.lat])
+                    var lat = latlon !== null ? latlon[0] : null
+                    var lon = latlon !== null ? latlon[1] : null 
+
+                    var year = +d.year
+                    var amount = +d.amount == 0 ? 0 : amount_scale(+d.amount)
+                    var change = +d.change !== +d.change ? 0 : +d.change
+                    
+                    var show = ticker == year ? true : false
+
+                    var name = d.name
+                    var state = d.state
+
+                    return({lat, lon, year, amount, change, show, id, name, state})
+                })
+            )
+
 	})
 
-    $: if(data !== undefined) {
-        data.forEach((d) => {
-            d.lat = +d.lat
-            d.lon = +d.lon
-            d.amount = +d.amount == 0 ? 0 : amount_scale(+d.amount)
-            d.year = +d.year
-            d.change = +d.change
-        })
-    }
+    // $: if(data !== undefined) {
+    //     data.forEach((d) => {
+    //         d.lat = +d.lat
+    //         d.lon = +d.lon
+    //         d.amount = +d.amount == 0 ? 0 : amount_scale(+d.amount)
+    //         d.year = +d.year
+    //         d.change = +d.change
+    //     })
+    // }
 
-    $: points = data !== undefined ? data.map((d, id) => {
-		var latlon = albers([d.lon, d.lat])
-        var lat = latlon !== null ? latlon[0] : null
-        var lon = latlon !== null ? latlon[1] : null 
+    // $: points = data !== undefined ? data.map((d, id) => {
+	// 	var latlon = albers([d.lon, d.lat])
+    //     var lat = latlon !== null ? latlon[0] : null
+    //     var lon = latlon !== null ? latlon[1] : null 
 
-		var year = d.year
-        var amount = d.amount
-        var change = d.change !== d.change ? 0 : d.change
+	// 	var year = d.year
+    //     var amount = d.amount
+    //     var change = d.change !== d.change ? 0 : d.change
         
-        var show = ticker == year ? true : false
+    //     var show = ticker == year ? true : false
+
+    //     var name = d.name
+    //     var state = d.state
 
 
-		return({lat, lon, year, amount, change, show, id})
-	}) : []
+	// 	return({lat, lon, year, amount, change, show, id, name, state})
+	// }).filter(d => d.amount != 0) : []
 
     let picked, click = false;
 
@@ -87,7 +110,7 @@
     );
 
 
-    // $: console.log(points)
+    $: console.log(points)
     $: console.log(picked)
 					
 </script>
@@ -119,11 +142,11 @@
 	<Canvas {width} {height} 
         style= "position: absolute; cursor: pointer"
         on:mousemove={({ clientX: x, clientY: y }) => {
-            if (picked = delaunay.find(x - 3, y - 3))
+            if (picked = delaunay.find(x - 2, y - 2))
                 points = [...points.filter((_, i) => i !== picked), points[picked]]
         }}
-        on:mousedown={() => (click = true)}
-        on:mouseup={() => (click = false)}
+        <!-- on:mousedown={() => (click = true)}
+        on:mouseup={() => (click = false)} -->
 		on:mouseout={() => (picked = null)}
     >
         {#each points as {lat, lon, show, amount, change, id} (id)}

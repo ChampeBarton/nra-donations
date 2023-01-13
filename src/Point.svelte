@@ -5,9 +5,15 @@
         import { interpolate} from 'd3-interpolate'
          import { spring } from 'svelte/motion'
 
-	export let x, y, r, change, stroke
+	export let x = 0,
+                y = 0,
+                r = 1,
+                stroke = null,
+                change, 
+                strokeWidth = 1;
 
-        let strokeWidth = 2;
+
+        $: console.log(stroke)
 
         let colorScale = scaleSequential(interpolateRdYlBu).domain([30000, -30000])
 
@@ -17,8 +23,8 @@
 	$: render = ({ context }) => {
                 context.globalAlpha = 0.9
                 context.fillStyle = colorScale(change)
-                context.strokeStyle = "#FFFFFF"
-                context.stroke();
+                // context.strokeStyle = "#FFFFFF"
+                // context.stroke();
                 context.beginPath();
                 context.arc(x, y, $radius, 0, Math.PI * 2);
                 context.fill();

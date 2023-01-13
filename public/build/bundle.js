@@ -33,6 +33,21 @@ var app = (function () {
     function is_empty(obj) {
         return Object.keys(obj).length === 0;
     }
+    function validate_store(store, name) {
+        if (store != null && typeof store.subscribe !== 'function') {
+            throw new Error(`'${name}' is not a store with a 'subscribe' method`);
+        }
+    }
+    function subscribe(store, ...callbacks) {
+        if (store == null) {
+            return noop$2;
+        }
+        const unsub = store.subscribe(...callbacks);
+        return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
+    }
+    function component_subscribe(component, store, callback) {
+        component.$$.on_destroy.push(subscribe(store, callback));
+    }
     function create_slot(definition, ctx, $$scope, fn) {
         if (definition) {
             const slot_ctx = get_slot_context(definition, ctx, $$scope, fn);
@@ -81,6 +96,41 @@ var app = (function () {
     }
     function action_destroyer(action_result) {
         return action_result && is_function(action_result.destroy) ? action_result.destroy : noop$2;
+    }
+
+    const is_client = typeof window !== 'undefined';
+    let now$1 = is_client
+        ? () => window.performance.now()
+        : () => Date.now();
+    let raf = is_client ? cb => requestAnimationFrame(cb) : noop$2;
+
+    const tasks = new Set();
+    function run_tasks(now) {
+        tasks.forEach(task => {
+            if (!task.c(now)) {
+                tasks.delete(task);
+                task.f();
+            }
+        });
+        if (tasks.size !== 0)
+            raf(run_tasks);
+    }
+    /**
+     * Creates a new task that runs on each raf frame
+     * until it returns a falsy value or is aborted
+     */
+    function loop(callback) {
+        let task;
+        if (tasks.size === 0)
+            raf(run_tasks);
+        return {
+            promise: new Promise(fulfill => {
+                tasks.add(task = { c: callback, f: fulfill });
+            }),
+            abort() {
+                tasks.delete(task);
+            }
+        };
     }
     function append(target, node) {
         target.appendChild(node);
@@ -325,6 +375,96 @@ var app = (function () {
         : typeof globalThis !== 'undefined'
             ? globalThis
             : global);
+    function outro_and_destroy_block(block, lookup) {
+        transition_out(block, 1, 1, () => {
+            lookup.delete(block.key);
+        });
+    }
+    function update_keyed_each(old_blocks, dirty, get_key, dynamic, ctx, list, lookup, node, destroy, create_each_block, next, get_context) {
+        let o = old_blocks.length;
+        let n = list.length;
+        let i = o;
+        const old_indexes = {};
+        while (i--)
+            old_indexes[old_blocks[i].key] = i;
+        const new_blocks = [];
+        const new_lookup = new Map();
+        const deltas = new Map();
+        i = n;
+        while (i--) {
+            const child_ctx = get_context(ctx, list, i);
+            const key = get_key(child_ctx);
+            let block = lookup.get(key);
+            if (!block) {
+                block = create_each_block(key, child_ctx);
+                block.c();
+            }
+            else if (dynamic) {
+                block.p(child_ctx, dirty);
+            }
+            new_lookup.set(key, new_blocks[i] = block);
+            if (key in old_indexes)
+                deltas.set(key, Math.abs(i - old_indexes[key]));
+        }
+        const will_move = new Set();
+        const did_move = new Set();
+        function insert(block) {
+            transition_in(block, 1);
+            block.m(node, next);
+            lookup.set(block.key, block);
+            next = block.first;
+            n--;
+        }
+        while (o && n) {
+            const new_block = new_blocks[n - 1];
+            const old_block = old_blocks[o - 1];
+            const new_key = new_block.key;
+            const old_key = old_block.key;
+            if (new_block === old_block) {
+                // do nothing
+                next = new_block.first;
+                o--;
+                n--;
+            }
+            else if (!new_lookup.has(old_key)) {
+                // remove old block
+                destroy(old_block, lookup);
+                o--;
+            }
+            else if (!lookup.has(new_key) || will_move.has(new_key)) {
+                insert(new_block);
+            }
+            else if (did_move.has(old_key)) {
+                o--;
+            }
+            else if (deltas.get(new_key) > deltas.get(old_key)) {
+                did_move.add(new_key);
+                insert(new_block);
+            }
+            else {
+                will_move.add(old_key);
+                o--;
+            }
+        }
+        while (o--) {
+            const old_block = old_blocks[o];
+            if (!new_lookup.has(old_block.key))
+                destroy(old_block, lookup);
+        }
+        while (n)
+            insert(new_blocks[n - 1]);
+        return new_blocks;
+    }
+    function validate_each_keys(ctx, list, get_context, get_key) {
+        const keys = new Set();
+        for (let i = 0; i < list.length; i++) {
+            const key = get_key(get_context(ctx, list, i));
+            if (keys.has(key)) {
+                throw new Error('Cannot have duplicate keys in a keyed each');
+            }
+            keys.add(key);
+        }
+    }
     function create_component(block) {
         block && block.c();
     }
@@ -476,13 +616,6 @@ var app = (function () {
         else
             dispatch_dev('SvelteDOMSetAttribute', { node, attribute, value });
     }
-    function set_data_dev(text, data) {
-        data = '' + data;
-        if (text.wholeText === data)
-            return;
-        dispatch_dev('SvelteDOMSetData', { node: text, data });
-        text.data = data;
-    }
     function validate_each_argument(arg) {
         if (typeof arg !== 'string' && !(arg && typeof arg === 'object' && 'length' in arg)) {
             let msg = '{#each} only iterates over array-like objects.';
@@ -629,7 +762,7 @@ var app = (function () {
     /* node_modules/svelte-canvas/src/components/Canvas.svelte generated by Svelte v3.44.0 */
     const file$2 = "node_modules/svelte-canvas/src/components/Canvas.svelte";
 
-    function create_fragment$3(ctx) {
+    function create_fragment$4(ctx) {
     	let canvas_1;
     	let canvas_1_style_value;
     	let canvas_1_width_value;
@@ -727,7 +860,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$3.name,
+    		id: create_fragment$4.name,
     		type: "component",
     		source: "",
     		ctx
@@ -738,7 +871,7 @@ var app = (function () {
 
     const KEY = {};
 
-    function instance$3($$self, $$props, $$invalidate) {
+    function instance$4($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Canvas', slots, ['default']);
     	let { width = 640, height = 640, pixelRatio = undefined, style = null, autoclear = true } = $$props;
@@ -905,7 +1038,7 @@ var app = (function () {
     	constructor(options) {
     		super(options);
 
-    		init(this, options, instance$3, create_fragment$3, safe_not_equal, {
+    		init(this, options, instance$4, create_fragment$4, safe_not_equal, {
     			width: 1,
     			height: 2,
     			pixelRatio: 0,
@@ -920,7 +1053,7 @@ var app = (function () {
     			component: this,
     			tagName: "Canvas",
     			options,
-    			id: create_fragment$3.name
+    			id: create_fragment$4.name
     		});
     	}
 
@@ -994,7 +1127,7 @@ var app = (function () {
     const { Error: Error_1 } = globals;
     const file$1 = "node_modules/svelte-canvas/src/components/Layer.svelte";
 
-    function create_fragment$2(ctx) {
+    function create_fragment$3(ctx) {
     	let div;
 
     	const block = {
@@ -1019,7 +1152,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$2.name,
+    		id: create_fragment$3.name,
     		type: "component",
     		source: "",
     		ctx
@@ -1028,7 +1161,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$2($$self, $$props, $$invalidate) {
+    function instance$3($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Layer', slots, []);
     	const { register, unregister, redraw } = getContext(KEY);
@@ -1091,13 +1224,13 @@ var app = (function () {
     class Layer extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$2, create_fragment$2, safe_not_equal, { setup: 1, render: 2 });
+    		init(this, options, instance$3, create_fragment$3, safe_not_equal, { setup: 1, render: 2 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "Layer",
     			options,
-    			id: create_fragment$2.name
+    			id: create_fragment$3.name
     		});
     	}
 
@@ -1577,12 +1710,12 @@ var app = (function () {
       return Array.from(flatten(arrays));
     }
 
-    var epsilon = 1e-6;
+    var epsilon$2 = 1e-6;
     var epsilon2 = 1e-12;
     var pi = Math.PI;
     var halfPi = pi / 2;
     var quarterPi = pi / 4;
-    var tau = pi * 2;
+    var tau$1 = pi * 2;
 
     var degrees = 180 / pi;
     var radians = pi / 180;
@@ -1721,13 +1854,13 @@ var app = (function () {
     }
 
     function rotationIdentity(lambda, phi) {
-      return [abs(lambda) > pi ? lambda + Math.round(-lambda / tau) * tau : lambda, phi];
+      return [abs(lambda) > pi ? lambda + Math.round(-lambda / tau$1) * tau$1 : lambda, phi];
     }
 
     rotationIdentity.invert = rotationIdentity;
 
     function rotateRadians(deltaLambda, deltaPhi, deltaGamma) {
-      return (deltaLambda %= tau) ? (deltaPhi || deltaGamma ? compose(rotationLambda(deltaLambda), rotationPhiGamma(deltaPhi, deltaGamma))
+      return (deltaLambda %= tau$1) ? (deltaPhi || deltaGamma ? compose(rotationLambda(deltaLambda), rotationPhiGamma(deltaPhi, deltaGamma))
         : rotationLambda(deltaLambda))
         : (deltaPhi || deltaGamma ? rotationPhiGamma(deltaPhi, deltaGamma)
         : rotationIdentity);
@@ -1735,7 +1868,7 @@ var app = (function () {
 
     function forwardRotationLambda(deltaLambda) {
       return function(lambda, phi) {
-        return lambda += deltaLambda, [lambda > pi ? lambda - tau : lambda < -pi ? lambda + tau : lambda, phi];
+        return lambda += deltaLambda, [lambda > pi ? lambda - tau$1 : lambda < -pi ? lambda + tau$1 : lambda, phi];
       };
     }
 
@@ -1785,12 +1918,12 @@ var app = (function () {
           sinRadius = sin(radius),
           step = direction * delta;
       if (t0 == null) {
-        t0 = radius + direction * tau;
+        t0 = radius + direction * tau$1;
         t1 = radius - step / 2;
       } else {
         t0 = circleRadius(cosRadius, t0);
         t1 = circleRadius(cosRadius, t1);
-        if (direction > 0 ? t0 < t1 : t0 > t1) t0 += direction * tau;
+        if (direction > 0 ? t0 < t1 : t0 > t1) t0 += direction * tau$1;
       }
       for (var point, t = t0; direction > 0 ? t > t1 : t < t1; t -= step) {
         point = spherical([cosRadius, -sinRadius * cos(t), -sinRadius * sin(t)]);
@@ -1803,7 +1936,7 @@ var app = (function () {
       point = cartesian(point), point[0] -= cosRadius;
       cartesianNormalizeInPlace(point);
       var radius = acos(-point[1]);
-      return ((-point[2] < 0 ? -radius : radius) + tau - epsilon) % tau;
+      return ((-point[2] < 0 ? -radius : radius) + tau$1 - epsilon$2) % tau$1;
     }
 
     function clipBuffer() {
@@ -1830,7 +1963,7 @@ var app = (function () {
     }
 
     function pointEqual(a, b) {
-      return abs(a[0] - b[0]) < epsilon && abs(a[1] - b[1]) < epsilon;
+      return abs(a[0] - b[0]) < epsilon$2 && abs(a[1] - b[1]) < epsilon$2;
     }
 
     function Intersection(point, points, other, entry) {
@@ -1863,7 +1996,7 @@ var app = (function () {
             return;
           }
           // handle degenerate cases by moving the point
-          p1[0] += 2 * epsilon;
+          p1[0] += 2 * epsilon$2;
         }
 
         subject.push(x = new Intersection(p0, segment, null, true));
@@ -1935,7 +2068,7 @@ var app = (function () {
     }
 
     function longitude(point) {
-      return abs(point[0]) <= pi ? point[0] : sign(point[0]) * ((abs(point[0]) + pi) % tau - pi);
+      return abs(point[0]) <= pi ? point[0] : sign(point[0]) * ((abs(point[0]) + pi) % tau$1 - pi);
     }
 
     function polygonContains(polygon, point) {
@@ -1948,8 +2081,8 @@ var app = (function () {
 
       var sum = new Adder();
 
-      if (sinPhi === 1) phi = halfPi + epsilon;
-      else if (sinPhi === -1) phi = -halfPi - epsilon;
+      if (sinPhi === 1) phi = halfPi + epsilon$2;
+      else if (sinPhi === -1) phi = -halfPi - epsilon$2;
 
       for (var i = 0, n = polygon.length; i < n; ++i) {
         if (!(m = (ring = polygon[i]).length)) continue;
@@ -1974,7 +2107,7 @@ var app = (function () {
               k = sinPhi0 * sinPhi1;
 
           sum.add(atan2(k * sign * sin(absDelta), cosPhi0 * cosPhi1 + k * cos(absDelta)));
-          angle += antimeridian ? delta + sign * tau : delta;
+          angle += antimeridian ? delta + sign * tau$1 : delta;
 
           // Are the longitudes either side of the point’s meridian (lambda),
           // and are the latitudes smaller than the parallel (phi)?
@@ -2002,7 +2135,7 @@ var app = (function () {
       // from the point to the South pole.  If it is zero, then the point is the
       // same side as the South pole.
 
-      return (angle < -epsilon || angle < epsilon && sum < -epsilon2) ^ (winding & 1);
+      return (angle < -epsilon$2 || angle < epsilon$2 && sum < -epsilon2) ^ (winding & 1);
     }
 
     function clip(pointVisible, clipLine, interpolate, start) {
@@ -2127,8 +2260,8 @@ var app = (function () {
     // Intersections are sorted along the clip edge. For both antimeridian cutting
     // and circle clipping, the same comparison is used.
     function compareIntersection(a, b) {
-      return ((a = a.x)[0] < 0 ? a[1] - halfPi - epsilon : halfPi - a[1])
-           - ((b = b.x)[0] < 0 ? b[1] - halfPi - epsilon : halfPi - b[1]);
+      return ((a = a.x)[0] < 0 ? a[1] - halfPi - epsilon$2 : halfPi - a[1])
+           - ((b = b.x)[0] < 0 ? b[1] - halfPi - epsilon$2 : halfPi - b[1]);
     }
 
     var clipAntimeridian = clip(
@@ -2155,7 +2288,7 @@ var app = (function () {
         point: function(lambda1, phi1) {
           var sign1 = lambda1 > 0 ? pi : -pi,
               delta = abs(lambda1 - lambda0);
-          if (abs(delta - pi) < epsilon) { // line crosses a pole
+          if (abs(delta - pi) < epsilon$2) { // line crosses a pole
             stream.point(lambda0, phi0 = (phi0 + phi1) / 2 > 0 ? halfPi : -halfPi);
             stream.point(sign0, phi0);
             stream.lineEnd();
@@ -2164,8 +2297,8 @@ var app = (function () {
             stream.point(lambda1, phi0);
             clean = 0;
           } else if (sign0 !== sign1 && delta >= pi) { // line crosses antimeridian
-            if (abs(lambda0 - sign0) < epsilon) lambda0 -= sign0 * epsilon; // handle degeneracies
-            if (abs(lambda1 - sign1) < epsilon) lambda1 -= sign1 * epsilon;
+            if (abs(lambda0 - sign0) < epsilon$2) lambda0 -= sign0 * epsilon$2; // handle degeneracies
+            if (abs(lambda1 - sign1) < epsilon$2) lambda1 -= sign1 * epsilon$2;
             phi0 = clipAntimeridianIntersect(lambda0, phi0, lambda1, phi1);
             stream.point(sign0, phi0);
             stream.lineEnd();
@@ -2190,7 +2323,7 @@ var app = (function () {
       var cosPhi0,
           cosPhi1,
           sinLambda0Lambda1 = sin(lambda0 - lambda1);
-      return abs(sinLambda0Lambda1) > epsilon
+      return abs(sinLambda0Lambda1) > epsilon$2
           ? atan((sin(phi0) * (cosPhi1 = cos(phi1)) * sin(lambda1)
               - sin(phi1) * (cosPhi0 = cos(phi0)) * sin(lambda0))
               / (cosPhi0 * cosPhi1 * sinLambda0Lambda1))
@@ -2210,7 +2343,7 @@ var app = (function () {
         stream.point(-pi, -phi);
         stream.point(-pi, 0);
         stream.point(-pi, phi);
-      } else if (abs(from[0] - to[0]) > epsilon) {
+      } else if (abs(from[0] - to[0]) > epsilon$2) {
         var lambda = from[0] < to[0] ? pi : -pi;
         phi = direction * lambda / 2;
         stream.point(-lambda, phi);
@@ -2225,7 +2358,7 @@ var app = (function () {
       var cr = cos(radius),
           delta = 6 * radians,
           smallRadius = cr > 0,
-          notHemisphere = abs(cr) > epsilon; // TODO optimise for this common case
+          notHemisphere = abs(cr) > epsilon$2; // TODO optimise for this common case
 
       function interpolate(from, to, direction, stream) {
         circleStream(stream, radius, delta, direction, from, to);
@@ -2361,15 +2494,15 @@ var app = (function () {
         if (lambda1 < lambda0) z = lambda0, lambda0 = lambda1, lambda1 = z;
 
         var delta = lambda1 - lambda0,
-            polar = abs(delta - pi) < epsilon,
-            meridian = polar || delta < epsilon;
+            polar = abs(delta - pi) < epsilon$2,
+            meridian = polar || delta < epsilon$2;
 
         if (!polar && phi1 < phi0) z = phi0, phi0 = phi1, phi1 = z;
 
         // Check that the first point is between a and b.
         if (meridian
             ? polar
-              ? phi0 + phi1 > 0 ^ q[1] < (abs(q[0] - lambda0) < epsilon ? phi0 : phi1)
+              ? phi0 + phi1 > 0 ^ q[1] < (abs(q[0] - lambda0) < epsilon$2 ? phi0 : phi1)
               : phi0 <= q[1] && q[1] <= phi1
             : delta > pi ^ (lambda0 <= q[0] && q[0] <= lambda1)) {
           var q1 = cartesianScale(u, (-w + t) / uu);
@@ -2477,9 +2610,9 @@ var app = (function () {
       }
 
       function corner(p, direction) {
-        return abs(p[0] - x0) < epsilon ? direction > 0 ? 0 : 3
-            : abs(p[0] - x1) < epsilon ? direction > 0 ? 2 : 1
-            : abs(p[1] - y0) < epsilon ? direction > 0 ? 1 : 0
+        return abs(p[0] - x0) < epsilon$2 ? direction > 0 ? 0 : 3
+            : abs(p[0] - x1) < epsilon$2 ? direction > 0 ? 2 : 1
+            : abs(p[1] - y0) < epsilon$2 ? direction > 0 ? 1 : 0
             : direction > 0 ? 3 : 2; // abs(p[1] - y1) < epsilon
       }
 
@@ -2826,7 +2959,7 @@ var app = (function () {
           }
           default: {
             this._context.moveTo(x + this._radius, y);
-            this._context.arc(x, y, this._radius, 0, tau);
+            this._context.arc(x, y, this._radius, 0, tau$1);
             break;
           }
         }
@@ -2989,7 +3122,7 @@ var app = (function () {
       return path.projection(projection).context(context);
     }
 
-    function transformer$1(methods) {
+    function transformer$2(methods) {
       return function(stream) {
         var s = new TransformStream;
         for (var key in methods) s[key] = methods[key];
@@ -3063,7 +3196,7 @@ var app = (function () {
     }
 
     function resampleNone(project) {
-      return transformer$1({
+      return transformer$2({
         point: function(x, y) {
           x = project(x, y);
           this.stream.point(x[0], x[1]);
@@ -3083,7 +3216,7 @@ var app = (function () {
               c = c0 + c1,
               m = sqrt(a * a + b * b + c * c),
               phi2 = asin(c /= m),
-              lambda2 = abs(abs(c) - 1) < epsilon || abs(lambda0 - lambda1) < epsilon ? (lambda0 + lambda1) / 2 : atan2(b, a),
+              lambda2 = abs(abs(c) - 1) < epsilon$2 || abs(lambda0 - lambda1) < epsilon$2 ? (lambda0 + lambda1) / 2 : atan2(b, a),
               p = project(lambda2, phi2),
               x2 = p[0],
               y2 = p[1],
@@ -3154,14 +3287,14 @@ var app = (function () {
       };
     }
 
-    var transformRadians = transformer$1({
+    var transformRadians = transformer$2({
       point: function(x, y) {
         this.stream.point(x * radians, y * radians);
       }
     });
 
     function transformRotate(rotate) {
-      return transformer$1({
+      return transformer$2({
         point: function(x, y) {
           var r = rotate(x, y);
           return this.stream.point(r[0], r[1]);
@@ -3348,7 +3481,7 @@ var app = (function () {
       var sy0 = sin(y0), n = (sy0 + sin(y1)) / 2;
 
       // Are the parallels symmetrical around the Equator?
-      if (abs(n) < epsilon) return cylindricalEqualAreaRaw(y0);
+      if (abs(n) < epsilon$2) return cylindricalEqualAreaRaw(y0);
 
       var c = 1 + sy0 * (2 * n - sy0), r0 = sqrt(c) / n;
 
@@ -3455,12 +3588,12 @@ var app = (function () {
 
         alaskaPoint = alaska
             .translate([x - 0.307 * k, y + 0.201 * k])
-            .clipExtent([[x - 0.425 * k + epsilon, y + 0.120 * k + epsilon], [x - 0.214 * k - epsilon, y + 0.234 * k - epsilon]])
+            .clipExtent([[x - 0.425 * k + epsilon$2, y + 0.120 * k + epsilon$2], [x - 0.214 * k - epsilon$2, y + 0.234 * k - epsilon$2]])
             .stream(pointStream);
 
         hawaiiPoint = hawaii
             .translate([x - 0.205 * k, y + 0.212 * k])
-            .clipExtent([[x - 0.214 * k + epsilon, y + 0.166 * k + epsilon], [x - 0.115 * k - epsilon, y + 0.234 * k - epsilon]])
+            .clipExtent([[x - 0.214 * k + epsilon$2, y + 0.166 * k + epsilon$2], [x - 0.115 * k - epsilon$2, y + 0.234 * k - epsilon$2]])
             .stream(pointStream);
 
         return reset();
@@ -3495,7 +3628,7 @@ var app = (function () {
           alpha = 0, ca, sa, // angle
           x0 = null, y0, x1, y1, // clip extent
           kx = 1, ky = 1,
-          transform = transformer$1({
+          transform = transformer$2({
             point: function(x, y) {
               var p = projection([x, y]);
               this.stream.point(p[0], p[1]);
@@ -3575,6 +3708,24 @@ var app = (function () {
         case 0: break;
         case 1: this.range(domain); break;
         default: this.range(range).domain(domain); break;
+      }
+      return this;
+    }
+
+    function initInterpolator(domain, interpolator) {
+      switch (arguments.length) {
+        case 0: break;
+        case 1: {
+          if (typeof domain === "function") this.interpolator(domain);
+          else this.range(domain);
+          break;
+        }
+        default: {
+          this.domain(domain);
+          if (typeof interpolator === "function") this.interpolator(interpolator);
+          else this.range(interpolator);
+          break;
+        }
       }
       return this;
     }
@@ -3960,6 +4111,26 @@ var app = (function () {
           : m1) * 255;
     }
 
+    function basis(t1, v0, v1, v2, v3) {
+      var t2 = t1 * t1, t3 = t2 * t1;
+      return ((1 - 3 * t1 + 3 * t2 - t3) * v0
+          + (4 - 6 * t2 + 3 * t3) * v1
+          + (1 + 3 * t1 + 3 * t2 - 3 * t3) * v2
+          + t3 * v3) / 6;
+    }
+
+    function basis$1(values) {
+      var n = values.length - 1;
+      return function(t) {
+        var i = t <= 0 ? (t = 0) : t >= 1 ? (t = 1, n - 1) : Math.floor(t * n),
+            v1 = values[i],
+            v2 = values[i + 1],
+            v0 = i > 0 ? values[i - 1] : 2 * v1 - v2,
+            v3 = i < n - 1 ? values[i + 2] : 2 * v2 - v1;
+        return basis((t - i / n) * n, v0, v1, v2, v3);
+      };
+    }
+
     var constant = x => () => x;
 
     function linear$1(a, d) {
@@ -4006,6 +4177,34 @@ var app = (function () {
 
       return rgb;
     })(1);
+
+    function rgbSpline(spline) {
+      return function(colors) {
+        var n = colors.length,
+            r = new Array(n),
+            g = new Array(n),
+            b = new Array(n),
+            i, color;
+        for (i = 0; i < n; ++i) {
+          color = rgb$1(colors[i]);
+          r[i] = color.r || 0;
+          g[i] = color.g || 0;
+          b[i] = color.b || 0;
+        }
+        r = spline(r);
+        g = spline(g);
+        b = spline(b);
+        color.opacity = 1;
+        return function(t) {
+          color.r = r(t);
+          color.g = g(t);
+          color.b = b(t);
+          return color + "";
+        };
+      };
+    }
+
+    var rgbBasis = rgbSpline(basis$1);
 
     function numberArray(a, b) {
       if (!b) b = [];
@@ -4215,7 +4414,7 @@ var app = (function () {
       };
     }
 
-    function copy(source, target) {
+    function copy$1(source, target) {
       return target
           .domain(source.domain())
           .range(source.range())
@@ -4224,7 +4423,7 @@ var app = (function () {
           .unknown(source.unknown());
     }
 
-    function transformer() {
+    function transformer$1() {
       var domain = unit,
           range = unit,
           interpolate$1 = interpolate,
@@ -4283,7 +4482,7 @@ var app = (function () {
     }
 
     function continuous() {
-      return transformer()(identity$1, identity$1);
+      return transformer$1()(identity$1, identity$1);
     }
 
     function formatDecimal(x) {
@@ -4698,12 +4897,78 @@ var app = (function () {
       var scale = continuous();
 
       scale.copy = function() {
-        return copy(scale, linear());
+        return copy$1(scale, linear());
       };
 
       initRange.apply(scale, arguments);
 
       return linearish(scale);
+    }
+
+    function transformer() {
+      var x0 = 0,
+          x1 = 1,
+          t0,
+          t1,
+          k10,
+          transform,
+          interpolator = identity$1,
+          clamp = false,
+          unknown;
+
+      function scale(x) {
+        return x == null || isNaN(x = +x) ? unknown : interpolator(k10 === 0 ? 0.5 : (x = (transform(x) - t0) * k10, clamp ? Math.max(0, Math.min(1, x)) : x));
+      }
+
+      scale.domain = function(_) {
+        return arguments.length ? ([x0, x1] = _, t0 = transform(x0 = +x0), t1 = transform(x1 = +x1), k10 = t0 === t1 ? 0 : 1 / (t1 - t0), scale) : [x0, x1];
+      };
+
+      scale.clamp = function(_) {
+        return arguments.length ? (clamp = !!_, scale) : clamp;
+      };
+
+      scale.interpolator = function(_) {
+        return arguments.length ? (interpolator = _, scale) : interpolator;
+      };
+
+      function range(interpolate) {
+        return function(_) {
+          var r0, r1;
+          return arguments.length ? ([r0, r1] = _, interpolator = interpolate(r0, r1), scale) : [interpolator(0), interpolator(1)];
+        };
+      }
+
+      scale.range = range(interpolate);
+
+      scale.rangeRound = range(interpolateRound);
+
+      scale.unknown = function(_) {
+        return arguments.length ? (unknown = _, scale) : unknown;
+      };
+
+      return function(t) {
+        transform = t, t0 = t(x0), t1 = t(x1), k10 = t0 === t1 ? 0 : 1 / (t1 - t0);
+        return scale;
+      };
+    }
+
+    function copy(source, target) {
+      return target
+          .domain(source.domain())
+          .interpolator(source.interpolator())
+          .clamp(source.clamp())
+          .unknown(source.unknown());
+    }
+
+    function sequential() {
+      var scale = linearish(transformer()(identity$1));
+
+      scale.copy = function() {
+        return copy(scale, sequential());
+      };
+
+      return initInterpolator.apply(scale, arguments);
     }
 
     var EOL = {},
@@ -4895,9 +5160,142 @@ var app = (function () {
 
     var csv = dsvParse(csvParse);
 
+    function colors(specifier) {
+      var n = specifier.length / 6 | 0, colors = new Array(n), i = 0;
+      while (i < n) colors[i] = "#" + specifier.slice(i * 6, ++i * 6);
+      return colors;
+    }
+
+    var ramp = scheme => rgbBasis(scheme[scheme.length - 1]);
+
+    var scheme = new Array(3).concat(
+      "fc8d59ffffbf91bfdb",
+      "d7191cfdae61abd9e92c7bb6",
+      "d7191cfdae61ffffbfabd9e92c7bb6",
+      "d73027fc8d59fee090e0f3f891bfdb4575b4",
+      "d73027fc8d59fee090ffffbfe0f3f891bfdb4575b4",
+      "d73027f46d43fdae61fee090e0f3f8abd9e974add14575b4",
+      "d73027f46d43fdae61fee090ffffbfe0f3f8abd9e974add14575b4",
+      "a50026d73027f46d43fdae61fee090e0f3f8abd9e974add14575b4313695",
+      "a50026d73027f46d43fdae61fee090ffffbfe0f3f8abd9e974add14575b4313695"
+    ).map(colors);
+
+    var interpolateRdYlBu = ramp(scheme);
+
+    function is_date(obj) {
+        return Object.prototype.toString.call(obj) === '[object Date]';
+    }
+
+    function tick_spring(ctx, last_value, current_value, target_value) {
+        if (typeof current_value === 'number' || is_date(current_value)) {
+            // @ts-ignore
+            const delta = target_value - current_value;
+            // @ts-ignore
+            const velocity = (current_value - last_value) / (ctx.dt || 1 / 60); // guard div by 0
+            const spring = ctx.opts.stiffness * delta;
+            const damper = ctx.opts.damping * velocity;
+            const acceleration = (spring - damper) * ctx.inv_mass;
+            const d = (velocity + acceleration) * ctx.dt;
+            if (Math.abs(d) < ctx.opts.precision && Math.abs(delta) < ctx.opts.precision) {
+                return target_value; // settled
+            }
+            else {
+                ctx.settled = false; // signal loop to keep ticking
+                // @ts-ignore
+                return is_date(current_value) ?
+                    new Date(current_value.getTime() + d) : current_value + d;
+            }
+        }
+        else if (Array.isArray(current_value)) {
+            // @ts-ignore
+            return current_value.map((_, i) => tick_spring(ctx, last_value[i], current_value[i], target_value[i]));
+        }
+        else if (typeof current_value === 'object') {
+            const next_value = {};
+            for (const k in current_value) {
+                // @ts-ignore
+                next_value[k] = tick_spring(ctx, last_value[k], current_value[k], target_value[k]);
+            }
+            // @ts-ignore
+            return next_value;
+        }
+        else {
+            throw new Error(`Cannot spring ${typeof current_value} values`);
+        }
+    }
+    function spring(value, opts = {}) {
+        const store = writable(value);
+        const { stiffness = 0.15, damping = 0.8, precision = 0.01 } = opts;
+        let last_time;
+        let task;
+        let current_token;
+        let last_value = value;
+        let target_value = value;
+        let inv_mass = 1;
+        let inv_mass_recovery_rate = 0;
+        let cancel_task = false;
+        function set(new_value, opts = {}) {
+            target_value = new_value;
+            const token = current_token = {};
+            if (value == null || opts.hard || (spring.stiffness >= 1 && spring.damping >= 1)) {
+                cancel_task = true; // cancel any running animation
+                last_time = now$1();
+                last_value = new_value;
+                store.set(value = target_value);
+                return Promise.resolve();
+            }
+            else if (opts.soft) {
+                const rate = opts.soft === true ? .5 : +opts.soft;
+                inv_mass_recovery_rate = 1 / (rate * 60);
+                inv_mass = 0; // infinite mass, unaffected by spring forces
+            }
+            if (!task) {
+                last_time = now$1();
+                cancel_task = false;
+                task = loop(now => {
+                    if (cancel_task) {
+                        cancel_task = false;
+                        task = null;
+                        return false;
+                    }
+                    inv_mass = Math.min(inv_mass + inv_mass_recovery_rate, 1);
+                    const ctx = {
+                        inv_mass,
+                        opts: spring,
+                        settled: true,
+                        dt: (now - last_time) * 60 / 1000
+                    };
+                    const next_value = tick_spring(ctx, last_value, value, target_value);
+                    last_time = now;
+                    last_value = value;
+                    store.set(value = next_value);
+                    if (ctx.settled) {
+                        task = null;
+                    }
+                    return !ctx.settled;
+                });
+            }
+            return new Promise(fulfil => {
+                task.promise.then(() => {
+                    if (token === current_token)
+                        fulfil();
+                });
+            });
+        }
+        const spring = {
+            set,
+            update: (fn, opts) => set(fn(target_value, value), opts),
+            subscribe: store.subscribe,
+            stiffness,
+            damping,
+            precision
+        };
+        return spring;
+    }
+
     /* src/Point.svelte generated by Svelte v3.44.0 */
 
-    function create_fragment$1(ctx) {
+    function create_fragment$2(ctx) {
     	let layer;
     	let current;
 
@@ -4938,6 +5336,1570 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
+    		id: create_fragment$2.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$2($$self, $$props, $$invalidate) {
+    	let render;
+    	let $radius;
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('Point', slots, []);
+    	let { x, y, r, change, stroke } = $$props;
+    	let strokeWidth = 2;
+    	let colorScale = sequential(interpolateRdYlBu).domain([30000, -30000]);
+    	const radius = spring(r, { stiffness: 0.15, damping: 0.3 });
+    	validate_store(radius, 'radius');
+    	component_subscribe($$self, radius, value => $$invalidate(7, $radius = value));
+    	const writable_props = ['x', 'y', 'r', 'change', 'stroke'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Point> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$$set = $$props => {
+    		if ('x' in $$props) $$invalidate(2, x = $$props.x);
+    		if ('y' in $$props) $$invalidate(3, y = $$props.y);
+    		if ('r' in $$props) $$invalidate(4, r = $$props.r);
+    		if ('change' in $$props) $$invalidate(5, change = $$props.change);
+    		if ('stroke' in $$props) $$invalidate(6, stroke = $$props.stroke);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		Layer,
+    		t,
+    		interpolateRdYlBu,
+    		scaleSequential: sequential,
+    		interpolate,
+    		spring,
+    		x,
+    		y,
+    		r,
+    		change,
+    		stroke,
+    		strokeWidth,
+    		colorScale,
+    		radius,
+    		render,
+    		$radius
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('x' in $$props) $$invalidate(2, x = $$props.x);
+    		if ('y' in $$props) $$invalidate(3, y = $$props.y);
+    		if ('r' in $$props) $$invalidate(4, r = $$props.r);
+    		if ('change' in $$props) $$invalidate(5, change = $$props.change);
+    		if ('stroke' in $$props) $$invalidate(6, stroke = $$props.stroke);
+    		if ('strokeWidth' in $$props) $$invalidate(8, strokeWidth = $$props.strokeWidth);
+    		if ('colorScale' in $$props) $$invalidate(9, colorScale = $$props.colorScale);
+    		if ('render' in $$props) $$invalidate(0, render = $$props.render);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*r*/ 16) {
+    			radius.set(r);
+    		}
+
+    		if ($$self.$$.dirty & /*change, x, y, $radius, stroke*/ 236) {
+    			$$invalidate(0, render = ({ context }) => {
+    				context.globalAlpha = 0.9;
+    				context.fillStyle = colorScale(change);
+    				context.strokeStyle = "#FFFFFF";
+    				context.stroke();
+    				context.beginPath();
+    				context.arc(x, y, $radius, 0, Math.PI * 2);
+    				context.fill();
+
+    				if (stroke) {
+    					context.strokeStyle = stroke;
+    					context.lineWidth = strokeWidth;
+    					context.beginPath();
+    					context.arc(x, y, $radius + strokeWidth / 2, 0, 2 * Math.PI);
+    					context.stroke();
+    				}
+    			});
+    		}
+    	};
+
+    	return [render, radius, x, y, r, change, stroke, $radius];
+    }
+
+    class Point extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$2, create_fragment$2, safe_not_equal, { x: 2, y: 3, r: 4, change: 5, stroke: 6 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "Point",
+    			options,
+    			id: create_fragment$2.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*x*/ ctx[2] === undefined && !('x' in props)) {
+    			console.warn("<Point> was created without expected prop 'x'");
+    		}
+
+    		if (/*y*/ ctx[3] === undefined && !('y' in props)) {
+    			console.warn("<Point> was created without expected prop 'y'");
+    		}
+
+    		if (/*r*/ ctx[4] === undefined && !('r' in props)) {
+    			console.warn("<Point> was created without expected prop 'r'");
+    		}
+
+    		if (/*change*/ ctx[5] === undefined && !('change' in props)) {
+    			console.warn("<Point> was created without expected prop 'change'");
+    		}
+
+    		if (/*stroke*/ ctx[6] === undefined && !('stroke' in props)) {
+    			console.warn("<Point> was created without expected prop 'stroke'");
+    		}
+    	}
+
+    	get x() {
+    		throw new Error("<Point>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set x(value) {
+    		throw new Error("<Point>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get y() {
+    		throw new Error("<Point>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set y(value) {
+    		throw new Error("<Point>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get r() {
+    		throw new Error("<Point>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set r(value) {
+    		throw new Error("<Point>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get change() {
+    		throw new Error("<Point>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set change(value) {
+    		throw new Error("<Point>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get stroke() {
+    		throw new Error("<Point>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set stroke(value) {
+    		throw new Error("<Point>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    const epsilon$1 = 1.1102230246251565e-16;
+    const splitter = 134217729;
+    const resulterrbound = (3 + 8 * epsilon$1) * epsilon$1;
+
+    // fast_expansion_sum_zeroelim routine from oritinal code
+    function sum(elen, e, flen, f, h) {
+        let Q, Qnew, hh, bvirt;
+        let enow = e[0];
+        let fnow = f[0];
+        let eindex = 0;
+        let findex = 0;
+        if ((fnow > enow) === (fnow > -enow)) {
+            Q = enow;
+            enow = e[++eindex];
+        } else {
+            Q = fnow;
+            fnow = f[++findex];
+        }
+        let hindex = 0;
+        if (eindex < elen && findex < flen) {
+            if ((fnow > enow) === (fnow > -enow)) {
+                Qnew = enow + Q;
+                hh = Q - (Qnew - enow);
+                enow = e[++eindex];
+            } else {
+                Qnew = fnow + Q;
+                hh = Q - (Qnew - fnow);
+                fnow = f[++findex];
+            }
+            Q = Qnew;
+            if (hh !== 0) {
+                h[hindex++] = hh;
+            }
+            while (eindex < elen && findex < flen) {
+                if ((fnow > enow) === (fnow > -enow)) {
+                    Qnew = Q + enow;
+                    bvirt = Qnew - Q;
+                    hh = Q - (Qnew - bvirt) + (enow - bvirt);
+                    enow = e[++eindex];
+                } else {
+                    Qnew = Q + fnow;
+                    bvirt = Qnew - Q;
+                    hh = Q - (Qnew - bvirt) + (fnow - bvirt);
+                    fnow = f[++findex];
+                }
+                Q = Qnew;
+                if (hh !== 0) {
+                    h[hindex++] = hh;
+                }
+            }
+        }
+        while (eindex < elen) {
+            Qnew = Q + enow;
+            bvirt = Qnew - Q;
+            hh = Q - (Qnew - bvirt) + (enow - bvirt);
+            enow = e[++eindex];
+            Q = Qnew;
+            if (hh !== 0) {
+                h[hindex++] = hh;
+            }
+        }
+        while (findex < flen) {
+            Qnew = Q + fnow;
+            bvirt = Qnew - Q;
+            hh = Q - (Qnew - bvirt) + (fnow - bvirt);
+            fnow = f[++findex];
+            Q = Qnew;
+            if (hh !== 0) {
+                h[hindex++] = hh;
+            }
+        }
+        if (Q !== 0 || hindex === 0) {
+            h[hindex++] = Q;
+        }
+        return hindex;
+    }
+
+    function estimate(elen, e) {
+        let Q = e[0];
+        for (let i = 1; i < elen; i++) Q += e[i];
+        return Q;
+    }
+
+    function vec(n) {
+        return new Float64Array(n);
+    }
+
+    const ccwerrboundA = (3 + 16 * epsilon$1) * epsilon$1;
+    const ccwerrboundB = (2 + 12 * epsilon$1) * epsilon$1;
+    const ccwerrboundC = (9 + 64 * epsilon$1) * epsilon$1 * epsilon$1;
+
+    const B = vec(4);
+    const C1 = vec(8);
+    const C2 = vec(12);
+    const D = vec(16);
+    const u = vec(4);
+
+    function orient2dadapt(ax, ay, bx, by, cx, cy, detsum) {
+        let acxtail, acytail, bcxtail, bcytail;
+        let bvirt, c, ahi, alo, bhi, blo, _i, _j, _0, s1, s0, t1, t0, u3;
+
+        const acx = ax - cx;
+        const bcx = bx - cx;
+        const acy = ay - cy;
+        const bcy = by - cy;
+
+        s1 = acx * bcy;
+        c = splitter * acx;
+        ahi = c - (c - acx);
+        alo = acx - ahi;
+        c = splitter * bcy;
+        bhi = c - (c - bcy);
+        blo = bcy - bhi;
+        s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+        t1 = acy * bcx;
+        c = splitter * acy;
+        ahi = c - (c - acy);
+        alo = acy - ahi;
+        c = splitter * bcx;
+        bhi = c - (c - bcx);
+        blo = bcx - bhi;
+        t0 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
+        _i = s0 - t0;
+        bvirt = s0 - _i;
+        B[0] = s0 - (_i + bvirt) + (bvirt - t0);
+        _j = s1 + _i;
+        bvirt = _j - s1;
+        _0 = s1 - (_j - bvirt) + (_i - bvirt);
+        _i = _0 - t1;
+        bvirt = _0 - _i;
+        B[1] = _0 - (_i + bvirt) + (bvirt - t1);
+        u3 = _j + _i;
+        bvirt = u3 - _j;
+        B[2] = _j - (u3 - bvirt) + (_i - bvirt);
+        B[3] = u3;
+
+        let det = estimate(4, B);
+        let errbound = ccwerrboundB * detsum;
+        if (det >= errbound || -det >= errbound) {
+            return det;
+        }
+
+        bvirt = ax - acx;
+        acxtail = ax - (acx + bvirt) + (bvirt - cx);
+        bvirt = bx - bcx;
+        bcxtail = bx - (bcx + bvirt) + (bvirt - cx);
+        bvirt = ay - acy;
+        acytail = ay - (acy + bvirt) + (bvirt - cy);
+        bvirt = by - bcy;
+        bcytail = by - (bcy + bvirt) + (bvirt - cy);
+
+        if (acxtail === 0 && acytail === 0 && bcxtail === 0 && bcytail === 0) {
+            return det;
+        }
+
+        errbound = ccwerrboundC * detsum + resulterrbound * Math.abs(det);
+        det += (acx * bcytail + bcy * acxtail) - (acy * bcxtail + bcx * acytail);
+        if (det >= errbound || -det >= errbound) return det;
+
+        s1 = acxtail * bcy;
+        c = splitter * acxtail;
+        ahi = c - (c - acxtail);
+        alo = acxtail - ahi;
+        c = splitter * bcy;
+        bhi = c - (c - bcy);
+        blo = bcy - bhi;
+        s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+        t1 = acytail * bcx;
+        c = splitter * acytail;
+        ahi = c - (c - acytail);
+        alo = acytail - ahi;
+        c = splitter * bcx;
+        bhi = c - (c - bcx);
+        blo = bcx - bhi;
+        t0 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
+        _i = s0 - t0;
+        bvirt = s0 - _i;
+        u[0] = s0 - (_i + bvirt) + (bvirt - t0);
+        _j = s1 + _i;
+        bvirt = _j - s1;
+        _0 = s1 - (_j - bvirt) + (_i - bvirt);
+        _i = _0 - t1;
+        bvirt = _0 - _i;
+        u[1] = _0 - (_i + bvirt) + (bvirt - t1);
+        u3 = _j + _i;
+        bvirt = u3 - _j;
+        u[2] = _j - (u3 - bvirt) + (_i - bvirt);
+        u[3] = u3;
+        const C1len = sum(4, B, 4, u, C1);
+
+        s1 = acx * bcytail;
+        c = splitter * acx;
+        ahi = c - (c - acx);
+        alo = acx - ahi;
+        c = splitter * bcytail;
+        bhi = c - (c - bcytail);
+        blo = bcytail - bhi;
+        s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+        t1 = acy * bcxtail;
+        c = splitter * acy;
+        ahi = c - (c - acy);
+        alo = acy - ahi;
+        c = splitter * bcxtail;
+        bhi = c - (c - bcxtail);
+        blo = bcxtail - bhi;
+        t0 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
+        _i = s0 - t0;
+        bvirt = s0 - _i;
+        u[0] = s0 - (_i + bvirt) + (bvirt - t0);
+        _j = s1 + _i;
+        bvirt = _j - s1;
+        _0 = s1 - (_j - bvirt) + (_i - bvirt);
+        _i = _0 - t1;
+        bvirt = _0 - _i;
+        u[1] = _0 - (_i + bvirt) + (bvirt - t1);
+        u3 = _j + _i;
+        bvirt = u3 - _j;
+        u[2] = _j - (u3 - bvirt) + (_i - bvirt);
+        u[3] = u3;
+        const C2len = sum(C1len, C1, 4, u, C2);
+
+        s1 = acxtail * bcytail;
+        c = splitter * acxtail;
+        ahi = c - (c - acxtail);
+        alo = acxtail - ahi;
+        c = splitter * bcytail;
+        bhi = c - (c - bcytail);
+        blo = bcytail - bhi;
+        s0 = alo * blo - (s1 - ahi * bhi - alo * bhi - ahi * blo);
+        t1 = acytail * bcxtail;
+        c = splitter * acytail;
+        ahi = c - (c - acytail);
+        alo = acytail - ahi;
+        c = splitter * bcxtail;
+        bhi = c - (c - bcxtail);
+        blo = bcxtail - bhi;
+        t0 = alo * blo - (t1 - ahi * bhi - alo * bhi - ahi * blo);
+        _i = s0 - t0;
+        bvirt = s0 - _i;
+        u[0] = s0 - (_i + bvirt) + (bvirt - t0);
+        _j = s1 + _i;
+        bvirt = _j - s1;
+        _0 = s1 - (_j - bvirt) + (_i - bvirt);
+        _i = _0 - t1;
+        bvirt = _0 - _i;
+        u[1] = _0 - (_i + bvirt) + (bvirt - t1);
+        u3 = _j + _i;
+        bvirt = u3 - _j;
+        u[2] = _j - (u3 - bvirt) + (_i - bvirt);
+        u[3] = u3;
+        const Dlen = sum(C2len, C2, 4, u, D);
+
+        return D[Dlen - 1];
+    }
+
+    function orient2d(ax, ay, bx, by, cx, cy) {
+        const detleft = (ay - cy) * (bx - cx);
+        const detright = (ax - cx) * (by - cy);
+        const det = detleft - detright;
+
+        if (detleft === 0 || detright === 0 || (detleft > 0) !== (detright > 0)) return det;
+
+        const detsum = Math.abs(detleft + detright);
+        if (Math.abs(det) >= ccwerrboundA * detsum) return det;
+
+        return -orient2dadapt(ax, ay, bx, by, cx, cy, detsum);
+    }
+
+    const EPSILON = Math.pow(2, -52);
+    const EDGE_STACK = new Uint32Array(512);
+
+    class Delaunator {
+
+        static from(points, getX = defaultGetX, getY = defaultGetY) {
+            const n = points.length;
+            const coords = new Float64Array(n * 2);
+
+            for (let i = 0; i < n; i++) {
+                const p = points[i];
+                coords[2 * i] = getX(p);
+                coords[2 * i + 1] = getY(p);
+            }
+
+            return new Delaunator(coords);
+        }
+
+        constructor(coords) {
+            const n = coords.length >> 1;
+            if (n > 0 && typeof coords[0] !== 'number') throw new Error('Expected coords to contain numbers.');
+
+            this.coords = coords;
+
+            // arrays that will store the triangulation graph
+            const maxTriangles = Math.max(2 * n - 5, 0);
+            this._triangles = new Uint32Array(maxTriangles * 3);
+            this._halfedges = new Int32Array(maxTriangles * 3);
+
+            // temporary arrays for tracking the edges of the advancing convex hull
+            this._hashSize = Math.ceil(Math.sqrt(n));
+            this._hullPrev = new Uint32Array(n); // edge to prev edge
+            this._hullNext = new Uint32Array(n); // edge to next edge
+            this._hullTri = new Uint32Array(n); // edge to adjacent triangle
+            this._hullHash = new Int32Array(this._hashSize).fill(-1); // angular edge hash
+
+            // temporary arrays for sorting points
+            this._ids = new Uint32Array(n);
+            this._dists = new Float64Array(n);
+
+            this.update();
+        }
+
+        update() {
+            const {coords, _hullPrev: hullPrev, _hullNext: hullNext, _hullTri: hullTri, _hullHash: hullHash} =  this;
+            const n = coords.length >> 1;
+
+            // populate an array of point indices; calculate input data bbox
+            let minX = Infinity;
+            let minY = Infinity;
+            let maxX = -Infinity;
+            let maxY = -Infinity;
+
+            for (let i = 0; i < n; i++) {
+                const x = coords[2 * i];
+                const y = coords[2 * i + 1];
+                if (x < minX) minX = x;
+                if (y < minY) minY = y;
+                if (x > maxX) maxX = x;
+                if (y > maxY) maxY = y;
+                this._ids[i] = i;
+            }
+            const cx = (minX + maxX) / 2;
+            const cy = (minY + maxY) / 2;
+
+            let minDist = Infinity;
+            let i0, i1, i2;
+
+            // pick a seed point close to the center
+            for (let i = 0; i < n; i++) {
+                const d = dist(cx, cy, coords[2 * i], coords[2 * i + 1]);
+                if (d < minDist) {
+                    i0 = i;
+                    minDist = d;
+                }
+            }
+            const i0x = coords[2 * i0];
+            const i0y = coords[2 * i0 + 1];
+
+            minDist = Infinity;
+
+            // find the point closest to the seed
+            for (let i = 0; i < n; i++) {
+                if (i === i0) continue;
+                const d = dist(i0x, i0y, coords[2 * i], coords[2 * i + 1]);
+                if (d < minDist && d > 0) {
+                    i1 = i;
+                    minDist = d;
+                }
+            }
+            let i1x = coords[2 * i1];
+            let i1y = coords[2 * i1 + 1];
+
+            let minRadius = Infinity;
+
+            // find the third point which forms the smallest circumcircle with the first two
+            for (let i = 0; i < n; i++) {
+                if (i === i0 || i === i1) continue;
+                const r = circumradius(i0x, i0y, i1x, i1y, coords[2 * i], coords[2 * i + 1]);
+                if (r < minRadius) {
+                    i2 = i;
+                    minRadius = r;
+                }
+            }
+            let i2x = coords[2 * i2];
+            let i2y = coords[2 * i2 + 1];
+
+            if (minRadius === Infinity) {
+                // order collinear points by dx (or dy if all x are identical)
+                // and return the list as a hull
+                for (let i = 0; i < n; i++) {
+                    this._dists[i] = (coords[2 * i] - coords[0]) || (coords[2 * i + 1] - coords[1]);
+                }
+                quicksort(this._ids, this._dists, 0, n - 1);
+                const hull = new Uint32Array(n);
+                let j = 0;
+                for (let i = 0, d0 = -Infinity; i < n; i++) {
+                    const id = this._ids[i];
+                    if (this._dists[id] > d0) {
+                        hull[j++] = id;
+                        d0 = this._dists[id];
+                    }
+                }
+                this.hull = hull.subarray(0, j);
+                this.triangles = new Uint32Array(0);
+                this.halfedges = new Uint32Array(0);
+                return;
+            }
+
+            // swap the order of the seed points for counter-clockwise orientation
+            if (orient2d(i0x, i0y, i1x, i1y, i2x, i2y) < 0) {
+                const i = i1;
+                const x = i1x;
+                const y = i1y;
+                i1 = i2;
+                i1x = i2x;
+                i1y = i2y;
+                i2 = i;
+                i2x = x;
+                i2y = y;
+            }
+
+            const center = circumcenter(i0x, i0y, i1x, i1y, i2x, i2y);
+            this._cx = center.x;
+            this._cy = center.y;
+
+            for (let i = 0; i < n; i++) {
+                this._dists[i] = dist(coords[2 * i], coords[2 * i + 1], center.x, center.y);
+            }
+
+            // sort the points by distance from the seed triangle circumcenter
+            quicksort(this._ids, this._dists, 0, n - 1);
+
+            // set up the seed triangle as the starting hull
+            this._hullStart = i0;
+            let hullSize = 3;
+
+            hullNext[i0] = hullPrev[i2] = i1;
+            hullNext[i1] = hullPrev[i0] = i2;
+            hullNext[i2] = hullPrev[i1] = i0;
+
+            hullTri[i0] = 0;
+            hullTri[i1] = 1;
+            hullTri[i2] = 2;
+
+            hullHash.fill(-1);
+            hullHash[this._hashKey(i0x, i0y)] = i0;
+            hullHash[this._hashKey(i1x, i1y)] = i1;
+            hullHash[this._hashKey(i2x, i2y)] = i2;
+
+            this.trianglesLen = 0;
+            this._addTriangle(i0, i1, i2, -1, -1, -1);
+
+            for (let k = 0, xp, yp; k < this._ids.length; k++) {
+                const i = this._ids[k];
+                const x = coords[2 * i];
+                const y = coords[2 * i + 1];
+
+                // skip near-duplicate points
+                if (k > 0 && Math.abs(x - xp) <= EPSILON && Math.abs(y - yp) <= EPSILON) continue;
+                xp = x;
+                yp = y;
+
+                // skip seed triangle points
+                if (i === i0 || i === i1 || i === i2) continue;
+
+                // find a visible edge on the convex hull using edge hash
+                let start = 0;
+                for (let j = 0, key = this._hashKey(x, y); j < this._hashSize; j++) {
+                    start = hullHash[(key + j) % this._hashSize];
+                    if (start !== -1 && start !== hullNext[start]) break;
+                }
+
+                start = hullPrev[start];
+                let e = start, q;
+                while (q = hullNext[e], orient2d(x, y, coords[2 * e], coords[2 * e + 1], coords[2 * q], coords[2 * q + 1]) >= 0) {
+                    e = q;
+                    if (e === start) {
+                        e = -1;
+                        break;
+                    }
+                }
+                if (e === -1) continue; // likely a near-duplicate point; skip it
+
+                // add the first triangle from the point
+                let t = this._addTriangle(e, i, hullNext[e], -1, -1, hullTri[e]);
+
+                // recursively flip triangles from the point until they satisfy the Delaunay condition
+                hullTri[i] = this._legalize(t + 2);
+                hullTri[e] = t; // keep track of boundary triangles on the hull
+                hullSize++;
+
+                // walk forward through the hull, adding more triangles and flipping recursively
+                let n = hullNext[e];
+                while (q = hullNext[n], orient2d(x, y, coords[2 * n], coords[2 * n + 1], coords[2 * q], coords[2 * q + 1]) < 0) {
+                    t = this._addTriangle(n, i, q, hullTri[i], -1, hullTri[n]);
+                    hullTri[i] = this._legalize(t + 2);
+                    hullNext[n] = n; // mark as removed
+                    hullSize--;
+                    n = q;
+                }
+
+                // walk backward from the other side, adding more triangles and flipping
+                if (e === start) {
+                    while (q = hullPrev[e], orient2d(x, y, coords[2 * q], coords[2 * q + 1], coords[2 * e], coords[2 * e + 1]) < 0) {
+                        t = this._addTriangle(q, i, e, -1, hullTri[e], hullTri[q]);
+                        this._legalize(t + 2);
+                        hullTri[q] = t;
+                        hullNext[e] = e; // mark as removed
+                        hullSize--;
+                        e = q;
+                    }
+                }
+
+                // update the hull indices
+                this._hullStart = hullPrev[i] = e;
+                hullNext[e] = hullPrev[n] = i;
+                hullNext[i] = n;
+
+                // save the two new edges in the hash table
+                hullHash[this._hashKey(x, y)] = i;
+                hullHash[this._hashKey(coords[2 * e], coords[2 * e + 1])] = e;
+            }
+
+            this.hull = new Uint32Array(hullSize);
+            for (let i = 0, e = this._hullStart; i < hullSize; i++) {
+                this.hull[i] = e;
+                e = hullNext[e];
+            }
+
+            // trim typed triangle mesh arrays
+            this.triangles = this._triangles.subarray(0, this.trianglesLen);
+            this.halfedges = this._halfedges.subarray(0, this.trianglesLen);
+        }
+
+        _hashKey(x, y) {
+            return Math.floor(pseudoAngle(x - this._cx, y - this._cy) * this._hashSize) % this._hashSize;
+        }
+
+        _legalize(a) {
+            const {_triangles: triangles, _halfedges: halfedges, coords} = this;
+
+            let i = 0;
+            let ar = 0;
+
+            // recursion eliminated with a fixed-size stack
+            while (true) {
+                const b = halfedges[a];
+
+                /* if the pair of triangles doesn't satisfy the Delaunay condition
+                 * (p1 is inside the circumcircle of [p0, pl, pr]), flip them,
+                 * then do the same check/flip recursively for the new pair of triangles
+                 *
+                 *           pl                    pl
+                 *          /||\                  /  \
+                 *       al/ || \bl            al/    \a
+                 *        /  ||  \              /      \
+                 *       /  a||b  \    flip    /___ar___\
+                 *     p0\   ||   /p1   =>   p0\---bl---/p1
+                 *        \  ||  /              \      /
+                 *       ar\ || /br             b\    /br
+                 *          \||/                  \  /
+                 *           pr                    pr
+                 */
+                const a0 = a - a % 3;
+                ar = a0 + (a + 2) % 3;
+
+                if (b === -1) { // convex hull edge
+                    if (i === 0) break;
+                    a = EDGE_STACK[--i];
+                    continue;
+                }
+
+                const b0 = b - b % 3;
+                const al = a0 + (a + 1) % 3;
+                const bl = b0 + (b + 2) % 3;
+
+                const p0 = triangles[ar];
+                const pr = triangles[a];
+                const pl = triangles[al];
+                const p1 = triangles[bl];
+
+                const illegal = inCircle(
+                    coords[2 * p0], coords[2 * p0 + 1],
+                    coords[2 * pr], coords[2 * pr + 1],
+                    coords[2 * pl], coords[2 * pl + 1],
+                    coords[2 * p1], coords[2 * p1 + 1]);
+
+                if (illegal) {
+                    triangles[a] = p1;
+                    triangles[b] = p0;
+
+                    const hbl = halfedges[bl];
+
+                    // edge swapped on the other side of the hull (rare); fix the halfedge reference
+                    if (hbl === -1) {
+                        let e = this._hullStart;
+                        do {
+                            if (this._hullTri[e] === bl) {
+                                this._hullTri[e] = a;
+                                break;
+                            }
+                            e = this._hullPrev[e];
+                        } while (e !== this._hullStart);
+                    }
+                    this._link(a, hbl);
+                    this._link(b, halfedges[ar]);
+                    this._link(ar, bl);
+
+                    const br = b0 + (b + 1) % 3;
+
+                    // don't worry about hitting the cap: it can only happen on extremely degenerate input
+                    if (i < EDGE_STACK.length) {
+                        EDGE_STACK[i++] = br;
+                    }
+                } else {
+                    if (i === 0) break;
+                    a = EDGE_STACK[--i];
+                }
+            }
+
+            return ar;
+        }
+
+        _link(a, b) {
+            this._halfedges[a] = b;
+            if (b !== -1) this._halfedges[b] = a;
+        }
+
+        // add a new triangle given vertex indices and adjacent half-edge ids
+        _addTriangle(i0, i1, i2, a, b, c) {
+            const t = this.trianglesLen;
+
+            this._triangles[t] = i0;
+            this._triangles[t + 1] = i1;
+            this._triangles[t + 2] = i2;
+
+            this._link(t, a);
+            this._link(t + 1, b);
+            this._link(t + 2, c);
+
+            this.trianglesLen += 3;
+
+            return t;
+        }
+    }
+
+    // monotonically increases with real angle, but doesn't need expensive trigonometry
+    function pseudoAngle(dx, dy) {
+        const p = dx / (Math.abs(dx) + Math.abs(dy));
+        return (dy > 0 ? 3 - p : 1 + p) / 4; // [0..1]
+    }
+
+    function dist(ax, ay, bx, by) {
+        const dx = ax - bx;
+        const dy = ay - by;
+        return dx * dx + dy * dy;
+    }
+
+    function inCircle(ax, ay, bx, by, cx, cy, px, py) {
+        const dx = ax - px;
+        const dy = ay - py;
+        const ex = bx - px;
+        const ey = by - py;
+        const fx = cx - px;
+        const fy = cy - py;
+
+        const ap = dx * dx + dy * dy;
+        const bp = ex * ex + ey * ey;
+        const cp = fx * fx + fy * fy;
+
+        return dx * (ey * cp - bp * fy) -
+               dy * (ex * cp - bp * fx) +
+               ap * (ex * fy - ey * fx) < 0;
+    }
+
+    function circumradius(ax, ay, bx, by, cx, cy) {
+        const dx = bx - ax;
+        const dy = by - ay;
+        const ex = cx - ax;
+        const ey = cy - ay;
+
+        const bl = dx * dx + dy * dy;
+        const cl = ex * ex + ey * ey;
+        const d = 0.5 / (dx * ey - dy * ex);
+
+        const x = (ey * bl - dy * cl) * d;
+        const y = (dx * cl - ex * bl) * d;
+
+        return x * x + y * y;
+    }
+
+    function circumcenter(ax, ay, bx, by, cx, cy) {
+        const dx = bx - ax;
+        const dy = by - ay;
+        const ex = cx - ax;
+        const ey = cy - ay;
+
+        const bl = dx * dx + dy * dy;
+        const cl = ex * ex + ey * ey;
+        const d = 0.5 / (dx * ey - dy * ex);
+
+        const x = ax + (ey * bl - dy * cl) * d;
+        const y = ay + (dx * cl - ex * bl) * d;
+
+        return {x, y};
+    }
+
+    function quicksort(ids, dists, left, right) {
+        if (right - left <= 20) {
+            for (let i = left + 1; i <= right; i++) {
+                const temp = ids[i];
+                const tempDist = dists[temp];
+                let j = i - 1;
+                while (j >= left && dists[ids[j]] > tempDist) ids[j + 1] = ids[j--];
+                ids[j + 1] = temp;
+            }
+        } else {
+            const median = (left + right) >> 1;
+            let i = left + 1;
+            let j = right;
+            swap(ids, median, i);
+            if (dists[ids[left]] > dists[ids[right]]) swap(ids, left, right);
+            if (dists[ids[i]] > dists[ids[right]]) swap(ids, i, right);
+            if (dists[ids[left]] > dists[ids[i]]) swap(ids, left, i);
+
+            const temp = ids[i];
+            const tempDist = dists[temp];
+            while (true) {
+                do i++; while (dists[ids[i]] < tempDist);
+                do j--; while (dists[ids[j]] > tempDist);
+                if (j < i) break;
+                swap(ids, i, j);
+            }
+            ids[left + 1] = ids[j];
+            ids[j] = temp;
+
+            if (right - i + 1 >= j - left) {
+                quicksort(ids, dists, i, right);
+                quicksort(ids, dists, left, j - 1);
+            } else {
+                quicksort(ids, dists, left, j - 1);
+                quicksort(ids, dists, i, right);
+            }
+        }
+    }
+
+    function swap(arr, i, j) {
+        const tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+    }
+
+    function defaultGetX(p) {
+        return p[0];
+    }
+    function defaultGetY(p) {
+        return p[1];
+    }
+
+    const epsilon = 1e-6;
+
+    class Path {
+      constructor() {
+        this._x0 = this._y0 = // start of current subpath
+        this._x1 = this._y1 = null; // end of current subpath
+        this._ = "";
+      }
+      moveTo(x, y) {
+        this._ += `M${this._x0 = this._x1 = +x},${this._y0 = this._y1 = +y}`;
+      }
+      closePath() {
+        if (this._x1 !== null) {
+          this._x1 = this._x0, this._y1 = this._y0;
+          this._ += "Z";
+        }
+      }
+      lineTo(x, y) {
+        this._ += `L${this._x1 = +x},${this._y1 = +y}`;
+      }
+      arc(x, y, r) {
+        x = +x, y = +y, r = +r;
+        const x0 = x + r;
+        const y0 = y;
+        if (r < 0) throw new Error("negative radius");
+        if (this._x1 === null) this._ += `M${x0},${y0}`;
+        else if (Math.abs(this._x1 - x0) > epsilon || Math.abs(this._y1 - y0) > epsilon) this._ += "L" + x0 + "," + y0;
+        if (!r) return;
+        this._ += `A${r},${r},0,1,1,${x - r},${y}A${r},${r},0,1,1,${this._x1 = x0},${this._y1 = y0}`;
+      }
+      rect(x, y, w, h) {
+        this._ += `M${this._x0 = this._x1 = +x},${this._y0 = this._y1 = +y}h${+w}v${+h}h${-w}Z`;
+      }
+      value() {
+        return this._ || null;
+      }
+    }
+
+    class Polygon {
+      constructor() {
+        this._ = [];
+      }
+      moveTo(x, y) {
+        this._.push([x, y]);
+      }
+      closePath() {
+        this._.push(this._[0].slice());
+      }
+      lineTo(x, y) {
+        this._.push([x, y]);
+      }
+      value() {
+        return this._.length ? this._ : null;
+      }
+    }
+
+    class Voronoi {
+      constructor(delaunay, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
+        if (!((xmax = +xmax) >= (xmin = +xmin)) || !((ymax = +ymax) >= (ymin = +ymin))) throw new Error("invalid bounds");
+        this.delaunay = delaunay;
+        this._circumcenters = new Float64Array(delaunay.points.length * 2);
+        this.vectors = new Float64Array(delaunay.points.length * 2);
+        this.xmax = xmax, this.xmin = xmin;
+        this.ymax = ymax, this.ymin = ymin;
+        this._init();
+      }
+      update() {
+        this.delaunay.update();
+        this._init();
+        return this;
+      }
+      _init() {
+        const {delaunay: {points, hull, triangles}, vectors} = this;
+
+        // Compute circumcenters.
+        const circumcenters = this.circumcenters = this._circumcenters.subarray(0, triangles.length / 3 * 2);
+        for (let i = 0, j = 0, n = triangles.length, x, y; i < n; i += 3, j += 2) {
+          const t1 = triangles[i] * 2;
+          const t2 = triangles[i + 1] * 2;
+          const t3 = triangles[i + 2] * 2;
+          const x1 = points[t1];
+          const y1 = points[t1 + 1];
+          const x2 = points[t2];
+          const y2 = points[t2 + 1];
+          const x3 = points[t3];
+          const y3 = points[t3 + 1];
+
+          const dx = x2 - x1;
+          const dy = y2 - y1;
+          const ex = x3 - x1;
+          const ey = y3 - y1;
+          const ab = (dx * ey - dy * ex) * 2;
+
+          if (Math.abs(ab) < 1e-9) {
+            // degenerate case (collinear diagram)
+            // almost equal points (degenerate triangle)
+            // the circumcenter is at the infinity, in a
+            // direction that is:
+            // 1. orthogonal to the halfedge.
+            let a = 1e9;
+            // 2. points away from the center; since the list of triangles starts
+            // in the center, the first point of the first triangle
+            // will be our reference
+            const r = triangles[0] * 2;
+            a *= Math.sign((points[r] - x1) * ey - (points[r + 1] - y1) * ex);
+            x = (x1 + x3) / 2 - a * ey;
+            y = (y1 + y3) / 2 + a * ex;
+          } else {
+            const d = 1 / ab;
+            const bl = dx * dx + dy * dy;
+            const cl = ex * ex + ey * ey;
+            x = x1 + (ey * bl - dy * cl) * d;
+            y = y1 + (dx * cl - ex * bl) * d;
+          }
+          circumcenters[j] = x;
+          circumcenters[j + 1] = y;
+        }
+
+        // Compute exterior cell rays.
+        let h = hull[hull.length - 1];
+        let p0, p1 = h * 4;
+        let x0, x1 = points[2 * h];
+        let y0, y1 = points[2 * h + 1];
+        vectors.fill(0);
+        for (let i = 0; i < hull.length; ++i) {
+          h = hull[i];
+          p0 = p1, x0 = x1, y0 = y1;
+          p1 = h * 4, x1 = points[2 * h], y1 = points[2 * h + 1];
+          vectors[p0 + 2] = vectors[p1] = y0 - y1;
+          vectors[p0 + 3] = vectors[p1 + 1] = x1 - x0;
+        }
+      }
+      render(context) {
+        const buffer = context == null ? context = new Path : undefined;
+        const {delaunay: {halfedges, inedges, hull}, circumcenters, vectors} = this;
+        if (hull.length <= 1) return null;
+        for (let i = 0, n = halfedges.length; i < n; ++i) {
+          const j = halfedges[i];
+          if (j < i) continue;
+          const ti = Math.floor(i / 3) * 2;
+          const tj = Math.floor(j / 3) * 2;
+          const xi = circumcenters[ti];
+          const yi = circumcenters[ti + 1];
+          const xj = circumcenters[tj];
+          const yj = circumcenters[tj + 1];
+          this._renderSegment(xi, yi, xj, yj, context);
+        }
+        let h0, h1 = hull[hull.length - 1];
+        for (let i = 0; i < hull.length; ++i) {
+          h0 = h1, h1 = hull[i];
+          const t = Math.floor(inedges[h1] / 3) * 2;
+          const x = circumcenters[t];
+          const y = circumcenters[t + 1];
+          const v = h0 * 4;
+          const p = this._project(x, y, vectors[v + 2], vectors[v + 3]);
+          if (p) this._renderSegment(x, y, p[0], p[1], context);
+        }
+        return buffer && buffer.value();
+      }
+      renderBounds(context) {
+        const buffer = context == null ? context = new Path : undefined;
+        context.rect(this.xmin, this.ymin, this.xmax - this.xmin, this.ymax - this.ymin);
+        return buffer && buffer.value();
+      }
+      renderCell(i, context) {
+        const buffer = context == null ? context = new Path : undefined;
+        const points = this._clip(i);
+        if (points === null || !points.length) return;
+        context.moveTo(points[0], points[1]);
+        let n = points.length;
+        while (points[0] === points[n-2] && points[1] === points[n-1] && n > 1) n -= 2;
+        for (let i = 2; i < n; i += 2) {
+          if (points[i] !== points[i-2] || points[i+1] !== points[i-1])
+            context.lineTo(points[i], points[i + 1]);
+        }
+        context.closePath();
+        return buffer && buffer.value();
+      }
+      *cellPolygons() {
+        const {delaunay: {points}} = this;
+        for (let i = 0, n = points.length / 2; i < n; ++i) {
+          const cell = this.cellPolygon(i);
+          if (cell) cell.index = i, yield cell;
+        }
+      }
+      cellPolygon(i) {
+        const polygon = new Polygon;
+        this.renderCell(i, polygon);
+        return polygon.value();
+      }
+      _renderSegment(x0, y0, x1, y1, context) {
+        let S;
+        const c0 = this._regioncode(x0, y0);
+        const c1 = this._regioncode(x1, y1);
+        if (c0 === 0 && c1 === 0) {
+          context.moveTo(x0, y0);
+          context.lineTo(x1, y1);
+        } else if (S = this._clipSegment(x0, y0, x1, y1, c0, c1)) {
+          context.moveTo(S[0], S[1]);
+          context.lineTo(S[2], S[3]);
+        }
+      }
+      contains(i, x, y) {
+        if ((x = +x, x !== x) || (y = +y, y !== y)) return false;
+        return this.delaunay._step(i, x, y) === i;
+      }
+      *neighbors(i) {
+        const ci = this._clip(i);
+        if (ci) for (const j of this.delaunay.neighbors(i)) {
+          const cj = this._clip(j);
+          // find the common edge
+          if (cj) loop: for (let ai = 0, li = ci.length; ai < li; ai += 2) {
+            for (let aj = 0, lj = cj.length; aj < lj; aj += 2) {
+              if (ci[ai] == cj[aj]
+              && ci[ai + 1] == cj[aj + 1]
+              && ci[(ai + 2) % li] == cj[(aj + lj - 2) % lj]
+              && ci[(ai + 3) % li] == cj[(aj + lj - 1) % lj]
+              ) {
+                yield j;
+                break loop;
+              }
+            }
+          }
+        }
+      }
+      _cell(i) {
+        const {circumcenters, delaunay: {inedges, halfedges, triangles}} = this;
+        const e0 = inedges[i];
+        if (e0 === -1) return null; // coincident point
+        const points = [];
+        let e = e0;
+        do {
+          const t = Math.floor(e / 3);
+          points.push(circumcenters[t * 2], circumcenters[t * 2 + 1]);
+          e = e % 3 === 2 ? e - 2 : e + 1;
+          if (triangles[e] !== i) break; // bad triangulation
+          e = halfedges[e];
+        } while (e !== e0 && e !== -1);
+        return points;
+      }
+      _clip(i) {
+        // degenerate case (1 valid point: return the box)
+        if (i === 0 && this.delaunay.hull.length === 1) {
+          return [this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax, this.xmin, this.ymin];
+        }
+        const points = this._cell(i);
+        if (points === null) return null;
+        const {vectors: V} = this;
+        const v = i * 4;
+        return V[v] || V[v + 1]
+            ? this._clipInfinite(i, points, V[v], V[v + 1], V[v + 2], V[v + 3])
+            : this._clipFinite(i, points);
+      }
+      _clipFinite(i, points) {
+        const n = points.length;
+        let P = null;
+        let x0, y0, x1 = points[n - 2], y1 = points[n - 1];
+        let c0, c1 = this._regioncode(x1, y1);
+        let e0, e1 = 0;
+        for (let j = 0; j < n; j += 2) {
+          x0 = x1, y0 = y1, x1 = points[j], y1 = points[j + 1];
+          c0 = c1, c1 = this._regioncode(x1, y1);
+          if (c0 === 0 && c1 === 0) {
+            e0 = e1, e1 = 0;
+            if (P) P.push(x1, y1);
+            else P = [x1, y1];
+          } else {
+            let S, sx0, sy0, sx1, sy1;
+            if (c0 === 0) {
+              if ((S = this._clipSegment(x0, y0, x1, y1, c0, c1)) === null) continue;
+              [sx0, sy0, sx1, sy1] = S;
+            } else {
+              if ((S = this._clipSegment(x1, y1, x0, y0, c1, c0)) === null) continue;
+              [sx1, sy1, sx0, sy0] = S;
+              e0 = e1, e1 = this._edgecode(sx0, sy0);
+              if (e0 && e1) this._edge(i, e0, e1, P, P.length);
+              if (P) P.push(sx0, sy0);
+              else P = [sx0, sy0];
+            }
+            e0 = e1, e1 = this._edgecode(sx1, sy1);
+            if (e0 && e1) this._edge(i, e0, e1, P, P.length);
+            if (P) P.push(sx1, sy1);
+            else P = [sx1, sy1];
+          }
+        }
+        if (P) {
+          e0 = e1, e1 = this._edgecode(P[0], P[1]);
+          if (e0 && e1) this._edge(i, e0, e1, P, P.length);
+        } else if (this.contains(i, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
+          return [this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax, this.xmin, this.ymin];
+        }
+        return P;
+      }
+      _clipSegment(x0, y0, x1, y1, c0, c1) {
+        while (true) {
+          if (c0 === 0 && c1 === 0) return [x0, y0, x1, y1];
+          if (c0 & c1) return null;
+          let x, y, c = c0 || c1;
+          if (c & 0b1000) x = x0 + (x1 - x0) * (this.ymax - y0) / (y1 - y0), y = this.ymax;
+          else if (c & 0b0100) x = x0 + (x1 - x0) * (this.ymin - y0) / (y1 - y0), y = this.ymin;
+          else if (c & 0b0010) y = y0 + (y1 - y0) * (this.xmax - x0) / (x1 - x0), x = this.xmax;
+          else y = y0 + (y1 - y0) * (this.xmin - x0) / (x1 - x0), x = this.xmin;
+          if (c0) x0 = x, y0 = y, c0 = this._regioncode(x0, y0);
+          else x1 = x, y1 = y, c1 = this._regioncode(x1, y1);
+        }
+      }
+      _clipInfinite(i, points, vx0, vy0, vxn, vyn) {
+        let P = Array.from(points), p;
+        if (p = this._project(P[0], P[1], vx0, vy0)) P.unshift(p[0], p[1]);
+        if (p = this._project(P[P.length - 2], P[P.length - 1], vxn, vyn)) P.push(p[0], p[1]);
+        if (P = this._clipFinite(i, P)) {
+          for (let j = 0, n = P.length, c0, c1 = this._edgecode(P[n - 2], P[n - 1]); j < n; j += 2) {
+            c0 = c1, c1 = this._edgecode(P[j], P[j + 1]);
+            if (c0 && c1) j = this._edge(i, c0, c1, P, j), n = P.length;
+          }
+        } else if (this.contains(i, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
+          P = [this.xmin, this.ymin, this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax];
+        }
+        return P;
+      }
+      _edge(i, e0, e1, P, j) {
+        while (e0 !== e1) {
+          let x, y;
+          switch (e0) {
+            case 0b0101: e0 = 0b0100; continue; // top-left
+            case 0b0100: e0 = 0b0110, x = this.xmax, y = this.ymin; break; // top
+            case 0b0110: e0 = 0b0010; continue; // top-right
+            case 0b0010: e0 = 0b1010, x = this.xmax, y = this.ymax; break; // right
+            case 0b1010: e0 = 0b1000; continue; // bottom-right
+            case 0b1000: e0 = 0b1001, x = this.xmin, y = this.ymax; break; // bottom
+            case 0b1001: e0 = 0b0001; continue; // bottom-left
+            case 0b0001: e0 = 0b0101, x = this.xmin, y = this.ymin; break; // left
+          }
+          // Note: this implicitly checks for out of bounds: if P[j] or P[j+1] are
+          // undefined, the conditional statement will be executed.
+          if ((P[j] !== x || P[j + 1] !== y) && this.contains(i, x, y)) {
+            P.splice(j, 0, x, y), j += 2;
+          }
+        }
+        if (P.length > 4) {
+          for (let i = 0; i < P.length; i+= 2) {
+            const j = (i + 2) % P.length, k = (i + 4) % P.length;
+            if (P[i] === P[j] && P[j] === P[k]
+            || P[i + 1] === P[j + 1] && P[j + 1] === P[k + 1])
+              P.splice(j, 2), i -= 2;
+          }
+        }
+        return j;
+      }
+      _project(x0, y0, vx, vy) {
+        let t = Infinity, c, x, y;
+        if (vy < 0) { // top
+          if (y0 <= this.ymin) return null;
+          if ((c = (this.ymin - y0) / vy) < t) y = this.ymin, x = x0 + (t = c) * vx;
+        } else if (vy > 0) { // bottom
+          if (y0 >= this.ymax) return null;
+          if ((c = (this.ymax - y0) / vy) < t) y = this.ymax, x = x0 + (t = c) * vx;
+        }
+        if (vx > 0) { // right
+          if (x0 >= this.xmax) return null;
+          if ((c = (this.xmax - x0) / vx) < t) x = this.xmax, y = y0 + (t = c) * vy;
+        } else if (vx < 0) { // left
+          if (x0 <= this.xmin) return null;
+          if ((c = (this.xmin - x0) / vx) < t) x = this.xmin, y = y0 + (t = c) * vy;
+        }
+        return [x, y];
+      }
+      _edgecode(x, y) {
+        return (x === this.xmin ? 0b0001
+            : x === this.xmax ? 0b0010 : 0b0000)
+            | (y === this.ymin ? 0b0100
+            : y === this.ymax ? 0b1000 : 0b0000);
+      }
+      _regioncode(x, y) {
+        return (x < this.xmin ? 0b0001
+            : x > this.xmax ? 0b0010 : 0b0000)
+            | (y < this.ymin ? 0b0100
+            : y > this.ymax ? 0b1000 : 0b0000);
+      }
+    }
+
+    const tau = 2 * Math.PI, pow = Math.pow;
+
+    function pointX(p) {
+      return p[0];
+    }
+
+    function pointY(p) {
+      return p[1];
+    }
+
+    // A triangulation is collinear if all its triangles have a non-null area
+    function collinear(d) {
+      const {triangles, coords} = d;
+      for (let i = 0; i < triangles.length; i += 3) {
+        const a = 2 * triangles[i],
+              b = 2 * triangles[i + 1],
+              c = 2 * triangles[i + 2],
+              cross = (coords[c] - coords[a]) * (coords[b + 1] - coords[a + 1])
+                    - (coords[b] - coords[a]) * (coords[c + 1] - coords[a + 1]);
+        if (cross > 1e-10) return false;
+      }
+      return true;
+    }
+
+    function jitter(x, y, r) {
+      return [x + Math.sin(x + y) * r, y + Math.cos(x - y) * r];
+    }
+
+    class Delaunay {
+      static from(points, fx = pointX, fy = pointY, that) {
+        return new Delaunay("length" in points
+            ? flatArray(points, fx, fy, that)
+            : Float64Array.from(flatIterable(points, fx, fy, that)));
+      }
+      constructor(points) {
+        this._delaunator = new Delaunator(points);
+        this.inedges = new Int32Array(points.length / 2);
+        this._hullIndex = new Int32Array(points.length / 2);
+        this.points = this._delaunator.coords;
+        this._init();
+      }
+      update() {
+        this._delaunator.update();
+        this._init();
+        return this;
+      }
+      _init() {
+        const d = this._delaunator, points = this.points;
+
+        // check for collinear
+        if (d.hull && d.hull.length > 2 && collinear(d)) {
+          this.collinear = Int32Array.from({length: points.length/2}, (_,i) => i)
+            .sort((i, j) => points[2 * i] - points[2 * j] || points[2 * i + 1] - points[2 * j + 1]); // for exact neighbors
+          const e = this.collinear[0], f = this.collinear[this.collinear.length - 1],
+            bounds = [ points[2 * e], points[2 * e + 1], points[2 * f], points[2 * f + 1] ],
+            r = 1e-8 * Math.hypot(bounds[3] - bounds[1], bounds[2] - bounds[0]);
+          for (let i = 0, n = points.length / 2; i < n; ++i) {
+            const p = jitter(points[2 * i], points[2 * i + 1], r);
+            points[2 * i] = p[0];
+            points[2 * i + 1] = p[1];
+          }
+          this._delaunator = new Delaunator(points);
+        } else {
+          delete this.collinear;
+        }
+
+        const halfedges = this.halfedges = this._delaunator.halfedges;
+        const hull = this.hull = this._delaunator.hull;
+        const triangles = this.triangles = this._delaunator.triangles;
+        const inedges = this.inedges.fill(-1);
+        const hullIndex = this._hullIndex.fill(-1);
+
+        // Compute an index from each point to an (arbitrary) incoming halfedge
+        // Used to give the first neighbor of each point; for this reason,
+        // on the hull we give priority to exterior halfedges
+        for (let e = 0, n = halfedges.length; e < n; ++e) {
+          const p = triangles[e % 3 === 2 ? e - 2 : e + 1];
+          if (halfedges[e] === -1 || inedges[p] === -1) inedges[p] = e;
+        }
+        for (let i = 0, n = hull.length; i < n; ++i) {
+          hullIndex[hull[i]] = i;
+        }
+
+        // degenerate case: 1 or 2 (distinct) points
+        if (hull.length <= 2 && hull.length > 0) {
+          this.triangles = new Int32Array(3).fill(-1);
+          this.halfedges = new Int32Array(3).fill(-1);
+          this.triangles[0] = hull[0];
+          inedges[hull[0]] = 1;
+          if (hull.length === 2) {
+            inedges[hull[1]] = 0;
+            this.triangles[1] = hull[1];
+            this.triangles[2] = hull[1];
+          }
+        }
+      }
+      voronoi(bounds) {
+        return new Voronoi(this, bounds);
+      }
+      *neighbors(i) {
+        const {inedges, hull, _hullIndex, halfedges, triangles, collinear} = this;
+
+        // degenerate case with several collinear points
+        if (collinear) {
+          const l = collinear.indexOf(i);
+          if (l > 0) yield collinear[l - 1];
+          if (l < collinear.length - 1) yield collinear[l + 1];
+          return;
+        }
+
+        const e0 = inedges[i];
+        if (e0 === -1) return; // coincident point
+        let e = e0, p0 = -1;
+        do {
+          yield p0 = triangles[e];
+          e = e % 3 === 2 ? e - 2 : e + 1;
+          if (triangles[e] !== i) return; // bad triangulation
+          e = halfedges[e];
+          if (e === -1) {
+            const p = hull[(_hullIndex[i] + 1) % hull.length];
+            if (p !== p0) yield p;
+            return;
+          }
+        } while (e !== e0);
+      }
+      find(x, y, i = 0) {
+        if ((x = +x, x !== x) || (y = +y, y !== y)) return -1;
+        const i0 = i;
+        let c;
+        while ((c = this._step(i, x, y)) >= 0 && c !== i && c !== i0) i = c;
+        return c;
+      }
+      _step(i, x, y) {
+        const {inedges, hull, _hullIndex, halfedges, triangles, points} = this;
+        if (inedges[i] === -1 || !points.length) return (i + 1) % (points.length >> 1);
+        let c = i;
+        let dc = pow(x - points[i * 2], 2) + pow(y - points[i * 2 + 1], 2);
+        const e0 = inedges[i];
+        let e = e0;
+        do {
+          let t = triangles[e];
+          const dt = pow(x - points[t * 2], 2) + pow(y - points[t * 2 + 1], 2);
+          if (dt < dc) dc = dt, c = t;
+          e = e % 3 === 2 ? e - 2 : e + 1;
+          if (triangles[e] !== i) break; // bad triangulation
+          e = halfedges[e];
+          if (e === -1) {
+            e = hull[(_hullIndex[i] + 1) % hull.length];
+            if (e !== t) {
+              if (pow(x - points[e * 2], 2) + pow(y - points[e * 2 + 1], 2) < dc) return e;
+            }
+            break;
+          }
+        } while (e !== e0);
+        return c;
+      }
+      render(context) {
+        const buffer = context == null ? context = new Path : undefined;
+        const {points, halfedges, triangles} = this;
+        for (let i = 0, n = halfedges.length; i < n; ++i) {
+          const j = halfedges[i];
+          if (j < i) continue;
+          const ti = triangles[i] * 2;
+          const tj = triangles[j] * 2;
+          context.moveTo(points[ti], points[ti + 1]);
+          context.lineTo(points[tj], points[tj + 1]);
+        }
+        this.renderHull(context);
+        return buffer && buffer.value();
+      }
+      renderPoints(context, r) {
+        if (r === undefined && (!context || typeof context.moveTo !== "function")) r = context, context = null;
+        r = r == undefined ? 2 : +r;
+        const buffer = context == null ? context = new Path : undefined;
+        const {points} = this;
+        for (let i = 0, n = points.length; i < n; i += 2) {
+          const x = points[i], y = points[i + 1];
+          context.moveTo(x + r, y);
+          context.arc(x, y, r, 0, tau);
+        }
+        return buffer && buffer.value();
+      }
+      renderHull(context) {
+        const buffer = context == null ? context = new Path : undefined;
+        const {hull, points} = this;
+        const h = hull[0] * 2, n = hull.length;
+        context.moveTo(points[h], points[h + 1]);
+        for (let i = 1; i < n; ++i) {
+          const h = 2 * hull[i];
+          context.lineTo(points[h], points[h + 1]);
+        }
+        context.closePath();
+        return buffer && buffer.value();
+      }
+      hullPolygon() {
+        const polygon = new Polygon;
+        this.renderHull(polygon);
+        return polygon.value();
+      }
+      renderTriangle(i, context) {
+        const buffer = context == null ? context = new Path : undefined;
+        const {points, triangles} = this;
+        const t0 = triangles[i *= 3] * 2;
+        const t1 = triangles[i + 1] * 2;
+        const t2 = triangles[i + 2] * 2;
+        context.moveTo(points[t0], points[t0 + 1]);
+        context.lineTo(points[t1], points[t1 + 1]);
+        context.lineTo(points[t2], points[t2 + 1]);
+        context.closePath();
+        return buffer && buffer.value();
+      }
+      *trianglePolygons() {
+        const {triangles} = this;
+        for (let i = 0, n = triangles.length / 3; i < n; ++i) {
+          yield this.trianglePolygon(i);
+        }
+      }
+      trianglePolygon(i) {
+        const polygon = new Polygon;
+        this.renderTriangle(i, polygon);
+        return polygon.value();
+      }
+    }
+
+    function flatArray(points, fx, fy, that) {
+      const n = points.length;
+      const array = new Float64Array(n * 2);
+      for (let i = 0; i < n; ++i) {
+        const p = points[i];
+        array[i * 2] = fx.call(that, p, i, points);
+        array[i * 2 + 1] = fy.call(that, p, i, points);
+      }
+      return array;
+    }
+
+    function* flatIterable(points, fx, fy, that) {
+      let i = 0;
+      for (const p of points) {
+        yield fx.call(that, p, i, points);
+        yield fy.call(that, p, i, points);
+        ++i;
+      }
+    }
+
+    /* src/Tooltip.svelte generated by Svelte v3.44.0 */
+
+    function create_fragment$1(ctx) {
+    	const block = {
+    		c: noop$2,
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: noop$2,
+    		p: noop$2,
+    		i: noop$2,
+    		o: noop$2,
+    		d: noop$2
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
     		id: create_fragment$1.name,
     		type: "component",
     		source: "",
@@ -4947,124 +6909,55 @@ var app = (function () {
     	return block;
     }
 
-    function instance$1($$self, $$props, $$invalidate) {
-    	let render;
+    function instance$1($$self, $$props) {
     	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('Point', slots, []);
-    	let { lat, lon, amount } = $$props;
-    	const writable_props = ['lat', 'lon', 'amount'];
+    	validate_slots('Tooltip', slots, []);
+    	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Point> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Tooltip> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$$set = $$props => {
-    		if ('lat' in $$props) $$invalidate(1, lat = $$props.lat);
-    		if ('lon' in $$props) $$invalidate(2, lon = $$props.lon);
-    		if ('amount' in $$props) $$invalidate(3, amount = $$props.amount);
-    	};
-
-    	$$self.$capture_state = () => ({ Layer, t, lat, lon, amount, render });
-
-    	$$self.$inject_state = $$props => {
-    		if ('lat' in $$props) $$invalidate(1, lat = $$props.lat);
-    		if ('lon' in $$props) $$invalidate(2, lon = $$props.lon);
-    		if ('amount' in $$props) $$invalidate(3, amount = $$props.amount);
-    		if ('render' in $$props) $$invalidate(0, render = $$props.render);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*lat, lon, amount*/ 14) {
-    			$$invalidate(0, render = ({ context }) => {
-    				context.fillStyle = "rgba(78, 60, 194, 0.7)";
-    				context.strokeStyle = "#FFFFFF";
-    				context.stroke();
-    				context.beginPath();
-    				context.arc(lat, lon, amount, 0, Math.PI * 2);
-    				context.fill();
-    			});
-    		}
-    	};
-
-    	return [render, lat, lon, amount];
+    	return [];
     }
 
-    class Point extends SvelteComponentDev {
+    class Tooltip extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { lat: 1, lon: 2, amount: 3 });
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
-    			tagName: "Point",
+    			tagName: "Tooltip",
     			options,
     			id: create_fragment$1.name
     		});
-
-    		const { ctx } = this.$$;
-    		const props = options.props || {};
-
-    		if (/*lat*/ ctx[1] === undefined && !('lat' in props)) {
-    			console.warn("<Point> was created without expected prop 'lat'");
-    		}
-
-    		if (/*lon*/ ctx[2] === undefined && !('lon' in props)) {
-    			console.warn("<Point> was created without expected prop 'lon'");
-    		}
-
-    		if (/*amount*/ ctx[3] === undefined && !('amount' in props)) {
-    			console.warn("<Point> was created without expected prop 'amount'");
-    		}
-    	}
-
-    	get lat() {
-    		throw new Error("<Point>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set lat(value) {
-    		throw new Error("<Point>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get lon() {
-    		throw new Error("<Point>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set lon(value) {
-    		throw new Error("<Point>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get amount() {
-    		throw new Error("<Point>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set amount(value) {
-    		throw new Error("<Point>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
 
     /* src/App.svelte generated by Svelte v3.44.0 */
+
+    const { console: console_1 } = globals;
     const file = "src/App.svelte";
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
     	child_ctx[19] = list[i].lat;
     	child_ctx[20] = list[i].lon;
-    	child_ctx[21] = list[i].amount;
-    	child_ctx[22] = list[i].show;
+    	child_ctx[21] = list[i].show;
+    	child_ctx[22] = list[i].amount;
+    	child_ctx[23] = list[i].change;
+    	child_ctx[24] = list[i].id;
     	return child_ctx;
     }
 
     function get_each_context_1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[25] = list[i];
+    	child_ctx[27] = list[i];
     	return child_ctx;
     }
 
-    // (99:2) {#if us}
+    // (110:2) {#if us}
     function create_if_block_1(ctx) {
     	let g;
     	let each_value_1 = /*features*/ ctx[5];
@@ -5084,7 +6977,7 @@ var app = (function () {
     			}
 
     			attr_dev(g, "fill", "rgb(233,233,233)");
-    			add_location(g, file, 99, 12, 2414);
+    			add_location(g, file, 110, 12, 2683);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, g, anchor);
@@ -5094,7 +6987,7 @@ var app = (function () {
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*path, features*/ 160) {
+    			if (dirty & /*path, features*/ 288) {
     				each_value_1 = /*features*/ ctx[5];
     				validate_each_argument(each_value_1);
     				let i;
@@ -5128,14 +7021,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(99:2) {#if us}",
+    		source: "(110:2) {#if us}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (101:16) {#each features as feature}
+    // (112:16) {#each features as feature}
     function create_each_block_1(ctx) {
     	let path_1;
     	let path_1_d_value;
@@ -5143,15 +7036,15 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			path_1 = svg_element("path");
-    			attr_dev(path_1, "d", path_1_d_value = /*path*/ ctx[7](/*feature*/ ctx[25]));
+    			attr_dev(path_1, "d", path_1_d_value = /*path*/ ctx[8](/*feature*/ ctx[27]));
     			attr_dev(path_1, "class", "svelte-1arwo6w");
-    			add_location(path_1, file, 101, 20, 2506);
+    			add_location(path_1, file, 112, 20, 2775);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, path_1, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*path, features*/ 160 && path_1_d_value !== (path_1_d_value = /*path*/ ctx[7](/*feature*/ ctx[25]))) {
+    			if (dirty & /*path, features*/ 288 && path_1_d_value !== (path_1_d_value = /*path*/ ctx[8](/*feature*/ ctx[27]))) {
     				attr_dev(path_1, "d", path_1_d_value);
     			}
     		},
@@ -5164,23 +7057,27 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(101:16) {#each features as feature}",
+    		source: "(112:16) {#each features as feature}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (110:12) {#if show}
+    // (130:12) {#if show}
     function create_if_block(ctx) {
     	let point;
     	let current;
 
     	point = new Point({
     			props: {
-    				lat: /*lat*/ ctx[19],
-    				lon: /*lon*/ ctx[20],
-    				amount: /*amount*/ ctx[21]
+    				x: /*lat*/ ctx[19],
+    				y: /*lon*/ ctx[20],
+    				r: /*picked*/ ctx[1] && /*id*/ ctx[24] === /*points*/ ctx[2].at(-1).id && !/*click*/ ctx[6]
+    				? /*amount*/ ctx[22] + 2
+    				: /*amount*/ ctx[22],
+    				stroke: /*picked*/ ctx[1] && /*id*/ ctx[24] === /*points*/ ctx[2].at(-1).id && '#FFFFFF',
+    				change: /*change*/ ctx[23]
     			},
     			$$inline: true
     		});
@@ -5195,9 +7092,15 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const point_changes = {};
-    			if (dirty & /*points*/ 64) point_changes.lat = /*lat*/ ctx[19];
-    			if (dirty & /*points*/ 64) point_changes.lon = /*lon*/ ctx[20];
-    			if (dirty & /*points*/ 64) point_changes.amount = /*amount*/ ctx[21];
+    			if (dirty & /*points*/ 4) point_changes.x = /*lat*/ ctx[19];
+    			if (dirty & /*points*/ 4) point_changes.y = /*lon*/ ctx[20];
+
+    			if (dirty & /*picked, points, click*/ 70) point_changes.r = /*picked*/ ctx[1] && /*id*/ ctx[24] === /*points*/ ctx[2].at(-1).id && !/*click*/ ctx[6]
+    			? /*amount*/ ctx[22] + 2
+    			: /*amount*/ ctx[22];
+
+    			if (dirty & /*picked, points*/ 6) point_changes.stroke = /*picked*/ ctx[1] && /*id*/ ctx[24] === /*points*/ ctx[2].at(-1).id && '#FFFFFF';
+    			if (dirty & /*points*/ 4) point_changes.change = /*change*/ ctx[23];
     			point.$set(point_changes);
     		},
     		i: function intro(local) {
@@ -5218,35 +7121,43 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(110:12) {#if show}",
+    		source: "(130:12) {#if show}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (109:8) {#each points as {lat, lon, amount, show}}
-    function create_each_block(ctx) {
+    // (129:8) {#each points as {lat, lon, show, amount, change, id}
+    function create_each_block(key_1, ctx) {
+    	let first;
     	let if_block_anchor;
     	let current;
-    	let if_block = /*show*/ ctx[22] && create_if_block(ctx);
+    	let if_block = /*show*/ ctx[21] && create_if_block(ctx);
 
     	const block = {
+    		key: key_1,
+    		first: null,
     		c: function create() {
+    			first = empty();
     			if (if_block) if_block.c();
     			if_block_anchor = empty();
+    			this.first = first;
     		},
     		m: function mount(target, anchor) {
+    			insert_dev(target, first, anchor);
     			if (if_block) if_block.m(target, anchor);
     			insert_dev(target, if_block_anchor, anchor);
     			current = true;
     		},
-    		p: function update(ctx, dirty) {
-    			if (/*show*/ ctx[22]) {
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (/*show*/ ctx[21]) {
     				if (if_block) {
     					if_block.p(ctx, dirty);
 
-    					if (dirty & /*points*/ 64) {
+    					if (dirty & /*points*/ 4) {
     						transition_in(if_block, 1);
     					}
     				} else {
@@ -5275,6 +7186,7 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
+    			if (detaching) detach_dev(first);
     			if (if_block) if_block.d(detaching);
     			if (detaching) detach_dev(if_block_anchor);
     		}
@@ -5284,28 +7196,29 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(109:8) {#each points as {lat, lon, amount, show}}",
+    		source: "(129:8) {#each points as {lat, lon, show, amount, change, id}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (108:1) <Canvas on:click ={() => playing = !playing} {width} {height} style="position: absolute">
+    // (119:1) <Canvas {width} {height}          style= "position: absolute; cursor: pointer"         on:mousemove={({ clientX: x, clientY: y }) => {             if (picked = delaunay.find(x - 3, y - 3))                 points = [...points.filter((_, i) => i !== picked), points[picked]]         }}         on:mousedown={() => (click = true)}         on:mouseup={() => (click = false)}   on:mouseout={() => (picked = null)}     >
     function create_default_slot(ctx) {
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
     	let each_1_anchor;
     	let current;
-    	let each_value = /*points*/ ctx[6];
+    	let each_value = /*points*/ ctx[2];
     	validate_each_argument(each_value);
-    	let each_blocks = [];
+    	const get_key = ctx => /*id*/ ctx[24];
+    	validate_each_keys(ctx, each_value, get_each_context, get_key);
 
     	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    		let child_ctx = get_each_context(ctx, each_value, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block(key, child_ctx));
     	}
-
-    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
-    		each_blocks[i] = null;
-    	});
 
     	const block = {
     		c: function create() {
@@ -5324,31 +7237,12 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*points*/ 64) {
-    				each_value = /*points*/ ctx[6];
+    			if (dirty & /*points, picked, click*/ 70) {
+    				each_value = /*points*/ ctx[2];
     				validate_each_argument(each_value);
-    				let i;
-
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context(ctx, each_value, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    						transition_in(each_blocks[i], 1);
-    					} else {
-    						each_blocks[i] = create_each_block(child_ctx);
-    						each_blocks[i].c();
-    						transition_in(each_blocks[i], 1);
-    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
-    					}
-    				}
-
     				group_outros();
-
-    				for (i = each_value.length; i < each_blocks.length; i += 1) {
-    					out(i);
-    				}
-
+    				validate_each_keys(ctx, each_value, get_each_context, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, each_1_anchor.parentNode, outro_and_destroy_block, create_each_block, each_1_anchor, get_each_context);
     				check_outros();
     			}
     		},
@@ -5362,8 +7256,6 @@ var app = (function () {
     			current = true;
     		},
     		o: function outro(local) {
-    			each_blocks = each_blocks.filter(Boolean);
-
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				transition_out(each_blocks[i]);
     			}
@@ -5371,7 +7263,10 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_each(each_blocks, detaching);
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d(detaching);
+    			}
+
     			if (detaching) detach_dev(each_1_anchor);
     		}
     	};
@@ -5380,7 +7275,7 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(108:1) <Canvas on:click ={() => playing = !playing} {width} {height} style=\\\"position: absolute\\\">",
+    		source: "(119:1) <Canvas {width} {height}          style= \\\"position: absolute; cursor: pointer\\\"         on:mousemove={({ clientX: x, clientY: y }) => {             if (picked = delaunay.find(x - 3, y - 3))                 points = [...points.filter((_, i) => i !== picked), points[picked]]         }}         on:mousedown={() => (click = true)}         on:mouseup={() => (click = false)}   on:mouseout={() => (picked = null)}     >",
     		ctx
     	});
 
@@ -5395,7 +7290,6 @@ var app = (function () {
     	let div_resize_listener;
     	let t1;
     	let p;
-    	let t2;
     	let current;
     	let if_block = /*us*/ ctx[4] && create_if_block_1(ctx);
 
@@ -5403,14 +7297,17 @@ var app = (function () {
     			props: {
     				width: /*width*/ ctx[0],
     				height: /*height*/ ctx[3],
-    				style: "position: absolute",
+    				style: "position: absolute; cursor: pointer",
     				$$slots: { default: [create_default_slot] },
     				$$scope: { ctx }
     			},
     			$$inline: true
     		});
 
-    	canvas.$on("click", /*click_handler*/ ctx[11]);
+    	canvas.$on("mousemove", /*mousemove_handler*/ ctx[13]);
+    	canvas.$on("mousedown", /*mousedown_handler*/ ctx[14]);
+    	canvas.$on("mouseup", /*mouseup_handler*/ ctx[15]);
+    	canvas.$on("mouseout", /*mouseout_handler*/ ctx[16]);
 
     	const block = {
     		c: function create() {
@@ -5421,14 +7318,14 @@ var app = (function () {
     			create_component(canvas.$$.fragment);
     			t1 = space();
     			p = element("p");
-    			t2 = text$1(/*ticker*/ ctx[1]);
+    			p.textContent = `${/*ticker*/ ctx[9]}`;
     			attr_dev(svg, "width", /*width*/ ctx[0]);
     			attr_dev(svg, "height", /*height*/ ctx[3]);
     			attr_dev(svg, "class", "svelte-1arwo6w");
-    			add_location(svg, file, 97, 1, 2368);
-    			add_render_callback(() => /*div_elementresize_handler*/ ctx[12].call(div));
-    			add_location(div, file, 96, 0, 2336);
-    			add_location(p, file, 115, 4, 2863);
+    			add_location(svg, file, 108, 1, 2637);
+    			add_render_callback(() => /*div_elementresize_handler*/ ctx[17].call(div));
+    			add_location(div, file, 107, 0, 2605);
+    			add_location(p, file, 142, 4, 3741);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -5439,10 +7336,9 @@ var app = (function () {
     			if (if_block) if_block.m(svg, null);
     			append_dev(div, t0);
     			mount_component(canvas, div, null);
-    			div_resize_listener = add_resize_listener(div, /*div_elementresize_handler*/ ctx[12].bind(div));
+    			div_resize_listener = add_resize_listener(div, /*div_elementresize_handler*/ ctx[17].bind(div));
     			insert_dev(target, t1, anchor);
     			insert_dev(target, p, anchor);
-    			append_dev(p, t2);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -5471,12 +7367,11 @@ var app = (function () {
     			if (dirty & /*width*/ 1) canvas_changes.width = /*width*/ ctx[0];
     			if (dirty & /*height*/ 8) canvas_changes.height = /*height*/ ctx[3];
 
-    			if (dirty & /*$$scope, points*/ 268435520) {
+    			if (dirty & /*$$scope, points, picked, click*/ 1073741894) {
     				canvas_changes.$$scope = { dirty, ctx };
     			}
 
     			canvas.$set(canvas_changes);
-    			if (!current || dirty & /*ticker*/ 2) set_data_dev(t2, /*ticker*/ ctx[1]);
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -5508,15 +7403,13 @@ var app = (function () {
     	return block;
     }
 
-    const loopPadding = 300; // time to wait between loops
-
     function instance($$self, $$props, $$invalidate) {
     	let height;
     	let projection;
     	let albers;
     	let path;
-    	let playing;
     	let points;
+    	let delaunay;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('App', slots, []);
     	let width = 1000;
@@ -5527,37 +7420,42 @@ var app = (function () {
     	// console.log(data)
     	let amount_scale = linear().domain([0, 30000]).range([1, 50]);
 
-    	let ticker = 2010;
-    	let timeout;
-    	let duration = 1500;
+    	let ticker = 2018;
 
-    	const loop = time => {
-    		timeout = setTimeout(
-    			() => {
-    				$$invalidate(1, ticker = ticker < 2022 ? ticker + 1 : 2010);
-    				loop(duration + loopPadding);
-    			},
-    			time
-    		);
-    	};
-
-    	const startPlaying = () => loop(0);
-    	const stopPlaying = () => clearTimeout(timeout);
-
+    	// let timeout;
+    	// let duration = 1500;
+    	// const loopPadding = 300; // time to wait between loops
+    	// const loop = time => {
+    	//     timeout = setTimeout(() => {
+    	//     ticker = ticker < 2022 ? ticker + 1 : 2010
+    	//     loop(duration + loopPadding);
+    	//     }, time);
+    	// };
+    	// const startPlaying = () => loop(0)
+    	// const stopPlaying = () => clearTimeout(timeout)
+    	// $: playing = false;
+    	// $: playing ? startPlaying() : stopPlaying();
     	onMount(async () => {
     		const shape = await fetch("https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json");
     		$$invalidate(4, us = await shape.json());
     		$$invalidate(5, features = feature(us, us.objects.states).features);
-    		$$invalidate(8, data = await csv("https://raw.githubusercontent.com/ChampeBarton/nra-donations/main/counties_ready.csv"));
+    		$$invalidate(10, data = await csv("https://raw.githubusercontent.com/ChampeBarton/nra-donations/main/counties_ready.csv"));
     	});
 
+    	let picked, click = false;
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<App> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<App> was created with unknown prop '${key}'`);
     	});
 
-    	const click_handler = () => $$invalidate(2, playing = !playing);
+    	const mousemove_handler = ({ clientX: x, clientY: y }) => {
+    		if ($$invalidate(1, picked = delaunay.find(x - 3, y - 3))) $$invalidate(2, points = [...points.filter((_, i) => i !== picked), points[picked]]);
+    	};
+
+    	const mousedown_handler = () => $$invalidate(6, click = true);
+    	const mouseup_handler = () => $$invalidate(6, click = false);
+    	const mouseout_handler = () => $$invalidate(1, picked = null);
 
     	function div_elementresize_handler() {
     		width = this.clientWidth;
@@ -5575,21 +7473,19 @@ var app = (function () {
     		scaleLinear: linear,
     		csv,
     		Point,
+    		Delaunay,
+    		Tooltip,
     		width,
     		us,
     		data,
     		features,
     		amount_scale,
     		ticker,
-    		timeout,
-    		duration,
-    		loopPadding,
-    		loop,
-    		startPlaying,
-    		stopPlaying,
-    		albers,
+    		picked,
+    		click,
     		points,
-    		playing,
+    		delaunay,
+    		albers,
     		projection,
     		path,
     		height
@@ -5598,17 +7494,17 @@ var app = (function () {
     	$$self.$inject_state = $$props => {
     		if ('width' in $$props) $$invalidate(0, width = $$props.width);
     		if ('us' in $$props) $$invalidate(4, us = $$props.us);
-    		if ('data' in $$props) $$invalidate(8, data = $$props.data);
+    		if ('data' in $$props) $$invalidate(10, data = $$props.data);
     		if ('features' in $$props) $$invalidate(5, features = $$props.features);
-    		if ('amount_scale' in $$props) $$invalidate(14, amount_scale = $$props.amount_scale);
-    		if ('ticker' in $$props) $$invalidate(1, ticker = $$props.ticker);
-    		if ('timeout' in $$props) timeout = $$props.timeout;
-    		if ('duration' in $$props) duration = $$props.duration;
-    		if ('albers' in $$props) $$invalidate(9, albers = $$props.albers);
-    		if ('points' in $$props) $$invalidate(6, points = $$props.points);
-    		if ('playing' in $$props) $$invalidate(2, playing = $$props.playing);
-    		if ('projection' in $$props) $$invalidate(10, projection = $$props.projection);
-    		if ('path' in $$props) $$invalidate(7, path = $$props.path);
+    		if ('amount_scale' in $$props) $$invalidate(18, amount_scale = $$props.amount_scale);
+    		if ('ticker' in $$props) $$invalidate(9, ticker = $$props.ticker);
+    		if ('picked' in $$props) $$invalidate(1, picked = $$props.picked);
+    		if ('click' in $$props) $$invalidate(6, click = $$props.click);
+    		if ('points' in $$props) $$invalidate(2, points = $$props.points);
+    		if ('delaunay' in $$props) $$invalidate(7, delaunay = $$props.delaunay);
+    		if ('albers' in $$props) $$invalidate(11, albers = $$props.albers);
+    		if ('projection' in $$props) $$invalidate(12, projection = $$props.projection);
+    		if ('path' in $$props) $$invalidate(8, path = $$props.path);
     		if ('height' in $$props) $$invalidate(3, height = $$props.height);
     	};
 
@@ -5622,63 +7518,72 @@ var app = (function () {
     		}
 
     		if ($$self.$$.dirty & /*width*/ 1) {
-    			$$invalidate(10, projection = geoIdentity().scale(width / 975));
+    			$$invalidate(12, projection = geoIdentity().scale(width / 975));
     		}
 
     		if ($$self.$$.dirty & /*width, height*/ 9) {
-    			$$invalidate(9, albers = geoAlbersUsa().scale(width * 1.33).translate([width * 0.5, height * 0.5]));
+    			$$invalidate(11, albers = geoAlbersUsa().scale(width * 1.33).translate([width * 0.5, height * 0.5]));
     		}
 
-    		if ($$self.$$.dirty & /*projection*/ 1024) {
-    			$$invalidate(7, path = geoPath(projection));
+    		if ($$self.$$.dirty & /*projection*/ 4096) {
+    			$$invalidate(8, path = geoPath(projection));
     		}
 
-    		if ($$self.$$.dirty & /*playing*/ 4) {
-    			playing ? startPlaying() : stopPlaying();
-    		}
-
-    		if ($$self.$$.dirty & /*data*/ 256) {
-    			// $: console.log(data)
+    		if ($$self.$$.dirty & /*data*/ 1024) {
     			if (data !== undefined) {
     				data.forEach(d => {
     					d.lat = +d.lat;
     					d.lon = +d.lon;
-    					d.amount = d.amount == 0 ? 0 : amount_scale(+d.amount);
+    					d.amount = +d.amount == 0 ? 0 : amount_scale(+d.amount);
     					d.year = +d.year;
+    					d.change = +d.change;
     				});
     			}
     		}
 
-    		if ($$self.$$.dirty & /*data, albers, ticker*/ 770) {
-    			$$invalidate(6, points = data !== undefined
-    			? data.map(d => {
+    		if ($$self.$$.dirty & /*data, albers*/ 3072) {
+    			$$invalidate(2, points = data !== undefined
+    			? data.map((d, id) => {
     					var latlon = albers([d.lon, d.lat]);
     					var lat = latlon !== null ? latlon[0] : null;
     					var lon = latlon !== null ? latlon[1] : null;
     					var year = d.year;
     					var amount = d.amount;
+    					var change = d.change !== d.change ? 0 : d.change;
     					var show = ticker == year ? true : false;
-    					return { lat, lon, year, amount, show };
+    					return { lat, lon, year, amount, change, show, id };
     				})
     			: []);
     		}
-    	};
 
-    	$$invalidate(2, playing = false);
+    		if ($$self.$$.dirty & /*points*/ 4) {
+    			$$invalidate(7, delaunay = Delaunay.from(points, d => d.lat, d => d.lon));
+    		}
+
+    		if ($$self.$$.dirty & /*picked*/ 2) {
+    			// $: console.log(points)
+    			console.log(picked);
+    		}
+    	};
 
     	return [
     		width,
-    		ticker,
-    		playing,
+    		picked,
+    		points,
     		height,
     		us,
     		features,
-    		points,
+    		click,
+    		delaunay,
     		path,
+    		ticker,
     		data,
     		albers,
     		projection,
-    		click_handler,
+    		mousemove_handler,
+    		mousedown_handler,
+    		mouseup_handler,
+    		mouseout_handler,
     		div_elementresize_handler
     	];
     }

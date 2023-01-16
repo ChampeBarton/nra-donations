@@ -7,7 +7,7 @@
     import { csv } from "d3-fetch"
 	import Point from './Point.svelte'
     import { Delaunay } from 'd3-delaunay';
-    import Tooltip from './Tooltip.svelte'
+    import Legend from './Legend.svelte'
 
 	
 	let width = 1000;
@@ -21,6 +21,8 @@
     let data;
     let features;
     let points = [];
+
+    let reference_year = 2020;
 
 
     // console.log(data)
@@ -51,55 +53,56 @@
 
         features = feature(us, us.objects.states).features
 
-        csv("https://raw.githubusercontent.com/ChampeBarton/nra-donations/main/counties_ready.csv")
-            .then(data =>
-                points = data.filter(d => +d.amount != 0 && +d.year == ticker).map((d, id) => {
-                    var latlon = albers([+d.lon, +d.lat])
-                    var lat = latlon !== null ? latlon[0] : null
-                    var lon = latlon !== null ? latlon[1] : null 
+        data = await csv("https://raw.githubusercontent.com/ChampeBarton/nra-donations/main/election_ready.csv")
+            // .then(data =>
+            //     points = data.filter(d => +d.amount != 0 && +d.year == ticker).map((d, id) => {
+            //         var latlon = albers([+d.lon, +d.lat])
+            //         var lat = latlon !== null ? latlon[0] : null
+            //         var lon = latlon !== null ? latlon[1] : null 
 
-                    var year = +d.year
-                    var amount = +d.amount == 0 ? 0 : amount_scale(+d.amount)
-                    var change = +d.change !== +d.change ? 0 : +d.change
+            //         var year = +d.year
+            //         var amount = +d.amount == 0 ? 0 : amount_scale(+d.amount)
+            //         var change = +d.change !== +d.change ? 0 : +d.change
                     
-                    var show = ticker == year ? true : false
+            //         var show = ticker == year ? true : false
 
-                    var name = d.name
-                    var state = d.state
+            //         var name = d.name
+            //         var state = d.state
 
-                    return({lat, lon, year, amount, change, show, id, name, state})
-                })
-            )
+            //         return({lat, lon, year, amount, change, show, id, name, state})
+            //     })
+            // )
 
 	})
 
-    // $: if(data !== undefined) {
-    //     data.forEach((d) => {
-    //         d.lat = +d.lat
-    //         d.lon = +d.lon
-    //         d.amount = +d.amount == 0 ? 0 : amount_scale(+d.amount)
-    //         d.year = +d.year
-    //         d.change = +d.change
-    //     })
-    // }
+    $: if(data !== undefined) {
+        data.forEach((d) => {
+            d.lat = +d.lat
+            d.lon = +d.lon
+            d.scaled_amount = +d.amount == 0 ? 0 : amount_scale(+d.amount)
+            d.year = +d.year
+            d.change = +d.change
+        })
+    }
 
-    // $: points = data !== undefined ? data.map((d, id) => {
-	// 	var latlon = albers([d.lon, d.lat])
-    //     var lat = latlon !== null ? latlon[0] : null
-    //     var lon = latlon !== null ? latlon[1] : null 
+    $: points = data !== undefined ? data.filter(d => +d.amount != 0 && +d.year == ticker).map((d, id) => {
+		var latlon = albers([d.lon, d.lat])
+        var lat = latlon !== null ? latlon[0] : null
+        var lon = latlon !== null ? latlon[1] : null 
 
-	// 	var year = d.year
-    //     var amount = d.amount
-    //     var change = d.change !== d.change ? 0 : d.change
+		var year = +d.year
+        var scaled_amount = +d.scaled_amount
+        var amount = +d.amount
+        var change = +d.change !== +d.change ? 0 : +d.change
         
-    //     var show = ticker == year ? true : false
+        var show = ticker == year ? true : false
 
-    //     var name = d.name
-    //     var state = d.state
+        var name = d.name
+        var state = d.state
 
 
-	// 	return({lat, lon, year, amount, change, show, id, name, state})
-	// }).filter(d => d.amount != 0) : []
+		return({lat, lon, year, amount, scaled_amount, change, show, id, name, state})
+	}).sort((a, b) => Math.abs(a.change) - Math.abs(b.change))  : []
 
     let picked, click = false;
 
@@ -110,8 +113,8 @@
     );
 
 
-    $: console.log(points)
-    $: console.log(picked)
+    // $: console.log(points)
+    // $: console.log(picked)
 					
 </script>
 
@@ -125,11 +128,29 @@
 		/* fill: transparent; */
 	}
 
+    h1 {
+		color: #333;
+		font-size: 25px;
+		font-family: "Aktiv Grotesk XBold";
+        margin-bottom: 10;
+        text-align: center;
+	}
+
+    /* h2 {
+		color: #777;
+		font-size: 20px;
+		font-family: "Aktiv Grotesk";
+        margin-top: 0;
+	} */
+
 
 </style>
-
+<header>
+    <h1> Amount Donated to the NRA by County in 2022</h1>
+    <Legend {width} {reference_year}></Legend>
+</header>  
 <div bind:clientWidth={width}>
-	<svg {width} {height}>
+    <svg {width} {height}>
 		{#if us}
             <g fill="rgb(233,233,233)">
                 {#each features as feature}
@@ -142,27 +163,28 @@
 	<Canvas {width} {height} 
         style= "position: absolute; cursor: pointer"
         on:mousemove={({ clientX: x, clientY: y }) => {
-            if (picked = delaunay.find(x - 2, y - 2))
+            if (picked = delaunay.find(x - 10, y - 120))
                 points = [...points.filter((_, i) => i !== picked), points[picked]]
         }}
-        <!-- on:mousedown={() => (click = true)}
-        on:mouseup={() => (click = false)} -->
 		on:mouseout={() => (picked = null)}
     >
-        {#each points as {lat, lon, show, amount, change, id} (id)}
+        {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state} (id)}
             {#if show}
                 <Point 
                     x = {lat} 
                     y = {lon} 
-                    r = {picked && id === points.at(-1).id && !click ? amount + 2 : amount}
-                    stroke = {picked && id === points.at(-1).id && '#FFFFFF'}
+                    r = {picked && id === points.at(-1).id && !click ? scaled_amount + 2 : scaled_amount}
+                    stroke = {picked && id === points.at(-1).id && '#000'}
                     {change}
+                    {name}
+                    {state}
+                    {amount}
+                    {reference_year}
                 />
             {/if}
         {/each}
         
 	</Canvas>   
 </div>
-    <p>{ticker}</p>
 
 <!-- on:click ={() => playing = !playing} -->

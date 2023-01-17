@@ -1,6 +1,7 @@
 <script>
+        import { mobile } from './store.js'
 	import { Layer, t } from 'svelte-canvas'
-        import { interpolateRdYlGn } from "d3-scale-chromatic"
+        import { interpolate, piecewise } from "d3-interpolate"
         import { scaleSequential} from 'd3-scale'
 
 	export let x = 0,
@@ -13,7 +14,7 @@
                 amount, 
                 reference_year;
 
-        let colorScale = scaleSequential(interpolateRdYlGn).domain([-10000, 10000])
+        let colorScale = scaleSequential(piecewise(interpolate, ["#d73027", "#ffffbf", "#4575b4"])).domain([-10000, 10000])
 
         let header_text = name + ", " + state
         let change_text = change > 0 
@@ -26,6 +27,8 @@
         let amount_text_end = " in 2022"
         
         let color = colorScale(change)
+
+        let mobile_annotate = header_text in {"Orange County, CA": 1, "Harris County, TX": 2}
 		
 	$: render = ({ context }) => {
 
@@ -39,6 +42,36 @@
                 context.stroke();
                 context.fill();
                 context.restore();
+
+                // if ($mobile) {
+                //         if (mobile_annotate) {
+                                
+                                
+                //                 context.font = "15px Aktiv Grotesk";
+                //                 context.fillStyle = "#000";
+                //                 context.fillText(amount_text_beginning, x + 15, y + 70)
+
+                //                 context.font = "15px Aktiv Grotesk XBold";
+                //                 context.fillStyle = "#000";
+                //                 context.fillText(amount_text_middle, x + 15 + context.measureText(amount_text_beginning).width, y + 70)
+
+                //                 context.font = "15px Aktiv Grotesk";
+                //                 context.fillStyle = "#000";
+                //                 context.fillText(amount_text_end, x + 15 + context.measureText(amount_text_beginning).width + context.measureText(amount_text_middle).width, y + 70)
+                                
+                //                 context.font = "15px Aktiv Grotesk XBold";
+                //                 context.fillStyle = color;
+                //                 context.fillText(change_text, x + 15, y + 100);
+
+                //                 context.font = "15px Aktiv Grotesk";
+                //                 context.fillStyle = "#000";
+                //                 context.fillText(" compared to " + reference_year, x + 15 + context.measureText(change_text).width, y + 100)
+
+                //                 context.font = "20px Aktiv Grotesk XBold";
+                //                 context.fillStyle = "#000";
+                //                 context.fillText(header_text, x + 15, y + 40);
+                //         }
+                // }
 
                 if (stroke) {
                         context.font = "15px Aktiv Grotesk";
@@ -75,7 +108,7 @@
                         ? box_width 
                         : amount_text_width + 30
 
-                        var box_height = 150
+                        var box_height = 120
 
                         var screen_adjust_x = x + 15 + box_width > edge_x ? x - 15 - box_width : x + 15
                         var screen_adjust_y = y + box_height > edge_y ? y - box_height : y
@@ -84,7 +117,7 @@
                         context.beginPath();
                         context.roundRect(screen_adjust_x, screen_adjust_y, box_width, box_height, 10);
                         context.strokeStyle = "#FFFFFF"
-                        context.fillStyle = "rgba(27, 29, 35,0.9)"
+                        context.fillStyle = "rgba(153, 153, 153, 0.9)"
                         context.stroke();
                         context.fill();
 
@@ -118,7 +151,7 @@
                         context.fillStyle = "#FFFFFF";
                         context.fillText(header_text, screen_adjust_x + 15, screen_adjust_y + 30);
                   
-    }
+                }
 	}
 
 </script>

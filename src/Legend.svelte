@@ -16,9 +16,9 @@
     let increase_text = "↑ from " + reference_year
 
     let colors = [
-		"rgb(151, 29, 43)",
-        "rgb(246, 243, 185)",
-		"rgb(43 101 60)"
+		"#a50026",
+        "#ffffbf",
+		"#313695"
 	]
 
     let ramp_width = width/3

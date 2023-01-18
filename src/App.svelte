@@ -203,7 +203,9 @@
             </Canvas>   
         </div>
     {:else}
-        <img src = "mobile-version.png" alt="Map of NRA donations broken down by U.S. County" >
+        <div {width}>
+            <img style = "max-width: 100%" src = "https://raw.githubusercontent.com/ChampeBarton/nra-donations/7859c7cf1887caccf534e6bbcb4f3a12f9ff1fd1/mobile-version.png" alt="Map of NRA donations broken down by U.S. County" >
+        </div>
     {/if}
 {/if}
 

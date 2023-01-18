@@ -36,7 +36,12 @@
 
     text.number {
         font-size: 15px;
-		font-family: "SpeziaMonoWeb-Medium";
+		font-family: "speziamonoweb-medium";
+    }
+
+    text.mobile-number {
+        font-size: .8rem;
+		font-family: "speziamonoweb-medium";
     }
 
     div {
@@ -46,8 +51,18 @@
 
     h2 {
         font-size: 12px;
-		font-family: "Aktiv Grotesk Xbold";
+		font-family: "aktiv grotesk xbold";
         position: absolute;
+    }
+
+    h3 {
+        font-size: .5rem;
+		font-family: "aktiv grotesk";
+        font-weight: 400;
+        text-align: center;
+        margin-top: 35px;
+        color: #777;
+
     }
 
 
@@ -75,13 +90,6 @@
     <h2 style="left: {width/2 + width/3/2 - 71}px; color: {colors[2]};">{increase_text}</h2>
 
 {:else}
-   <svg {width} height=40>
-        <text class="number" x={width/2 - 80} y=22.5>{left_text}</text>
-        <circle cx={width/2 - 30} cy=20 r={circle1}></circle>
-        <circle cx={width/2 - 20} cy=20 r={circle2}></circle>
-        <circle cx={width/2 + 5} cy=20 r={circle3}></circle>
-        <text class="number" x={width/2 + 35} y=22.5>{right_text}</text>   
-    </svg>
     <div
         style="
             --deg: 90deg;
@@ -94,5 +102,13 @@
     ></div>
     <h2 style="left: 0px; color: {colors[0]};">{decrease_text}</h2>
     <h2 style="left: {width - 71}px; color: {colors[2]};">{increase_text}</h2> 
+    <h3> Cirlce size is proportional to donation amount</h3>
+    <!-- <svg {width} height=80>
+        <text class="mobile-number" x={width/2 - 80} y=52.5>{left_text}</text>
+        <circle cx={width/2 - 30} cy=50 r={circle1}></circle>
+        <circle cx={width/2 - 20} cy=50 r={circle2}></circle>
+        <circle cx={width/2 + 5} cy=50 r={circle3}></circle>
+        <text class="mobile-number" x={width/2 + 35} y=52.5>{right_text}</text>   
+    </svg> -->
 {/if}
 

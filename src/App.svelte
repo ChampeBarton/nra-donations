@@ -116,7 +116,7 @@
 {#if $innerWidth}
     <!-- {#if !$mobile} -->
         <div bind:clientWidth={width}>
-            <header style = "margin-bottom: {!$mobile ? 0 : 30}px" >
+            <header >
                 <h1> Amount Donated to the NRA by County in 2022</h1>
                 <Legend {width} {reference_year}></Legend>
             </header>  
@@ -130,7 +130,7 @@
                     
                 {/if}
             </svg>
-            <Canvas {width} {height} 
+            <Canvas {width} height = {!$mobile ? height : height + 100} 
                 style= "position: absolute; cursor: pointer"
                 on:mousemove={({ clientX: x, clientY: y }) => {
                     if (!$mobile) {
@@ -152,6 +152,7 @@
                             {state}
                             {amount}
                             {reference_year}
+                            {height}
                         />
                     {/if}
                 {/each}
@@ -166,3 +167,4 @@
 {/if}
 
 <!-- on:click ={() => playing = !playing} -->
+<!-- style = "margin-bottom: {!$mobile ? 0 : 30}px" -->

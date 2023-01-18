@@ -35,7 +35,7 @@
                 context.save();
                 context.globalAlpha = 0.9;
                 context.fillStyle = color;
-                context.strokeStyle = "#000";
+                context.strokeStyle = !$mobile ? "#000" : "#FFFFFF";
                 context.lineWidth = 1;
                 context.beginPath();
                 context.arc(x, y, r, 0, Math.PI * 2);

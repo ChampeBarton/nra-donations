@@ -5074,6 +5074,9 @@ var app = (function () {
 
     function instance$2($$self, $$props, $$invalidate) {
     	let render;
+    	let $mobile;
+    	validate_store(mobile, 'mobile');
+    	component_subscribe($$self, mobile, $$value => $$invalidate(10, $mobile = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Point', slots, []);
     	let { x = 0, y = 0, r = 1, stroke = null, change, name, state, amount, reference_year } = $$props;
@@ -5138,7 +5141,8 @@ var app = (function () {
     		amount_text_end,
     		color,
     		mobile_annotate,
-    		render
+    		render,
+    		$mobile
     	});
 
     	$$self.$inject_state = $$props => {
@@ -5152,12 +5156,12 @@ var app = (function () {
     		if ('amount' in $$props) $$invalidate(8, amount = $$props.amount);
     		if ('reference_year' in $$props) $$invalidate(9, reference_year = $$props.reference_year);
     		if ('colorScale' in $$props) colorScale = $$props.colorScale;
-    		if ('header_text' in $$props) $$invalidate(11, header_text = $$props.header_text);
-    		if ('change_text' in $$props) $$invalidate(12, change_text = $$props.change_text);
-    		if ('amount_text_beginning' in $$props) $$invalidate(13, amount_text_beginning = $$props.amount_text_beginning);
-    		if ('amount_text_middle' in $$props) $$invalidate(14, amount_text_middle = $$props.amount_text_middle);
-    		if ('amount_text_end' in $$props) $$invalidate(15, amount_text_end = $$props.amount_text_end);
-    		if ('color' in $$props) $$invalidate(16, color = $$props.color);
+    		if ('header_text' in $$props) $$invalidate(12, header_text = $$props.header_text);
+    		if ('change_text' in $$props) $$invalidate(13, change_text = $$props.change_text);
+    		if ('amount_text_beginning' in $$props) $$invalidate(14, amount_text_beginning = $$props.amount_text_beginning);
+    		if ('amount_text_middle' in $$props) $$invalidate(15, amount_text_middle = $$props.amount_text_middle);
+    		if ('amount_text_end' in $$props) $$invalidate(16, amount_text_end = $$props.amount_text_end);
+    		if ('color' in $$props) $$invalidate(17, color = $$props.color);
     		if ('mobile_annotate' in $$props) mobile_annotate = $$props.mobile_annotate;
     		if ('render' in $$props) $$invalidate(0, render = $$props.render);
     	};
@@ -5167,12 +5171,12 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*x, y, r, stroke, reference_year*/ 542) {
+    		if ($$self.$$.dirty & /*$mobile, x, y, r, stroke, reference_year*/ 1566) {
     			$$invalidate(0, render = ({ context }) => {
     				context.save();
     				context.globalAlpha = 0.9;
     				context.fillStyle = color;
-    				context.strokeStyle = "#000";
+    				context.strokeStyle = !$mobile ? "#000" : "#FFFFFF";
     				context.lineWidth = 1;
     				context.beginPath();
     				context.arc(x, y, r, 0, Math.PI * 2);
@@ -5274,7 +5278,7 @@ var app = (function () {
     		}
     	};
 
-    	return [render, x, y, r, stroke, change, name, state, amount, reference_year];
+    	return [render, x, y, r, stroke, change, name, state, amount, reference_year, $mobile];
     }
 
     class Point extends SvelteComponentDev {

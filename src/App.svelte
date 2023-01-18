@@ -31,28 +31,11 @@
     let reference_year = 2020;
 
 
-    // console.log(data)
-
-
     // let amount_scale = !$mobile ? scaleLinear().domain([0, 30000]).range([1, 50]) : scaleLinear().domain([0, 30000]).range([1, 30])
     let amount_scale = scaleLinear().domain([0, 30000]).range([1, 50])
+    let mobile_amount_scale = scaleLinear().domain([0, 30000]).range([1, 30])
 
-    let ticker = 2022;
-    // let timeout;
-    // let duration = 1500;
-    // const loopPadding = 300; // time to wait between loops
-    // const loop = time => {
-    //     timeout = setTimeout(() => {
-    //     ticker = ticker < 2022 ? ticker + 1 : 2010
-        
-    //     loop(duration + loopPadding);
-    //     }, time);
-    // };
-    // const startPlaying = () => loop(0)
-    // const stopPlaying = () => clearTimeout(timeout)
-
-    // $: playing = false;
-    // $: playing ? startPlaying() : stopPlaying();
+    let display = 2022;
 
 	onMount(async () => {
 		const shape = await fetch("https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json")
@@ -61,38 +44,19 @@
         features = feature(us, us.objects.states).features
 
         data = await csv("https://raw.githubusercontent.com/ChampeBarton/nra-donations/main/election_ready.csv")
-            // .then(data =>
-            //     points = data.filter(d => +d.amount != 0 && +d.year == ticker).map((d, id) => {
-            //         var latlon = albers([+d.lon, +d.lat])
-            //         var lat = latlon !== null ? latlon[0] : null
-            //         var lon = latlon !== null ? latlon[1] : null 
-
-            //         var year = +d.year
-            //         var amount = +d.amount == 0 ? 0 : amount_scale(+d.amount)
-            //         var change = +d.change !== +d.change ? 0 : +d.change
-                    
-            //         var show = ticker == year ? true : false
-
-            //         var name = d.name
-            //         var state = d.state
-
-            //         return({lat, lon, year, amount, change, show, id, name, state})
-            //     })
-            // )
-
 	})
 
     $: if(data !== undefined) {
         data.forEach((d) => {
             d.lat = +d.lat
             d.lon = +d.lon
-            d.scaled_amount = +d.amount == 0 ? 0 : amount_scale(+d.amount)
+            d.scaled_amount = +d.amount == 0 ? 0 : !$mobile ? amount_scale(+d.amount) : mobile_amount_scale(+d.amount)
             d.year = +d.year
             d.change = +d.change
         })
     }
 
-    $: points = data !== undefined ? data.filter(d => +d.amount != 0 && +d.year == ticker).map((d, id) => {
+    $: points = data !== undefined ? data.filter(d => +d.amount != 0 && +d.year == display).map((d, id) => {
 		var latlon = albers([d.lon, d.lat])
         var lat = latlon !== null ? latlon[0] : null
         var lon = latlon !== null ? latlon[1] : null 
@@ -102,7 +66,7 @@
         var amount = +d.amount
         var change = +d.change !== +d.change ? 0 : +d.change
         
-        var show = ticker == year ? true : false
+        var show = display == year ? true : false
 
         var name = d.name
         var state = d.state
@@ -118,10 +82,6 @@
         d => d.lat,
         d => d.lon
     );
-
-
-    // $: console.log(points)
-    // $: console.log(picked)
 					
 </script>
 
@@ -154,16 +114,12 @@
 
 <svelte:window bind:innerWidth={$innerWidth}/>
 {#if $innerWidth}
-    {#if !$mobile}
-            <!-- <header style="margin-bottom:30px">
+    <!-- {#if !$mobile} -->
+        <div bind:clientWidth={width}>
+            <header style = "margin-bottom: {!$mobile ? 0 : 30}px" >
                 <h1> Amount Donated to the NRA by County in 2022</h1>
                 <Legend {width} {reference_year}></Legend>
-            </header>   -->
-        <header>
-            <h1> Amount Donated to the NRA by County in 2022</h1>
-            <Legend {width} {reference_year}></Legend>
-        </header>  
-        <div bind:clientWidth={width}>
+            </header>  
             <svg {width} {height}>
                 {#if us}
                     <g fill="rgb(233,233,233)">
@@ -202,11 +158,11 @@
                 
             </Canvas>   
         </div>
-    {:else}
+    <!-- {:else}
         <div {width}>
             <img style = "max-width: 100%" src = "https://raw.githubusercontent.com/ChampeBarton/nra-donations/7859c7cf1887caccf534e6bbcb4f3a12f9ff1fd1/mobile-version.png" alt="Map of NRA donations broken down by U.S. County" >
         </div>
-    {/if}
+    {/if} -->
 {/if}
 
 <!-- on:click ={() => playing = !playing} -->

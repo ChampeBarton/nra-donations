@@ -1,4 +1,5 @@
 <script>
+    import { mobile } from './store.js'
     import {scaleLinear} from 'd3-scale';
 
     export let width, reference_year;
@@ -21,7 +22,6 @@
 		"#313695"
 	]
 
-    let ramp_width = width/3
 
 </script>
 
@@ -47,30 +47,52 @@
     h2 {
         font-size: 12px;
 		font-family: "Aktiv Grotesk Xbold";
-        position: fixed;
+        position: absolute;
     }
 
 
 
 </style>
+{#if !$mobile}
+    <svg {width} height=40>
+        <text class="number" x={width/2 - 80} y=22.5>{left_text}</text>
+        <circle cx={width/2 - 30} cy=20 r={circle1}></circle>
+        <circle cx={width/2 - 20} cy=20 r={circle2}></circle>
+        <circle cx={width/2 + 5} cy=20 r={circle3}></circle>
+        <text class="number" x={width/2 + 35} y=22.5>{right_text}</text>   
+    </svg>
+    <div
+        style="
+            --deg: 90deg;
+            --gradient-1:{colors[0]};
+            --gradient-2:{colors[1]};
+            --gradient-3:{colors[2]};
+            width: {width/3}px;
+            height: 10px;
+        "
+    ></div>
+    <h2 style="left: {width/2 - width/3/2}px; color: {colors[0]};">{decrease_text}</h2>
+    <h2 style="left: {width/2 + width/3/2 - 71}px; color: {colors[2]};">{increase_text}</h2>
 
-<svg {width} height=40>
-    <text class="number" x={width/2 - 80} y=22.5>{left_text}</text>
-    <circle cx={width/2 - 30} cy=20 r={circle1}></circle>
-    <circle cx={width/2 - 20} cy=20 r={circle2}></circle>
-    <circle cx={width/2 + 5} cy=20 r={circle3}></circle>
-    <text class="number" x={width/2 + 35} y=22.5>{right_text}</text>   
-</svg>
-<div
-    style="
-		--deg: 90deg;
-		--gradient-1:{colors[0]};
-        --gradient-2:{colors[1]};
-		--gradient-3:{colors[2]};
-        width: {ramp_width}px;
-        height: 10px;
-	"
-></div>
-<h2 style="left: {width/2 - ramp_width/2}px; color: {colors[0]};">{decrease_text}</h2>
-<h2 style="left: {width/2 + ramp_width/2 - 55}px; color: {colors[2]};">{increase_text}</h2>
+{:else}
+   <svg {width} height=40>
+        <text class="number" x={width/2 - 80} y=22.5>{left_text}</text>
+        <circle cx={width/2 - 30} cy=20 r={circle1}></circle>
+        <circle cx={width/2 - 20} cy=20 r={circle2}></circle>
+        <circle cx={width/2 + 5} cy=20 r={circle3}></circle>
+        <text class="number" x={width/2 + 35} y=22.5>{right_text}</text>   
+    </svg>
+    <div
+        style="
+            --deg: 90deg;
+            --gradient-1:{colors[0]};
+            --gradient-2:{colors[1]};
+            --gradient-3:{colors[2]};
+            width: {width}px;
+            height: 10px;
+        "
+    ></div>
+    <h2 style="left: 0px; color: {colors[0]};">{decrease_text}</h2>
+    <h2 style="left: {width - 71}px; color: {colors[2]};">{increase_text}</h2> 
+{/if}
 

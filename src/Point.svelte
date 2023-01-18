@@ -113,6 +113,11 @@
                         var screen_adjust_x = x + 15 + box_width > edge_x ? x - 15 - box_width : x + 15
                         var screen_adjust_y = y + box_height > edge_y ? y - box_height : y
 
+                        context.strokeStyle = stroke;
+                        context.lineWidth = 2;
+                        context.beginPath();
+                        context.arc(x, y, r, 0, 2 * Math.PI);
+                        context.stroke();
 
                         context.beginPath();
                         context.roundRect(screen_adjust_x, screen_adjust_y, box_width, box_height, 10);
@@ -120,12 +125,6 @@
                         context.fillStyle = "rgba(153, 153, 153, 0.9)"
                         context.stroke();
                         context.fill();
-
-                        context.strokeStyle = stroke;
-                        context.lineWidth = 2;
-                        context.beginPath();
-                        context.arc(x, y, r, 0, 2 * Math.PI);
-                        context.stroke();
 
                         context.font = "15px Aktiv Grotesk";
                         context.fillStyle = "#FFFFFF";

@@ -195,7 +195,7 @@
 </script>
 
 <style>
-        /* @font-face {
+        @font-face {
                 font-family: "Aktiv Grotesk";
                 src: url('../fonts/Aktiv Grotesk Regular.otf');
         }
@@ -208,7 +208,7 @@
         @font-face {
                 font-family: "speziamonoweb-medium";
                 src: url('../fonts/SpeziaMonoWeb-Medium.ttf');
-        } */
+        }
 </style>
 
 

@@ -32,7 +32,7 @@
 </script>
 
 <style>
-    /* @font-face {
+    @font-face {
         font-family: "aktiv grotesk";
         src: url('../fonts/Aktiv Grotesk Regular.otf');
     }
@@ -45,7 +45,7 @@
     @font-face {
         font-family: "speziamonoweb-medium";
         src: url('../fonts/SpeziaMonoWeb-Medium.ttf');
-    } */
+    }
     
     circle {
         fill: none;

@@ -30,6 +30,14 @@ var app = (function () {
     function safe_not_equal(a, b) {
         return a != a ? b == b : a !== b || ((a && typeof a === 'object') || typeof a === 'function');
     }
+    let src_url_equal_anchor;
+    function src_url_equal(element_src, url) {
+        if (!src_url_equal_anchor) {
+            src_url_equal_anchor = document.createElement('a');
+        }
+        src_url_equal_anchor.href = url;
+        return element_src === src_url_equal_anchor.href;
+    }
     function is_empty(obj) {
         return Object.keys(obj).length === 0;
     }
@@ -7074,28 +7082,143 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (155:0) {#if $innerWidth}
+    // (156:0) {#if $innerWidth}
     function create_if_block(ctx) {
     	let current_block_type_index;
-    	let if_block0;
-    	let t0;
-    	let div;
-    	let svg;
-    	let t1;
-    	let canvas;
-    	let div_resize_listener;
+    	let if_block;
+    	let if_block_anchor;
     	let current;
-    	const if_block_creators = [create_if_block_3, create_else_block];
+    	const if_block_creators = [create_if_block_1, create_else_block];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
-    		if (/*$mobile*/ ctx[8]) return 0;
+    		if (!/*$mobile*/ ctx[9]) return 0;
     		return 1;
     	}
 
     	current_block_type_index = select_block_type(ctx);
-    	if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-    	let if_block1 = /*us*/ ctx[3] && create_if_block_2(ctx);
+    	if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+
+    	const block = {
+    		c: function create() {
+    			if_block.c();
+    			if_block_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			if_blocks[current_block_type_index].m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			let previous_block_index = current_block_type_index;
+    			current_block_type_index = select_block_type(ctx);
+
+    			if (current_block_type_index === previous_block_index) {
+    				if_blocks[current_block_type_index].p(ctx, dirty);
+    			} else {
+    				group_outros();
+
+    				transition_out(if_blocks[previous_block_index], 1, 1, () => {
+    					if_blocks[previous_block_index] = null;
+    				});
+
+    				check_outros();
+    				if_block = if_blocks[current_block_type_index];
+
+    				if (!if_block) {
+    					if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    					if_block.c();
+    				} else {
+    					if_block.p(ctx, dirty);
+    				}
+
+    				transition_in(if_block, 1);
+    				if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(if_block);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(if_block);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if_blocks[current_block_type_index].d(detaching);
+    			if (detaching) detach_dev(if_block_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block.name,
+    		type: "if",
+    		source: "(156:0) {#if $innerWidth}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (205:4) {:else}
+    function create_else_block(ctx) {
+    	let img;
+    	let img_src_value;
+
+    	const block = {
+    		c: function create() {
+    			img = element("img");
+    			if (!src_url_equal(img.src, img_src_value = "mobile-version.png")) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "alt", "Map of NRA donations broken down by U.S. County");
+    			add_location(img, file, 205, 8, 6431);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, img, anchor);
+    		},
+    		p: noop$2,
+    		i: noop$2,
+    		o: noop$2,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(img);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block.name,
+    		type: "else",
+    		source: "(205:4) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (157:4) {#if !$mobile}
+    function create_if_block_1(ctx) {
+    	let header;
+    	let h1;
+    	let t1;
+    	let legend;
+    	let t2;
+    	let div;
+    	let svg;
+    	let t3;
+    	let canvas;
+    	let div_resize_listener;
+    	let current;
+
+    	legend = new Legend({
+    			props: {
+    				width: /*width*/ ctx[0],
+    				reference_year: /*reference_year*/ ctx[10]
+    			},
+    			$$inline: true
+    		});
+
+    	let if_block = /*us*/ ctx[3] && create_if_block_3(ctx);
 
     	canvas = new Canvas({
     			props: {
@@ -7113,69 +7236,57 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
-    			if_block0.c();
-    			t0 = space();
+    			header = element("header");
+    			h1 = element("h1");
+    			h1.textContent = "Amount Donated to the NRA by County in 2022";
+    			t1 = space();
+    			create_component(legend.$$.fragment);
+    			t2 = space();
     			div = element("div");
     			svg = svg_element("svg");
-    			if (if_block1) if_block1.c();
-    			t1 = space();
+    			if (if_block) if_block.c();
+    			t3 = space();
     			create_component(canvas.$$.fragment);
+    			attr_dev(h1, "class", "svelte-1ykewl7");
+    			add_location(h1, file, 162, 12, 4632);
+    			add_location(header, file, 161, 8, 4611);
     			attr_dev(svg, "width", /*width*/ ctx[0]);
     			attr_dev(svg, "height", /*height*/ ctx[2]);
     			attr_dev(svg, "class", "svelte-1ykewl7");
-    			add_location(svg, file, 167, 8, 4726);
+    			add_location(svg, file, 166, 12, 4812);
     			add_render_callback(() => /*div_elementresize_handler*/ ctx[18].call(div));
-    			add_location(div, file, 166, 4, 4687);
+    			add_location(div, file, 165, 8, 4769);
     		},
     		m: function mount(target, anchor) {
-    			if_blocks[current_block_type_index].m(target, anchor);
-    			insert_dev(target, t0, anchor);
+    			insert_dev(target, header, anchor);
+    			append_dev(header, h1);
+    			append_dev(header, t1);
+    			mount_component(legend, header, null);
+    			insert_dev(target, t2, anchor);
     			insert_dev(target, div, anchor);
     			append_dev(div, svg);
-    			if (if_block1) if_block1.m(svg, null);
-    			append_dev(div, t1);
+    			if (if_block) if_block.m(svg, null);
+    			append_dev(div, t3);
     			mount_component(canvas, div, null);
     			div_resize_listener = add_resize_listener(div, /*div_elementresize_handler*/ ctx[18].bind(div));
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			let previous_block_index = current_block_type_index;
-    			current_block_type_index = select_block_type(ctx);
-
-    			if (current_block_type_index === previous_block_index) {
-    				if_blocks[current_block_type_index].p(ctx, dirty);
-    			} else {
-    				group_outros();
-
-    				transition_out(if_blocks[previous_block_index], 1, 1, () => {
-    					if_blocks[previous_block_index] = null;
-    				});
-
-    				check_outros();
-    				if_block0 = if_blocks[current_block_type_index];
-
-    				if (!if_block0) {
-    					if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-    					if_block0.c();
-    				} else {
-    					if_block0.p(ctx, dirty);
-    				}
-
-    				transition_in(if_block0, 1);
-    				if_block0.m(t0.parentNode, t0);
-    			}
+    			const legend_changes = {};
+    			if (dirty[0] & /*width*/ 1) legend_changes.width = /*width*/ ctx[0];
+    			legend.$set(legend_changes);
 
     			if (/*us*/ ctx[3]) {
-    				if (if_block1) {
-    					if_block1.p(ctx, dirty);
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
     				} else {
-    					if_block1 = create_if_block_2(ctx);
-    					if_block1.c();
-    					if_block1.m(svg, null);
+    					if_block = create_if_block_3(ctx);
+    					if_block.c();
+    					if_block.m(svg, null);
     				}
-    			} else if (if_block1) {
-    				if_block1.d(1);
-    				if_block1 = null;
+    			} else if (if_block) {
+    				if_block.d(1);
+    				if_block = null;
     			}
 
     			if (!current || dirty[0] & /*width*/ 1) {
@@ -7190,7 +7301,7 @@ var app = (function () {
     			if (dirty[0] & /*width*/ 1) canvas_changes.width = /*width*/ ctx[0];
     			if (dirty[0] & /*height*/ 4) canvas_changes.height = /*height*/ ctx[2];
 
-    			if (dirty[0] & /*points, $mobile, picked*/ 290 | dirty[1] & /*$$scope*/ 16) {
+    			if (dirty[0] & /*points, $mobile, picked*/ 546 | dirty[1] & /*$$scope*/ 16) {
     				canvas_changes.$$scope = { dirty, ctx };
     			}
 
@@ -7198,20 +7309,21 @@ var app = (function () {
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(if_block0);
+    			transition_in(legend.$$.fragment, local);
     			transition_in(canvas.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(if_block0);
+    			transition_out(legend.$$.fragment, local);
     			transition_out(canvas.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if_blocks[current_block_type_index].d(detaching);
-    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(header);
+    			destroy_component(legend);
+    			if (detaching) detach_dev(t2);
     			if (detaching) detach_dev(div);
-    			if (if_block1) if_block1.d();
+    			if (if_block) if_block.d();
     			destroy_component(canvas);
     			div_resize_listener();
     		}
@@ -7219,148 +7331,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block.name,
+    		id: create_if_block_1.name,
     		type: "if",
-    		source: "(155:0) {#if $innerWidth}",
+    		source: "(157:4) {#if !$mobile}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (161:4) {:else}
-    function create_else_block(ctx) {
-    	let header;
-    	let h1;
-    	let t1;
-    	let legend;
-    	let current;
-
-    	legend = new Legend({
-    			props: {
-    				width: /*width*/ ctx[0],
-    				reference_year: /*reference_year*/ ctx[10]
-    			},
-    			$$inline: true
-    		});
-
-    	const block = {
-    		c: function create() {
-    			header = element("header");
-    			h1 = element("h1");
-    			h1.textContent = "Amount Donated to the NRA by County in 2022";
-    			t1 = space();
-    			create_component(legend.$$.fragment);
-    			attr_dev(h1, "class", "svelte-1ykewl7");
-    			add_location(h1, file, 162, 12, 4544);
-    			add_location(header, file, 161, 8, 4523);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, header, anchor);
-    			append_dev(header, h1);
-    			append_dev(header, t1);
-    			mount_component(legend, header, null);
-    			current = true;
-    		},
-    		p: function update(ctx, dirty) {
-    			const legend_changes = {};
-    			if (dirty[0] & /*width*/ 1) legend_changes.width = /*width*/ ctx[0];
-    			legend.$set(legend_changes);
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(legend.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(legend.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(header);
-    			destroy_component(legend);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_else_block.name,
-    		type: "else",
-    		source: "(161:4) {:else}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (156:4) {#if $mobile}
+    // (168:16) {#if us}
     function create_if_block_3(ctx) {
-    	let header;
-    	let h1;
-    	let t1;
-    	let legend;
-    	let current;
-
-    	legend = new Legend({
-    			props: {
-    				width: /*width*/ ctx[0],
-    				reference_year: /*reference_year*/ ctx[10]
-    			},
-    			$$inline: true
-    		});
-
-    	const block = {
-    		c: function create() {
-    			header = element("header");
-    			h1 = element("h1");
-    			h1.textContent = "Amount Donated to the NRA by County in 2022";
-    			t1 = space();
-    			create_component(legend.$$.fragment);
-    			attr_dev(h1, "class", "svelte-1ykewl7");
-    			add_location(h1, file, 157, 12, 4374);
-    			set_style(header, "margin-bottom", "30px");
-    			add_location(header, file, 156, 8, 4326);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, header, anchor);
-    			append_dev(header, h1);
-    			append_dev(header, t1);
-    			mount_component(legend, header, null);
-    			current = true;
-    		},
-    		p: function update(ctx, dirty) {
-    			const legend_changes = {};
-    			if (dirty[0] & /*width*/ 1) legend_changes.width = /*width*/ ctx[0];
-    			legend.$set(legend_changes);
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(legend.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(legend.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(header);
-    			destroy_component(legend);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_3.name,
-    		type: "if",
-    		source: "(156:4) {#if $mobile}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (169:12) {#if us}
-    function create_if_block_2(ctx) {
     	let g;
     	let each_value_1 = /*features*/ ctx[4];
     	validate_each_argument(each_value_1);
@@ -7379,7 +7360,7 @@ var app = (function () {
     			}
 
     			attr_dev(g, "fill", "rgb(233,233,233)");
-    			add_location(g, file, 169, 16, 4786);
+    			add_location(g, file, 168, 20, 4880);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, g, anchor);
@@ -7421,16 +7402,16 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2.name,
+    		id: create_if_block_3.name,
     		type: "if",
-    		source: "(169:12) {#if us}",
+    		source: "(168:16) {#if us}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (171:20) {#each features as feature}
+    // (170:24) {#each features as feature}
     function create_each_block_1(ctx) {
     	let path_1;
     	let path_1_d_value;
@@ -7440,7 +7421,7 @@ var app = (function () {
     			path_1 = svg_element("path");
     			attr_dev(path_1, "d", path_1_d_value = /*path*/ ctx[7](/*feature*/ ctx[32]));
     			attr_dev(path_1, "class", "svelte-1ykewl7");
-    			add_location(path_1, file, 171, 24, 4886);
+    			add_location(path_1, file, 170, 28, 4988);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, path_1, anchor);
@@ -7459,15 +7440,15 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(171:20) {#each features as feature}",
+    		source: "(170:24) {#each features as feature}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (189:16) {#if show}
-    function create_if_block_1(ctx) {
+    // (188:20) {#if show}
+    function create_if_block_2(ctx) {
     	let point;
     	let current;
 
@@ -7475,12 +7456,12 @@ var app = (function () {
     			props: {
     				x: /*lat*/ ctx[21],
     				y: /*lon*/ ctx[22],
-    				r: !/*$mobile*/ ctx[8]
+    				r: !/*$mobile*/ ctx[9]
     				? /*picked*/ ctx[5] && /*id*/ ctx[27] === /*points*/ ctx[1].at(-1).id && !/*click*/ ctx[11]
     					? /*scaled_amount*/ ctx[25] + 2
     					: /*scaled_amount*/ ctx[25]
     				: /*scaled_amount*/ ctx[25],
-    				stroke: !/*$mobile*/ ctx[8]
+    				stroke: !/*$mobile*/ ctx[9]
     				? /*picked*/ ctx[5] && /*id*/ ctx[27] === /*points*/ ctx[1].at(-1).id && '#000'
     				: null,
     				change: /*change*/ ctx[26],
@@ -7505,13 +7486,13 @@ var app = (function () {
     			if (dirty[0] & /*points*/ 2) point_changes.x = /*lat*/ ctx[21];
     			if (dirty[0] & /*points*/ 2) point_changes.y = /*lon*/ ctx[22];
 
-    			if (dirty[0] & /*$mobile, picked, points*/ 290) point_changes.r = !/*$mobile*/ ctx[8]
+    			if (dirty[0] & /*$mobile, picked, points*/ 546) point_changes.r = !/*$mobile*/ ctx[9]
     			? /*picked*/ ctx[5] && /*id*/ ctx[27] === /*points*/ ctx[1].at(-1).id && !/*click*/ ctx[11]
     				? /*scaled_amount*/ ctx[25] + 2
     				: /*scaled_amount*/ ctx[25]
     			: /*scaled_amount*/ ctx[25];
 
-    			if (dirty[0] & /*$mobile, picked, points*/ 290) point_changes.stroke = !/*$mobile*/ ctx[8]
+    			if (dirty[0] & /*$mobile, picked, points*/ 546) point_changes.stroke = !/*$mobile*/ ctx[9]
     			? /*picked*/ ctx[5] && /*id*/ ctx[27] === /*points*/ ctx[1].at(-1).id && '#000'
     			: null;
 
@@ -7537,21 +7518,21 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1.name,
+    		id: create_if_block_2.name,
     		type: "if",
-    		source: "(189:16) {#if show}",
+    		source: "(188:20) {#if show}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (188:12) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}
+    // (187:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}
     function create_each_block(key_1, ctx) {
     	let first;
     	let if_block_anchor;
     	let current;
-    	let if_block = /*show*/ ctx[23] && create_if_block_1(ctx);
+    	let if_block = /*show*/ ctx[23] && create_if_block_2(ctx);
 
     	const block = {
     		key: key_1,
@@ -7579,7 +7560,7 @@ var app = (function () {
     						transition_in(if_block, 1);
     					}
     				} else {
-    					if_block = create_if_block_1(ctx);
+    					if_block = create_if_block_2(ctx);
     					if_block.c();
     					transition_in(if_block, 1);
     					if_block.m(if_block_anchor.parentNode, if_block_anchor);
@@ -7614,14 +7595,14 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(188:12) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}",
+    		source: "(187:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (178:8) <Canvas {width} {height}              style= "position: absolute; cursor: pointer"             on:mousemove={({ clientX: x, clientY: y }) => {                 if (!$mobile) {                     if (picked = delaunay.find(x - 10, y - 120))                     points = [...points.filter((_, i) => i !== picked), points[picked]]                 }}             }             on:mouseout={() => (picked = null)}         >
+    // (177:12) <Canvas {width} {height}                  style= "position: absolute; cursor: pointer"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >
     function create_default_slot(ctx) {
     	let each_blocks = [];
     	let each_1_lookup = new Map();
@@ -7655,7 +7636,7 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*points, $mobile, picked, click, reference_year*/ 3362) {
+    			if (dirty[0] & /*points, $mobile, picked, click, reference_year*/ 3618) {
     				each_value = /*points*/ ctx[1];
     				validate_each_argument(each_value);
     				group_outros();
@@ -7693,7 +7674,7 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(178:8) <Canvas {width} {height}              style= \\\"position: absolute; cursor: pointer\\\"             on:mousemove={({ clientX: x, clientY: y }) => {                 if (!$mobile) {                     if (picked = delaunay.find(x - 10, y - 120))                     points = [...points.filter((_, i) => i !== picked), points[picked]]                 }}             }             on:mouseout={() => (picked = null)}         >",
+    		source: "(177:12) <Canvas {width} {height}                  style= \\\"position: absolute; cursor: pointer\\\"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >",
     		ctx
     	});
 
@@ -7706,7 +7687,7 @@ var app = (function () {
     	let mounted;
     	let dispose;
     	add_render_callback(/*onwindowresize*/ ctx[15]);
-    	let if_block = /*$innerWidth*/ ctx[9] && create_if_block(ctx);
+    	let if_block = /*$innerWidth*/ ctx[8] && create_if_block(ctx);
 
     	const block = {
     		c: function create() {
@@ -7727,11 +7708,11 @@ var app = (function () {
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (/*$innerWidth*/ ctx[9]) {
+    			if (/*$innerWidth*/ ctx[8]) {
     				if (if_block) {
     					if_block.p(ctx, dirty);
 
-    					if (dirty[0] & /*$innerWidth*/ 512) {
+    					if (dirty[0] & /*$innerWidth*/ 256) {
     						transition_in(if_block, 1);
     					}
     				} else {
@@ -7784,12 +7765,12 @@ var app = (function () {
     	let albers;
     	let path;
     	let delaunay;
-    	let $mobile;
     	let $innerWidth;
-    	validate_store(mobile, 'mobile');
-    	component_subscribe($$self, mobile, $$value => $$invalidate(8, $mobile = $$value));
+    	let $mobile;
     	validate_store(innerWidth, 'innerWidth');
-    	component_subscribe($$self, innerWidth, $$value => $$invalidate(9, $innerWidth = $$value));
+    	component_subscribe($$self, innerWidth, $$value => $$invalidate(8, $innerWidth = $$value));
+    	validate_store(mobile, 'mobile');
+    	component_subscribe($$self, mobile, $$value => $$invalidate(9, $mobile = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('App', slots, []);
     	let width = 1000;
@@ -7800,9 +7781,8 @@ var app = (function () {
     	let reference_year = 2020;
 
     	// console.log(data)
-    	let amount_scale = !$mobile
-    	? linear().domain([0, 30000]).range([1, 50])
-    	: linear().domain([0, 30000]).range([1, 30]);
+    	// let amount_scale = !$mobile ? scaleLinear().domain([0, 30000]).range([1, 50]) : scaleLinear().domain([0, 30000]).range([1, 30])
+    	let amount_scale = linear().domain([0, 30000]).range([1, 50]);
 
     	let ticker = 2022;
 
@@ -7882,8 +7862,8 @@ var app = (function () {
     		projection,
     		path,
     		height,
-    		$mobile,
-    		$innerWidth
+    		$innerWidth,
+    		$mobile
     	});
 
     	$$self.$inject_state = $$props => {
@@ -7991,8 +7971,8 @@ var app = (function () {
     		picked,
     		delaunay,
     		path,
-    		$mobile,
     		$innerWidth,
+    		$mobile,
     		reference_year,
     		click,
     		data,

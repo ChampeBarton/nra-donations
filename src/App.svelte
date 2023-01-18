@@ -34,7 +34,8 @@
     // console.log(data)
 
 
-    let amount_scale = !$mobile ? scaleLinear().domain([0, 30000]).range([1, 50]) : scaleLinear().domain([0, 30000]).range([1, 30])
+    // let amount_scale = !$mobile ? scaleLinear().domain([0, 30000]).range([1, 50]) : scaleLinear().domain([0, 30000]).range([1, 30])
+    let amount_scale = scaleLinear().domain([0, 30000]).range([1, 50])
 
     let ticker = 2022;
     // let timeout;
@@ -153,56 +154,57 @@
 
 <svelte:window bind:innerWidth={$innerWidth}/>
 {#if $innerWidth}
-    {#if $mobile}
-        <header style="margin-bottom:30px">
-            <h1> Amount Donated to the NRA by County in 2022</h1>
-            <Legend {width} {reference_year}></Legend>
-        </header>  
-    {:else}
+    {#if !$mobile}
+            <!-- <header style="margin-bottom:30px">
+                <h1> Amount Donated to the NRA by County in 2022</h1>
+                <Legend {width} {reference_year}></Legend>
+            </header>   -->
         <header>
             <h1> Amount Donated to the NRA by County in 2022</h1>
             <Legend {width} {reference_year}></Legend>
         </header>  
-    {/if}
-    <div bind:clientWidth={width}>
-        <svg {width} {height}>
-            {#if us}
-                <g fill="rgb(233,233,233)">
-                    {#each features as feature}
-                        <path d={path(feature)}/>
-                    {/each}
-                </g>
-                
-            {/if}
-        </svg>
-        <Canvas {width} {height} 
-            style= "position: absolute; cursor: pointer"
-            on:mousemove={({ clientX: x, clientY: y }) => {
-                if (!$mobile) {
-                    if (picked = delaunay.find(x - 10, y - 120))
-                    points = [...points.filter((_, i) => i !== picked), points[picked]]
-                }}
-            }
-            on:mouseout={() => (picked = null)}
-        >
-            {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state} (id)}
-                {#if show}
-                    <Point 
-                        x = {lat} 
-                        y = {lon} 
-                        r = {!$mobile ? picked && id === points.at(-1).id && !click ? scaled_amount + 2 : scaled_amount : scaled_amount}
-                        stroke = {!$mobile ? picked && id === points.at(-1).id && '#000' : null}
-                        {change}
-                        {name}
-                        {state}
-                        {amount}
-                        {reference_year}
-                    />
+        <div bind:clientWidth={width}>
+            <svg {width} {height}>
+                {#if us}
+                    <g fill="rgb(233,233,233)">
+                        {#each features as feature}
+                            <path d={path(feature)}/>
+                        {/each}
+                    </g>
+                    
                 {/if}
-            {/each}
-            
-        </Canvas>   
-    </div>
+            </svg>
+            <Canvas {width} {height} 
+                style= "position: absolute; cursor: pointer"
+                on:mousemove={({ clientX: x, clientY: y }) => {
+                    if (!$mobile) {
+                        if (picked = delaunay.find(x - 10, y - 120))
+                        points = [...points.filter((_, i) => i !== picked), points[picked]]
+                    }}
+                }
+                on:mouseout={() => (picked = null)}
+            >
+                {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state} (id)}
+                    {#if show}
+                        <Point 
+                            x = {lat} 
+                            y = {lon} 
+                            r = {!$mobile ? picked && id === points.at(-1).id && !click ? scaled_amount + 2 : scaled_amount : scaled_amount}
+                            stroke = {!$mobile ? picked && id === points.at(-1).id && '#000' : null}
+                            {change}
+                            {name}
+                            {state}
+                            {amount}
+                            {reference_year}
+                        />
+                    {/if}
+                {/each}
+                
+            </Canvas>   
+        </div>
+    {:else}
+        <img src = "mobile-version.png" alt="Map of NRA donations broken down by U.S. County" >
+    {/if}
 {/if}
 
 <!-- on:click ={() => playing = !playing} -->

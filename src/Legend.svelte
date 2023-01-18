@@ -57,7 +57,7 @@
 
     text.number {
         font-size: 15px;
-		font-family: "speziamonoweb-medium";
+		font-family: "sSpeziaMonoWeb-Medium";
     }
 
     /* text.mobile-number {
@@ -72,13 +72,13 @@
 
     h2 {
         font-size: 12px;
-		font-family: "aktiv grotesk xbold";
+		font-family: "Aktiv Grotesk XBold";
         position: absolute;
     }
 
     h3 {
         font-size: .5rem;
-		font-family: "aktiv grotesk";
+		font-family: "Aktiv Grotesk";
         font-weight: 400;
         text-align: center;
         margin-top: 35px;

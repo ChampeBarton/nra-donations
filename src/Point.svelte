@@ -139,8 +139,21 @@
                         context.arc(x, y, r, 0, 2 * Math.PI);
                         context.stroke();
 
+                        CanvasRenderingContext2D.prototype.roundyRect = function (x, y, w, h, r) {
+                                if (w < 2 * r) r = w / 2;
+                                if (h < 2 * r) r = h / 2;
+                                this.beginPath();
+                                this.moveTo(x+r, y);
+                                this.arcTo(x+w, y,   x+w, y+h, r);
+                                this.arcTo(x+w, y+h, x,   y+h, r);
+                                this.arcTo(x,   y+h, x,   y,   r);
+                                this.arcTo(x,   y,   x+w, y,   r);
+                                this.closePath();
+                                return this;
+                        }
+
                         context.beginPath();
-                        context.roundRect(screen_adjust_x, screen_adjust_y, box_width, box_height, 10);
+                        context.roundyRect(screen_adjust_x, screen_adjust_y, box_width, box_height, 10);
                         context.strokeStyle = "#FFFFFF"
                         context.fillStyle = "rgba(153, 153, 153, 0.9)"
                         context.stroke();
@@ -175,7 +188,22 @@
 
 </script>
 
+<style>
+        /* @font-face {
+                font-family: "aktiv grotesk";
+                src: url('../fonts/Aktiv Grotesk Regular.otf');
+        }
 
+        @font-face {
+                font-family: "aktiv grotesk xbold";
+                src: url('../fonts/Aktiv Grotesk XBold.otf');
+        }
+
+        @font-face {
+                font-family: "speziamonoweb-medium";
+                src: url('../fonts/SpeziaMonoWeb-Medium.ttf');
+        } */
+</style>
 
 
 <Layer {render} />

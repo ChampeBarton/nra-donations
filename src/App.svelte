@@ -1,3 +1,10 @@
+<svelte:head>
+  <link href="../fonts/Aktiv Grotesk Regular.otf" rel="preload" as="font" type="font/otf" crossorigin>
+  <link href="../fonts/Aktiv Grotesk XBold.otf" rel="preload" as="font" type="font/otf" crossorigin>
+  <link href="../fonts/SpeziaMonoWeb-Medium.ttf" rel="preload" as="font" type="font/ttf" crossorigin>
+</svelte:head>
+
+
 <script>
     import { mobile, innerWidth } from './store.js'
 	import { onMount } from 'svelte'

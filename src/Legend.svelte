@@ -26,6 +26,21 @@
 </script>
 
 <style>
+    /* @font-face {
+        font-family: "aktiv grotesk";
+        src: url('../fonts/Aktiv Grotesk Regular.otf');
+    }
+
+    @font-face {
+        font-family: "aktiv grotesk xbold";
+        src: url('../fonts/Aktiv Grotesk XBold.otf');
+    }
+
+    @font-face {
+        font-family: "speziamonoweb-medium";
+        src: url('../fonts/SpeziaMonoWeb-Medium.ttf');
+    } */
+    
     circle {
         fill: none;
         stroke: #000;
@@ -39,10 +54,10 @@
 		font-family: "speziamonoweb-medium";
     }
 
-    text.mobile-number {
+    /* text.mobile-number {
         font-size: .8rem;
 		font-family: "speziamonoweb-medium";
-    }
+    } */
 
     div {
 		background: linear-gradient(to right, var(--gradient-1), var(--gradient-2), var(--gradient-3));
@@ -87,7 +102,7 @@
         "
     ></div>
     <h2 style="left: {width/2 - width/3/2}px; color: {colors[0]};">{decrease_text}</h2>
-    <h2 style="left: {width/2 + width/3/2 - 71}px; color: {colors[2]};">{increase_text}</h2>
+    <h2 style="left: {width/2 + width/3/2 - 81}px; color: {colors[2]};">{increase_text}</h2>
 
 {:else}
     <div
@@ -101,7 +116,7 @@
         "
     ></div>
     <h2 style="left: 0px; color: {colors[0]};">{decrease_text}</h2>
-    <h2 style="left: {width - 71}px; color: {colors[2]};">{increase_text}</h2> 
+    <h2 style="left: {width - 81}px; color: {colors[2]};">{increase_text}</h2> 
     <h3> Cirlce size is proportional to donation amount</h3>
     <!-- <svg {width} height=80>
         <text class="mobile-number" x={width/2 - 80} y=52.5>{left_text}</text>

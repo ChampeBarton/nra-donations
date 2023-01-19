@@ -37,6 +37,8 @@
 
     let display = 2022;
 
+    $: console.log(width)
+
 	onMount(async () => {
 		const shape = await fetch("https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json")
 		us = await shape.json()
@@ -118,8 +120,11 @@
         <div bind:clientWidth={width}>
             <header >
                 <h1> Amount Donated to the NRA by County in 2022</h1>
-                <Legend {width} {reference_year}></Legend>
+                <Legend {width} {height} {reference_year}></Legend>
             </header>  
+            {#if $mobile}
+                <div style="clear:both;" />
+            {/if}
             <svg {width} {height}>
                 {#if us}
                     <g fill="rgb(233,233,233)">

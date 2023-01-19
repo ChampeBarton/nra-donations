@@ -1,7 +1,6 @@
 <svelte:head>
   <link href="../fonts/Aktiv Grotesk Regular.otf" rel="preload" as="font" type="font/otf" crossorigin>
   <link href="../fonts/Aktiv Grotesk XBold.otf" rel="preload" as="font" type="font/otf" crossorigin>
-  <link href="../fonts/SpeziaMonoWeb-Medium.ttf" rel="preload" as="font" type="font/ttf" crossorigin>
 </svelte:head>
 
 <script>
@@ -41,8 +40,6 @@
         let harris = header_text == "Harris County, TX"
         let losangeles = header_text == "Los Angeles County, CA"
         let newcastle = header_text == "New Castle County, DE"
-
-        $: console.log(height)
 		
 	$: render = ({ context }) => {
 
@@ -203,11 +200,6 @@
         @font-face {
                 font-family: "Aktiv Grotesk XBold";
                 src: url('../fonts/Aktiv Grotesk XBold.otf');
-        }
-
-        @font-face {
-                font-family: "speziamonoweb-medium";
-                src: url('../fonts/SpeziaMonoWeb-Medium.ttf');
         }
 </style>
 

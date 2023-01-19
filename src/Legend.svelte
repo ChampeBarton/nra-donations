@@ -8,16 +8,29 @@
     import { mobile } from './store.js'
     import {scaleLinear} from 'd3-scale';
 
-    export let width, reference_year;
+    export let width, height, reference_year;
 
-	let left_text = "$100"
-    let right_text = "$10,000"
+	let small = "$1000"
+    let large = "$10,000"
 
     let amount_scale = scaleLinear().domain([0, 30000]).range([1, 50])
 
     let circle1 = amount_scale(100)
     let circle2 = amount_scale(1000)
     let circle3 = amount_scale(10000)
+
+    $: circle2height = height/6
+    $: circle3height = circle2height - 15
+
+    $: circleX = width - width/4
+
+    console.log(circle1)
+    console.log(circle2)
+    console.log(circle3)
+
+    console.log(amount_scale(100))
+    console.log(amount_scale(1000))
+    console.log(amount_scale(10000))
 
     let decrease_text = "↓ from " + reference_year
     let increase_text = "↑ from " + reference_year
@@ -33,17 +46,17 @@
 
 <style>
     @font-face {
-        font-family: "aktiv grotesk";
+        font-family: "Aktiv Grotesk";
         src: url('../fonts/Aktiv Grotesk Regular.otf');
     }
 
     @font-face {
-        font-family: "aktiv grotesk xbold";
+        font-family: "Aktiv Grotesk XBold";
         src: url('../fonts/Aktiv Grotesk XBold.otf');
     }
 
     @font-face {
-        font-family: "speziamonoweb-medium";
+        font-family: "SpeziaMonoWeb-Medium";
         src: url('../fonts/SpeziaMonoWeb-Medium.ttf');
     }
     
@@ -56,8 +69,8 @@
     }
 
     text.number {
-        font-size: 15px;
-		font-family: "sSpeziaMonoWeb-Medium";
+        font-size: 14px;
+		font-family: "SpeziaMonoWeb-Medium";
     }
 
     /* text.mobile-number {
@@ -70,10 +83,21 @@
         margin: auto;
 	}
 
-    h2 {
+    svg {
+        position: absolute;
+    }
+
+    h2.desktop {
         font-size: 12px;
 		font-family: "Aktiv Grotesk XBold";
         position: absolute;
+    }
+
+    h2.mobile {
+        font-size: 12px;
+		font-family: "Aktiv Grotesk XBold";
+        margin: 0px;
+        padding: 5px 0px 0px 0px;
     }
 
     h3 {
@@ -81,34 +105,47 @@
 		font-family: "Aktiv Grotesk";
         font-weight: 400;
         text-align: center;
-        margin-top: 35px;
         color: #777;
+        margin: 0px;
+        padding: 30px 0px 0px 0px;
+    }
 
+    .legend-text {
+        position: relative;
     }
 
 
 
 </style>
 {#if !$mobile}
-    <svg {width} height=40>
-        <text class="number" x={width/2 - 80} y=22.5>{left_text}</text>
-        <circle cx={width/2 - 30} cy=20 r={circle1}></circle>
-        <circle cx={width/2 - 20} cy=20 r={circle2}></circle>
-        <circle cx={width/2 + 5} cy=20 r={circle3}></circle>
-        <text class="number" x={width/2 + 35} y=22.5>{right_text}</text>   
-    </svg>
     <div
         style="
             --deg: 90deg;
             --gradient-1:{colors[0]};
             --gradient-2:{colors[1]};
             --gradient-3:{colors[2]};
-            width: {width/3}px;
+            width: {width/2.5}px;
             height: 10px;
+            margin-top: 40px;
         "
     ></div>
-    <h2 style="left: {width/2 - width/3/2}px; color: {colors[0]};">{decrease_text}</h2>
-    <h2 style="left: {width/2 + width/3/2 - 81}px; color: {colors[2]};">{increase_text}</h2>
+    <h2 class="desktop" style="left: {width/2 - width/2.5/2}px; color: {colors[0]};">{decrease_text}</h2>
+    <h2 class="desktop" style="left: {width/2 + width/2.5/2 - 81}px; color: {colors[2]};">{increase_text}</h2>
+    <br style="clear: both;"/>
+    <svg {width} {height}>
+        
+        <!-- <circle cx={width/2 + width/2.5/2 + 40} cy=20 r={circle1}></circle> -->
+        <circle cx={circleX} cy={circle2height} r={circle2}></circle>
+        <circle cx={circleX} cy={circle3height} r={circle3}></circle>
+
+        <g fill="none" stroke="black" stroke-width="1">
+            <path stroke-dasharray="3,3" d="M{circleX} {circle2height - 2.5} l28 0" />
+            <path stroke-dasharray="3,3" d="M{circleX} {circle3height - 17.5} l28 0" />
+        </g>
+
+        <text class="number" x={circleX + 28} y={circle2height + 2.5}>{small}</text>
+        <text class="number" x={circleX + 28} y={circle3height - 12.5}>{large}</text>   
+    </svg>
 
 {:else}
     <div
@@ -121,9 +158,11 @@
             height: 10px;
         "
     ></div>
-    <h2 style="left: 0px; color: {colors[0]};">{decrease_text}</h2>
-    <h2 style="left: {width - 81}px; color: {colors[2]};">{increase_text}</h2> 
-    <h3> Cirlce size is proportional to donation amount</h3>
+    <div class="legend-text" >
+        <h2 class="mobile" style="float: right; color: {colors[2]};">{increase_text}</h2> 
+        <h2 class="mobile" style="float: left; color: {colors[0]};">{decrease_text}</h2>
+        <h3> Cirlce size is proportional to donation amount</h3>
+    </div>
     <!-- <svg {width} height=80>
         <text class="mobile-number" x={width/2 - 80} y=52.5>{left_text}</text>
         <circle cx={width/2 - 30} cy=50 r={circle1}></circle>

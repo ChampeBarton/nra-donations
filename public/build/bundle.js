@@ -7601,7 +7601,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (123:0) {#if $innerWidth}
+    // (122:0) {#if $innerWidth}
     function create_if_block(ctx) {
     	let div;
     	let header;
@@ -7633,7 +7633,7 @@ var app = (function () {
     				height: !/*$mobile*/ ctx[3]
     				? /*height*/ ctx[2]
     				: /*height*/ ctx[2] + 100,
-    				style: "position: absolute; cursor: pointer",
+    				style: "position: absolute; cursor: pointer; z-index: 6",
     				$$slots: { default: [create_default_slot] },
     				$$scope: { ctx }
     			},
@@ -7659,15 +7659,15 @@ var app = (function () {
     			t4 = space();
     			svg = svg_element("svg");
     			if (if_block1) if_block1.c();
-    			attr_dev(h1, "class", "svelte-1whmux6");
-    			add_location(h1, file, 126, 16, 3330);
-    			add_location(header, file, 125, 12, 3304);
+    			attr_dev(h1, "class", "svelte-1wdrlxb");
+    			add_location(h1, file, 125, 16, 3307);
+    			add_location(header, file, 124, 12, 3281);
     			attr_dev(svg, "width", /*width*/ ctx[0]);
     			attr_dev(svg, "height", /*height*/ ctx[2]);
-    			attr_dev(svg, "class", "svelte-1whmux6");
-    			add_location(svg, file, 160, 12, 5054);
+    			attr_dev(svg, "class", "svelte-1wdrlxb");
+    			add_location(svg, file, 159, 12, 5043);
     			add_render_callback(() => /*div_elementresize_handler*/ ctx[18].call(div));
-    			add_location(div, file, 124, 8, 3261);
+    			add_location(div, file, 123, 8, 3238);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -7761,14 +7761,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(123:0) {#if $innerWidth}",
+    		source: "(122:0) {#if $innerWidth}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (131:12) {#if $mobile}
+    // (130:12) {#if $mobile}
     function create_if_block_3(ctx) {
     	let div;
 
@@ -7776,7 +7776,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			set_style(div, "clear", "both");
-    			add_location(div, file, 131, 16, 3678);
+    			add_location(div, file, 130, 16, 3655);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -7790,14 +7790,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(131:12) {#if $mobile}",
+    		source: "(130:12) {#if $mobile}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (145:20) {#if show}
+    // (144:20) {#if show}
     function create_if_block_2(ctx) {
     	let point;
     	let current;
@@ -7872,14 +7872,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(145:20) {#if show}",
+    		source: "(144:20) {#if show}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (144:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}
+    // (143:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}
     function create_each_block_1(key_1, ctx) {
     	let first;
     	let if_block_anchor;
@@ -7947,14 +7947,14 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(144:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}",
+    		source: "(143:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (134:12) <Canvas {width} height = {!$mobile ? height : height + 100}                  style= "position: absolute; cursor: pointer"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >
+    // (133:12) <Canvas {width} height = {!$mobile ? height : height + 100}                  style= "position: absolute; cursor: pointer; z-index: 6"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >
     function create_default_slot(ctx) {
     	let each_blocks = [];
     	let each_1_lookup = new Map();
@@ -8026,14 +8026,14 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(134:12) <Canvas {width} height = {!$mobile ? height : height + 100}                  style= \\\"position: absolute; cursor: pointer\\\"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >",
+    		source: "(133:12) <Canvas {width} height = {!$mobile ? height : height + 100}                  style= \\\"position: absolute; cursor: pointer; z-index: 6\\\"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >",
     		ctx
     	});
 
     	return block;
     }
 
-    // (162:16) {#if us}
+    // (161:16) {#if us}
     function create_if_block_1(ctx) {
     	let g;
     	let each_value = /*features*/ ctx[5];
@@ -8053,7 +8053,7 @@ var app = (function () {
     			}
 
     			attr_dev(g, "fill", "rgb(233,233,233)");
-    			add_location(g, file, 162, 20, 5122);
+    			add_location(g, file, 161, 20, 5111);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, g, anchor);
@@ -8097,14 +8097,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(162:16) {#if us}",
+    		source: "(161:16) {#if us}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (164:24) {#each features as feature}
+    // (163:24) {#each features as feature}
     function create_each_block(ctx) {
     	let path_1;
     	let path_1_d_value;
@@ -8113,8 +8113,8 @@ var app = (function () {
     		c: function create() {
     			path_1 = svg_element("path");
     			attr_dev(path_1, "d", path_1_d_value = /*path*/ ctx[8](/*feature*/ ctx[22]));
-    			attr_dev(path_1, "class", "svelte-1whmux6");
-    			add_location(path_1, file, 164, 28, 5230);
+    			attr_dev(path_1, "class", "svelte-1wdrlxb");
+    			add_location(path_1, file, 163, 28, 5219);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, path_1, anchor);
@@ -8133,7 +8133,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(164:24) {#each features as feature}",
+    		source: "(163:24) {#each features as feature}",
     		ctx
     	});
 

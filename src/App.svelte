@@ -89,7 +89,6 @@
 
 <style>
 	svg {
-		position: relative;
         z-index: 5;
 	}
 	

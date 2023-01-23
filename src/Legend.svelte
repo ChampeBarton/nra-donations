@@ -128,8 +128,8 @@
             margin-top: 40px;
         "
     ></div>
-    <h2 class="desktop" style="right: {headerMargin + width/2 - width/2.5/2}px; color: {colors[2]};">{increase_text}</h2>
-    <h2 class="desktop" style="left: {width/2 - width/2.5/2 + headerMargin}px; color: {colors[0]};">{decrease_text}</h2>
+    <h2 class="desktop" style="right: {width/2 - width/2.5/2}px; color: {colors[2]};">{increase_text}</h2>
+    <h2 class="desktop" style="left: {width/2 - width/2.5/2}px; color: {colors[0]};">{decrease_text}</h2>
     <br style="clear: both;"/>
     <svg {width} {height}>
         

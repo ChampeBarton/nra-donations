@@ -23,7 +23,8 @@
 
     $: headerMargin = width >= 1200 ? (document.body.clientWidth - 1200)/2 : 0
 
-    $: offset = {left: document.querySelector("#nradonContainer").offsetLeft, top: document.querySelector("#nradonContainer").offsetTop}
+    // $: offset = document.querySelector('.donationContainer') ? {left: document.querySelector('.donationContainer').offsetLeft, top: document.querySelector('.donationContainer').offsetTop} : {}
+    $: console.log(document.querySelector('.donationContainer'))
 
 	$: projection = geoIdentity().scale(width / 975)
     $: albers = geoAlbersUsa().scale(width*1.33).translate([width*0.5, height*0.5])
@@ -125,7 +126,7 @@
 <svelte:window bind:innerWidth={$innerWidth} bind:scrollY={$scrollY}/>
 {#if $innerWidth}
     <!-- {#if !$mobile} -->
-        <div bind:clientWidth={width} id="nradonContainer">
+        <div bind:clientWidth={width} class="donationContainer">
             <header style="margin-right: {headerMargin}px; margin-left:{headerMargin}px;">
                 <h1> Change in Amount Donated to the NRA by County from 2020 to 2022</h1>
                 <!-- <h2> For the first time in a decade, the organization failed to out-raise the previous federal election year.</h2> -->
@@ -138,7 +139,7 @@
                 style= "position: absolute; cursor: pointer; z-index: 6"
                 on:mousemove={({ clientX: x, clientY: y }) => {
                     if (!$mobile) {
-                        if (picked = delaunay.find(x - offset.left - 10, y - offset.top - 120))
+                        if (picked = delaunay.find(x - 10, y - 120))
                         points = [...points.filter((_, i) => i !== picked), points[picked]]
                     }}
                 }

@@ -131,7 +131,7 @@
 {#if $innerWidth}
     <!-- {#if !$mobile} -->
         <div bind:clientWidth={bodyWidth} class="donationContainer">
-            <header {width}>
+            <header style="width: 1000px">
                 <h1> Change in Amount Donated to the NRA by County from 2020 to 2022</h1>
                 <!-- <h2> For the first time in a decade, the organization failed to out-raise the previous federal election year.</h2> -->
                 <Legend {width} {height} {reference_year}></Legend>

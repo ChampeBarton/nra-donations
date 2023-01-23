@@ -14,23 +14,21 @@
     let large = "$10,000"
 
     let amount_scale = scaleLinear().domain([0, 30000]).range([1, 50])
+    let mobile_amount_scale = scaleLinear().domain([0, 30000]).range([1, 30])
 
     let circle1 = amount_scale(100)
     let circle2 = amount_scale(1000)
     let circle3 = amount_scale(10000)
 
+    let mobileCircle1 = mobile_amount_scale(100)
+    let mobileCircle2 = mobile_amount_scale(1000)
+    let mobileCircle3 = mobile_amount_scale(10000)
+
     $: circle2height = height/6
     $: circle3height = circle2height - 15
 
     $: circleX = width - width/4
-
-    console.log(circle1)
-    console.log(circle2)
-    console.log(circle3)
-
-    console.log(amount_scale(100))
-    console.log(amount_scale(1000))
-    console.log(amount_scale(10000))
+    $: mobileCircleX = width/2 - 100
 
     let decrease_text = "↓ from " + reference_year
     let increase_text = "↑ from " + reference_year
@@ -96,7 +94,7 @@
     h2.mobile {
         font-size: 12px;
 		font-family: "Aktiv Grotesk XBold";
-        margin: 0px 0px 40px 0px;
+        margin: 0px 0px 30px 0px;
         padding: 5px 0px 0px 0px;
     }
 
@@ -166,16 +164,16 @@
     <svg {width} {height}>
         
         <!-- <circle cx={width/2 + width/2.5/2 + 40} cy=20 r={circle1}></circle> -->
-        <circle cx={circleX - 180} cy={circle2height + 30} r={circle2}></circle>
-        <circle cx={circleX - 180} cy={circle3height + 30} r={circle3}></circle>
+        <circle cx={mobileCircleX} cy={circle2height + 13.5} r={mobileCircle2}></circle>
+        <circle cx={mobileCircleX} cy={circle3height + 20} r={mobileCircle3}></circle>
 
         <g fill="none" stroke="black" stroke-width="1">
-            <path stroke-dasharray="3,3" d="M{circleX - 180} {circle2height + 27.5} l28 0" />
-            <path stroke-dasharray="3,3" d="M{circleX - 180} {circle3height + 12.5} l28 0" />
+            <path stroke-dasharray="3,3" d="M{mobileCircleX} {circle2height + 11.5} l28 0" />
+            <path stroke-dasharray="3,3" d="M{mobileCircleX} {circle3height + 9.3} l28 0" />
         </g>
 
-        <text class="mobile-number" x={circleX - 152} y={circle2height + 30}>{small}</text>
-        <text class="mobile-number" x={circleX - 152} y={circle3height + 15}>{large}</text>   
+        <text class="mobile-number" x={mobileCircleX + 30} y={circle2height + 15}>{small}</text>
+        <text class="mobile-number" x={mobileCircleX + 30} y={circle3height + 12}>{large}</text>   
     </svg>
     <!-- <svg {width} height=80>
         <text class="mobile-number" x={width/2 - 80} y=52.5>{left_text}</text>

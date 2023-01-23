@@ -33,7 +33,6 @@
         let amount_text_end = " in 2022"
         
         let color = colorScale(change)
-        console.log(color)
 
         let mobile_annotate = header_text in {"Orange County, CA": 1}
 
@@ -48,7 +47,7 @@
                 context.globalAlpha = 0.9;
                 context.fillStyle = color;
                 context.strokeStyle = !$mobile ? "#000" : "#999";
-                context.lineWidth = 1;
+                context.lineWidth = !$mobile ? 1 : .5;
                 context.beginPath();
                 context.arc(x, y, r, 0, Math.PI * 2);
                 context.stroke();
@@ -99,7 +98,7 @@
                         if (newcastle) {
                                 context.beginPath();
                                 context.moveTo(x, y);
-                                context.quadraticCurveTo(x + 30, height - 20, x + 5, height + 20 );
+                                context.quadraticCurveTo(x + 30, height - 50, x + 5, height + 20 );
                                 context.strokeStyle = color;
                                 context.stroke()
                                 

@@ -27,7 +27,7 @@
     $: circle2height = height/6
     $: circle3height = circle2height - 15
 
-    $: circleX = width - width/4
+    $: circleX = width - width/4 - headerMargin
     $: mobileCircleX = width/2 - 100
 
     let decrease_text = "↓ from " + reference_year
@@ -128,8 +128,8 @@
             margin-top: 40px;
         "
     ></div>
-    <h2 class="desktop" style="right: {width/2 - width/2.5/2}px; color: {colors[2]};">{increase_text}</h2>
-    <h2 class="desktop" style="left: {width/2 - width/2.5/2}px; color: {colors[0]};">{decrease_text}</h2>
+    <h2 class="desktop" style="right: {width/2 - width/2.5/2 - headerMargin/5}px; color: {colors[2]};">{increase_text}</h2>
+    <h2 class="desktop" style="left: {width/2 - width/2.5/2 - headerMargin/5}px; color: {colors[0]};">{decrease_text}</h2>
     <br style="clear: both;"/>
     <svg {width} {height}>
         

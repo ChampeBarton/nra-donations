@@ -34,6 +34,8 @@
 
     let reference_year = 2020;
 
+    // $: console.log(offset)
+
 
     // let amount_scale = !$mobile ? scaleLinear().domain([0, 30000]).range([1, 50]) : scaleLinear().domain([0, 30000]).range([1, 30])
     let amount_scale = scaleLinear().domain([0, 30000]).range([1, 50])
@@ -48,6 +50,11 @@
         features = feature(us, us.objects.states).features
 
         data = await csv("https://raw.githubusercontent.com/ChampeBarton/nra-donations/main/election_ready.csv")
+
+        // $: offset = {
+        //     left: document.querySelector('.donationContainer').offsetLeft,
+        //     top: document.querySelector('.donationContainer').offsetTop
+        // }
 	})
 
     $: if(data !== undefined) {
@@ -58,6 +65,7 @@
             d.year = +d.year
             d.change = +d.change
         })
+
     }
 
     $: points = data !== undefined ? data.filter(d => +d.amount != 0 && +d.year == display).map((d, id) => {
@@ -159,7 +167,7 @@
                     {/if}
                 {/each}
             </Canvas>   
-            <svg {width} {height}>
+            <svg {width} height={!$mobile ? height : height + 100}>
                 {#if us}
                     <g fill="rgb(233,233,233)">
                         {#each features as feature}

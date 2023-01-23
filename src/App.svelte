@@ -90,7 +90,7 @@
 <style>
 	svg {
 		position: relative;
-        z-index: -1;
+        z-index: 5;
 	}
 	
 	path {
@@ -132,7 +132,7 @@
                 <div style="clear:both;" />
             {/if}
             <Canvas {width} height = {!$mobile ? height : height + 100} 
-                style= "position: absolute; cursor: pointer"
+                style= "position: absolute; cursor: pointer; z-index: 6"
                 on:mousemove={({ clientX: x, clientY: y }) => {
                     if (!$mobile) {
                         if (picked = delaunay.find(x - 10, y - 120))

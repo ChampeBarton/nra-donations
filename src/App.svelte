@@ -21,7 +21,7 @@
     $: width = bodyWidth > 1200 ? 1000 : bodyWidth
 	$: height = width * .6256;
 
-    $: headerMargin = width < 1000 ? 0 : (document.body.clientWidth - 1000)
+    $: headerMargin = width < 1000 ? 0 : (document.body.clientWidth - 1000)/2
 
 	$: projection = geoIdentity().scale(width / 975)
     $: albers = geoAlbersUsa().scale(width*1.33).translate([width*0.5, height*0.5])

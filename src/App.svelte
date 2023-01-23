@@ -18,7 +18,7 @@
 	
 	let width = 1000;
 
-    $: width = width > 1200 ? 1200 : width
+    $: width = width > 1200 ? 1000 : width
 	$: height = width * .6256;
 
     $: headerMargin = width >= 1200 ? (document.body.clientWidth - 1200)/2 : 0

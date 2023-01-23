@@ -134,9 +134,9 @@
             {/if}
             <Canvas {width} height = {!$mobile ? height : height + 100} 
                 style= "position: absolute; cursor: pointer; z-index: 6"
-                on:mousemove={({ pageX: x, pageY: y }) => {
+                on:mousemove={({ clientX: x, clientY: y }) => {
                     if (!$mobile) {
-                        if (picked = delaunay.find(x - 10, y - 120))
+                        if (picked = delaunay.find(x - 410, y - 120))
                         points = [...points.filter((_, i) => i !== picked), points[picked]]
                     }}
                 }

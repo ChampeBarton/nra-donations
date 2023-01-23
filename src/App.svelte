@@ -16,12 +16,12 @@
     //     mobile = true          
     // }
 	
-	let width = 1000;
+	let bodyWidth = 1000;
 
-    $: width = width > 1200 ? 1000 : width
+    $: width = bodyWidth > 1200 ? 1000 : bodyWidth
 	$: height = width * .6256;
 
-    $: headerMargin = width < 1000 ? 0 : (document.body.clientWidth - 1000)/2
+    $: headerMargin = width < 1000 ? 0 : (document.body.clientWidth - 1000)
 
 	$: projection = geoIdentity().scale(width / 975)
     $: albers = geoAlbersUsa().scale(width*1.33).translate([width*0.5, height*0.5])
@@ -130,8 +130,8 @@
 <svelte:window bind:innerWidth={$innerWidth} bind:scrollY={$scrollY}/>
 {#if $innerWidth}
     <!-- {#if !$mobile} -->
-        <div bind:clientWidth={width} class="donationContainer">
-            <header style="margin-right: {headerMargin}px; margin-left:{headerMargin}px;">
+        <div bind:clientWidth={bodyWidth} class="donationContainer">
+            <header style="margin-right: {headerMargin}px;">
                 <h1> Change in Amount Donated to the NRA by County from 2020 to 2022</h1>
                 <!-- <h2> For the first time in a decade, the organization failed to out-raise the previous federal election year.</h2> -->
                 <Legend {width} {height} {reference_year} {headerMargin}></Legend>

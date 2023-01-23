@@ -121,7 +121,7 @@
 <svelte:window bind:innerWidth={$innerWidth}/>
 {#if $innerWidth}
     <!-- {#if !$mobile} -->
-        <div bind:clientWidth={width} style="margin-bottom: {height + 20}px; position: absolute;">
+        <div bind:clientWidth={width} style="height: {height + 150}px; position: relative">
             <header >
                 <h1> Change in Amount Donated to the NRA by County from 2020 to 2022</h1>
                 <!-- <h2> For the first time in a decade, the organization failed to out-raise the previous federal election year.</h2> -->
@@ -175,8 +175,7 @@
         </div>
     {/if} -->
 {/if}
-<p> TEXT</p>
-
+<p>text is what i do it's how i live it's what i'm all about please don't stop me</p>
 
 <!-- on:click ={() => playing = !playing} -->
 <!-- style = "margin-bottom: {!$mobile ? 0 : 30}px" -->

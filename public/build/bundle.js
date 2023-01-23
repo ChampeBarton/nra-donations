@@ -7660,13 +7660,14 @@ var app = (function () {
     			t4 = space();
     			create_component(canvas.$$.fragment);
     			attr_dev(h1, "class", "svelte-h4j7fl");
-    			add_location(h1, file, 125, 16, 3348);
-    			add_location(header, file, 124, 12, 3322);
+    			add_location(h1, file, 125, 16, 3362);
+    			add_location(header, file, 124, 12, 3336);
     			attr_dev(svg, "width", /*width*/ ctx[0]);
     			attr_dev(svg, "height", /*height*/ ctx[2]);
     			attr_dev(svg, "class", "svelte-h4j7fl");
-    			add_location(svg, file, 132, 12, 3754);
-    			set_style(div, "margin-bottom", /*height*/ ctx[2] + 20 + "px");
+    			add_location(svg, file, 132, 12, 3768);
+    			set_style(div, "height", /*height*/ ctx[2] + 150 + "px");
+    			set_style(div, "position", "relative");
     			add_render_callback(() => /*div_elementresize_handler*/ ctx[18].call(div));
     			add_location(div, file, 123, 8, 3240);
     		},
@@ -7738,7 +7739,7 @@ var app = (function () {
     			canvas.$set(canvas_changes);
 
     			if (!current || dirty[0] & /*height*/ 4) {
-    				set_style(div, "margin-bottom", /*height*/ ctx[2] + 20 + "px");
+    				set_style(div, "height", /*height*/ ctx[2] + 150 + "px");
     			}
     		},
     		i: function intro(local) {
@@ -7781,7 +7782,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			set_style(div, "clear", "both");
-    			add_location(div, file, 130, 16, 3696);
+    			add_location(div, file, 130, 16, 3710);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -7822,7 +7823,7 @@ var app = (function () {
     			}
 
     			attr_dev(g, "fill", "rgb(233,233,233)");
-    			add_location(g, file, 134, 20, 3822);
+    			add_location(g, file, 134, 20, 3836);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, g, anchor);
@@ -7883,7 +7884,7 @@ var app = (function () {
     			path_1 = svg_element("path");
     			attr_dev(path_1, "d", path_1_d_value = /*path*/ ctx[8](/*feature*/ ctx[33]));
     			attr_dev(path_1, "class", "svelte-h4j7fl");
-    			add_location(path_1, file, 136, 28, 3930);
+    			add_location(path_1, file, 136, 28, 3944);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, path_1, anchor);
@@ -8159,8 +8160,8 @@ var app = (function () {
     			if (if_block) if_block.c();
     			t0 = space();
     			p = element("p");
-    			p.textContent = "TEXT";
-    			add_location(p, file, 177, 0, 5727);
+    			p.textContent = "text is what i do it's how i live it's what i'm all about please don't stop me";
+    			add_location(p, file, 177, 0, 5741);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -8456,8 +8457,8 @@ var app = (function () {
     }
 
     const app = new App({
-      target: document.querySelector('#nradonations')
-      // target: document.body
+      // target: document.querySelector('#nradonations')
+      target: document.body
     });
 
     return app;

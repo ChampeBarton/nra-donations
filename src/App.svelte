@@ -23,9 +23,6 @@
 
     $: headerMargin = width >= 1200 ? (document.body.clientWidth - 1200)/2 : 0
 
-    // $: offset = document.querySelector('.donationContainer') ? {left: document.querySelector('.donationContainer').offsetLeft, top: document.querySelector('.donationContainer').offsetTop} : {}
-    $: console.log(document.querySelector('.donationContainer'))
-
 	$: projection = geoIdentity().scale(width / 975)
     $: albers = geoAlbersUsa().scale(width*1.33).translate([width*0.5, height*0.5])
 	$: path = geoPath(projection)

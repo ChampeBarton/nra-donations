@@ -101,15 +101,18 @@
 		color: #333;
 		font-size: 25px;
 		font-family: "Aktiv Grotesk XBold";
-        margin-bottom: 10;
-        text-align: center;
+        margin-bottom: 20px;
+        text-align: left;
 	}
 
     /* h2 {
 		color: #777;
-		font-size: 20px;
+		font-size: 18px;
 		font-family: "Aktiv Grotesk";
+        font-weight: 200;
+        text-align: left;
         margin-top: 0;
+        margin-bottom: 10px ;
 	} */
 
 </style>
@@ -119,7 +122,8 @@
     <!-- {#if !$mobile} -->
         <div bind:clientWidth={width}>
             <header >
-                <h1> Amount Donated to the NRA by County in 2022</h1>
+                <h1> Change in Amount Donated to the NRA by County from 2020 to 2022</h1>
+                <!-- <h2> For the first time in a decade, the organization failed to out-raise the previous federal election year.</h2> -->
                 <Legend {width} {height} {reference_year}></Legend>
             </header>  
             {#if $mobile}

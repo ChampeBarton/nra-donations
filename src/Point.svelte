@@ -33,6 +33,7 @@
         let amount_text_end = " in 2022"
         
         let color = colorScale(change)
+        console.log(color)
 
         let mobile_annotate = header_text in {"Orange County, CA": 1}
 
@@ -46,7 +47,7 @@
                 context.save();
                 context.globalAlpha = 0.9;
                 context.fillStyle = color;
-                context.strokeStyle = !$mobile ? "#000" : "#FFFFFF";
+                context.strokeStyle = !$mobile ? "#000" : "#999";
                 context.lineWidth = 1;
                 context.beginPath();
                 context.arc(x, y, r, 0, Math.PI * 2);
@@ -75,24 +76,44 @@
                                 context.fillText(header_text, x, height + 45);
                         }
 
-                        if (harris) {
+                        // if (harris) {
+                        //         context.beginPath();
+                        //         context.moveTo(x, y);
+                        //         context.quadraticCurveTo(x - 15, height - 10, x - 5, height + 20 );
+                        //         context.strokeStyle = color;
+                        //         context.stroke()
+                                
+                        //         context.font = ".6rem Aktiv Grotesk";
+                        //         context.fillStyle = "#000";
+                        //         context.fillText(amount_text_middle, x, height + 40)
+
+                        //         context.font = ".6rem Aktiv Grotesk";
+                        //         context.fillStyle = color;
+                        //         context.fillText(" (" + change_text + ")", x + context.measureText(amount_text_middle).width, height + 40)
+
+                        //         context.font = ".7rem Aktiv Grotesk XBold";
+                        //         context.fillStyle = "#000";
+                        //         context.fillText(header_text, x, height + 25); 
+                        // }
+
+                        if (newcastle) {
                                 context.beginPath();
                                 context.moveTo(x, y);
-                                context.quadraticCurveTo(x - 15, height - 10, x - 5, height + 20 );
+                                context.quadraticCurveTo(x + 30, height - 20, x + 5, height + 20 );
                                 context.strokeStyle = color;
                                 context.stroke()
                                 
                                 context.font = ".6rem Aktiv Grotesk";
                                 context.fillStyle = "#000";
-                                context.fillText(amount_text_middle, x, height + 40)
+                                context.fillText(amount_text_middle, x - context.measureText(header_text).width, height + 40)
 
                                 context.font = ".6rem Aktiv Grotesk";
                                 context.fillStyle = color;
-                                context.fillText(" (" + change_text + ")", x + context.measureText(amount_text_middle).width, height + 40)
+                                context.fillText(" (" + change_text + ")", x - context.measureText(header_text).width + context.measureText(amount_text_middle).width, height + 40)
 
                                 context.font = ".7rem Aktiv Grotesk XBold";
                                 context.fillStyle = "#000";
-                                context.fillText(header_text, x, height + 25); 
+                                context.fillText(header_text, x - context.measureText(header_text).width, height + 25);
                         }
                 }
 
@@ -158,7 +179,7 @@
                         context.beginPath();
                         context.roundyRect(screen_adjust_x, screen_adjust_y, box_width, box_height, 10);
                         context.strokeStyle = "#FFFFFF"
-                        context.fillStyle = "rgba(153, 153, 153, 0.9)"
+                        context.fillStyle = change < -14000 ? "rgba(150, 150, 150, 0.95)" : "rgba(0, 0, 0, 0.8)"
                         context.stroke();
                         context.fill();
 

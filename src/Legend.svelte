@@ -73,10 +73,10 @@
 		font-family: "SpeziaMonoWeb-Medium";
     }
 
-    /* text.mobile-number {
-        font-size: .8rem;
-		font-family: "speziamonoweb-medium";
-    } */
+    text.mobile-number {
+        font-size: .6rem;
+		font-family: "SpeziaMonoweb-Medium";
+    }
 
     div {
 		background: linear-gradient(to right, var(--gradient-1), var(--gradient-2), var(--gradient-3));
@@ -96,11 +96,11 @@
     h2.mobile {
         font-size: 12px;
 		font-family: "Aktiv Grotesk XBold";
-        margin: 0px;
+        margin: 0px 0px 40px 0px;
         padding: 5px 0px 0px 0px;
     }
 
-    h3 {
+    /* h3 {
         font-size: .5rem;
 		font-family: "Aktiv Grotesk";
         font-weight: 400;
@@ -108,7 +108,7 @@
         color: #777;
         margin: 0px;
         padding: 30px 0px 0px 0px;
-    }
+    } */
 
     .legend-text {
         position: relative;
@@ -130,7 +130,7 @@
         "
     ></div>
     <h2 class="desktop" style="left: {width/2 - width/2.5/2}px; color: {colors[0]};">{decrease_text}</h2>
-    <h2 class="desktop" style="left: {width/2 + width/2.5/2 - 81}px; color: {colors[2]};">{increase_text}</h2>
+    <h2 class="desktop" style="right: {width/2 - width/2.5/2}px; color: {colors[2]};">{increase_text}</h2>
     <br style="clear: both;"/>
     <svg {width} {height}>
         
@@ -161,8 +161,22 @@
     <div class="legend-text" >
         <h2 class="mobile" style="float: right; color: {colors[2]};">{increase_text}</h2> 
         <h2 class="mobile" style="float: left; color: {colors[0]};">{decrease_text}</h2>
-        <h3> Cirlce size is proportional to donation amount</h3>
+        <!-- <h3> Cirlce size is proportional to donation amount</h3> -->
     </div>
+    <svg {width} {height}>
+        
+        <!-- <circle cx={width/2 + width/2.5/2 + 40} cy=20 r={circle1}></circle> -->
+        <circle cx={circleX - 180} cy={circle2height + 30} r={circle2}></circle>
+        <circle cx={circleX - 180} cy={circle3height + 30} r={circle3}></circle>
+
+        <g fill="none" stroke="black" stroke-width="1">
+            <path stroke-dasharray="3,3" d="M{circleX - 180} {circle2height + 27.5} l28 0" />
+            <path stroke-dasharray="3,3" d="M{circleX - 180} {circle3height + 12.5} l28 0" />
+        </g>
+
+        <text class="mobile-number" x={circleX - 152} y={circle2height + 30}>{small}</text>
+        <text class="mobile-number" x={circleX - 152} y={circle3height + 15}>{large}</text>   
+    </svg>
     <!-- <svg {width} height=80>
         <text class="mobile-number" x={width/2 - 80} y=52.5>{left_text}</text>
         <circle cx={width/2 - 30} cy=50 r={circle1}></circle>

@@ -29,13 +29,11 @@
 	
 	let us;
     let data;
+    let offset = {};
     let features;
     let points = [];
 
     let reference_year = 2020;
-
-    // $: console.log(offset)
-
 
     // let amount_scale = !$mobile ? scaleLinear().domain([0, 30000]).range([1, 50]) : scaleLinear().domain([0, 30000]).range([1, 30])
     let amount_scale = scaleLinear().domain([0, 30000]).range([1, 50])
@@ -51,10 +49,7 @@
 
         data = await csv("https://raw.githubusercontent.com/ChampeBarton/nra-donations/main/election_ready.csv")
 
-        // $: offset = {
-        //     left: document.querySelector('.donationContainer').offsetLeft,
-        //     top: document.querySelector('.donationContainer').offsetTop
-        // }
+        offset = {left: document.querySelector('.donationContainer').offsetLeft, top: document.querySelector('.donationContainer').offsetTop}
 	})
 
     $: if(data !== undefined) {
@@ -94,9 +89,13 @@
         d => d.lat,
         d => d.lon
     );
+
+    $: console.log(offset)
 					
 </script>
 
+<!-- svelte-ignore non-top-level-reactive-declaration -->
+<!-- svelte-ignore non-top-level-reactive-declaration -->
 <style>
 	svg {
         z-index: 5;
@@ -144,7 +143,7 @@
                 style= "position: absolute; cursor: pointer; z-index: 6"
                 on:mousemove={({ clientX: x, clientY: y }) => {
                     if (!$mobile) {
-                        if (picked = delaunay.find(x - 10, y - 120))
+                        if (picked = delaunay.find(x - offset.left, y - offset.top - 100))
                         points = [...points.filter((_, i) => i !== picked), points[picked]]
                     }}
                 }

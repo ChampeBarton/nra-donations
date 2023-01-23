@@ -21,7 +21,7 @@
     $: width = width > 1200 ? 1200 : width
 	$: height = width * .6256;
 
-    $: headerMargin = width >= 1200 ? window.innerWidth - 1200 : 0
+    $: headerMargin = width >= 1200 ? (document.body.clientWidth - 1200)/2 : 0
 
 	$: projection = geoIdentity().scale(width / 975)
     $: albers = geoAlbersUsa().scale(width*1.33).translate([width*0.5, height*0.5])
@@ -124,7 +124,7 @@
 {#if $innerWidth}
     <!-- {#if !$mobile} -->
         <div bind:clientWidth={width}>
-            <header style="margin-right: {headerMargin}px">
+            <header style="margin-right: {headerMargin}px; margin-left:{headerMargin}px;">
                 <h1> Change in Amount Donated to the NRA by County from 2020 to 2022</h1>
                 <!-- <h2> For the first time in a decade, the organization failed to out-raise the previous federal election year.</h2> -->
                 <Legend {width} {height} {reference_year} {headerMargin}></Legend>

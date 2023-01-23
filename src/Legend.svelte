@@ -8,7 +8,7 @@
     import { mobile } from './store.js'
     import {scaleLinear} from 'd3-scale';
 
-    export let width, height, reference_year, headerMargin;
+    export let width, height, reference_year;
 
 	let small = "$1000"
     let large = "$10,000"
@@ -128,8 +128,8 @@
             margin-top: 40px;
         "
     ></div>
-    <h2 class="desktop" style="right: {width/2 - width/2.5/2 + headerMargin}px; color: {colors[2]};">{increase_text}</h2>
-    <h2 class="desktop" style="left: {width/2 - width/2.5/2 - headerMargin/6}px; color: {colors[0]};">{decrease_text}</h2>
+    <h2 class="desktop" style="right: {width/2 - width/2.5/2}px; color: {colors[2]};">{increase_text}</h2>
+    <h2 class="desktop" style="left: {width/2 - width/2.5/2}px; color: {colors[0]};">{decrease_text}</h2>
     <br style="clear: both;"/>
     <svg {width} {height}>
         

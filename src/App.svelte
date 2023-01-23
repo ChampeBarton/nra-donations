@@ -17,7 +17,11 @@
     // }
 	
 	let width = 1000;
+
+    $: width = width > 1200 ? 1200 : width
 	$: height = width * .6256;
+
+    $: headerMargin = width >= 1200 ? document.body.clientWidth - 1200 : 0
 
 	$: projection = geoIdentity().scale(width / 975)
     $: albers = geoAlbersUsa().scale(width*1.33).translate([width*0.5, height*0.5])
@@ -36,8 +40,6 @@
     let mobile_amount_scale = scaleLinear().domain([0, 30000]).range([1, 30])
 
     let display = 2022;
-
-    $: console.log(width)
 
 	onMount(async () => {
 		const shape = await fetch("https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json")
@@ -102,7 +104,7 @@
 		font-size: 25px;
 		font-family: "Aktiv Grotesk XBold";
         margin-bottom: 20px;
-        text-align: left;
+        text-align: center;
 	}
 
     /* h2 {
@@ -122,10 +124,10 @@
 {#if $innerWidth}
     <!-- {#if !$mobile} -->
         <div bind:clientWidth={width}>
-            <header >
+            <header style="margin-right: {headerMargin}px">
                 <h1> Change in Amount Donated to the NRA by County from 2020 to 2022</h1>
                 <!-- <h2> For the first time in a decade, the organization failed to out-raise the previous federal election year.</h2> -->
-                <Legend {width} {height} {reference_year}></Legend>
+                <Legend {width} {height} {reference_year} {headerMargin}></Legend>
             </header>  
             {#if $mobile}
                 <div style="clear:both;" />

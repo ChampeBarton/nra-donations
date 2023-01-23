@@ -6936,10 +6936,10 @@ var app = (function () {
     			t0 = space();
     			div1 = element("div");
     			h20 = element("h2");
-    			t1 = text$1(/*increase_text*/ ctx[14]);
+    			t1 = text$1(/*increase_text*/ ctx[15]);
     			t2 = space();
     			h21 = element("h2");
-    			t3 = text$1(/*decrease_text*/ ctx[13]);
+    			t3 = text$1(/*decrease_text*/ ctx[14]);
     			t4 = space();
     			svg = svg_element("svg");
     			circle0 = svg_element("circle");
@@ -6948,59 +6948,59 @@ var app = (function () {
     			path0 = svg_element("path");
     			path1 = svg_element("path");
     			text0 = svg_element("text");
-    			t5 = text$1(/*small*/ ctx[7]);
+    			t5 = text$1(/*small*/ ctx[8]);
     			text1 = svg_element("text");
-    			t6 = text$1(/*large*/ ctx[8]);
+    			t6 = text$1(/*large*/ ctx[9]);
     			set_style(div0, "--deg", "90deg");
-    			set_style(div0, "--gradient-1", /*colors*/ ctx[15][0]);
-    			set_style(div0, "--gradient-2", /*colors*/ ctx[15][1]);
-    			set_style(div0, "--gradient-3", /*colors*/ ctx[15][2]);
+    			set_style(div0, "--gradient-1", /*colors*/ ctx[16][0]);
+    			set_style(div0, "--gradient-2", /*colors*/ ctx[16][1]);
+    			set_style(div0, "--gradient-3", /*colors*/ ctx[16][2]);
     			set_style(div0, "width", /*width*/ ctx[0] + "px");
     			set_style(div0, "height", "10px");
     			attr_dev(div0, "class", "svelte-1rmdiff");
-    			add_location(div0, file$1, 148, 4, 3938);
+    			add_location(div0, file$1, 148, 4, 4005);
     			attr_dev(h20, "class", "mobile svelte-1rmdiff");
     			set_style(h20, "float", "right");
-    			set_style(h20, "color", /*colors*/ ctx[15][2]);
-    			add_location(h20, file$1, 159, 8, 4216);
+    			set_style(h20, "color", /*colors*/ ctx[16][2]);
+    			add_location(h20, file$1, 159, 8, 4283);
     			attr_dev(h21, "class", "mobile svelte-1rmdiff");
     			set_style(h21, "float", "left");
-    			set_style(h21, "color", /*colors*/ ctx[15][0]);
-    			add_location(h21, file$1, 160, 8, 4307);
+    			set_style(h21, "color", /*colors*/ ctx[16][0]);
+    			add_location(h21, file$1, 160, 8, 4374);
     			attr_dev(div1, "class", "legend-text svelte-1rmdiff");
-    			add_location(div1, file$1, 158, 4, 4181);
-    			attr_dev(circle0, "cx", /*mobileCircleX*/ ctx[3]);
-    			attr_dev(circle0, "cy", circle0_cy_value = /*circle2height*/ ctx[2] + 13.5);
-    			attr_dev(circle0, "r", /*mobileCircle2*/ ctx[11]);
+    			add_location(div1, file$1, 158, 4, 4248);
+    			attr_dev(circle0, "cx", /*mobileCircleX*/ ctx[4]);
+    			attr_dev(circle0, "cy", circle0_cy_value = /*circle2height*/ ctx[3] + 13.5);
+    			attr_dev(circle0, "r", /*mobileCircle2*/ ctx[12]);
     			attr_dev(circle0, "class", "svelte-1rmdiff");
-    			add_location(circle0, file$1, 166, 8, 4602);
-    			attr_dev(circle1_1, "cx", /*mobileCircleX*/ ctx[3]);
-    			attr_dev(circle1_1, "cy", circle1_1_cy_value = /*circle3height*/ ctx[5] + 20);
-    			attr_dev(circle1_1, "r", /*mobileCircle3*/ ctx[12]);
+    			add_location(circle0, file$1, 166, 8, 4669);
+    			attr_dev(circle1_1, "cx", /*mobileCircleX*/ ctx[4]);
+    			attr_dev(circle1_1, "cy", circle1_1_cy_value = /*circle3height*/ ctx[6] + 20);
+    			attr_dev(circle1_1, "r", /*mobileCircle3*/ ctx[13]);
     			attr_dev(circle1_1, "class", "svelte-1rmdiff");
-    			add_location(circle1_1, file$1, 167, 8, 4691);
+    			add_location(circle1_1, file$1, 167, 8, 4758);
     			attr_dev(path0, "stroke-dasharray", "3,3");
-    			attr_dev(path0, "d", path0_d_value = "M" + /*mobileCircleX*/ ctx[3] + " " + (/*circle2height*/ ctx[2] + 11.5) + " l28 0");
-    			add_location(path0, file$1, 170, 12, 4839);
+    			attr_dev(path0, "d", path0_d_value = "M" + /*mobileCircleX*/ ctx[4] + " " + (/*circle2height*/ ctx[3] + 11.5) + " l28 0");
+    			add_location(path0, file$1, 170, 12, 4906);
     			attr_dev(path1, "stroke-dasharray", "3,3");
-    			attr_dev(path1, "d", path1_d_value = "M" + /*mobileCircleX*/ ctx[3] + " " + (/*circle3height*/ ctx[5] + 9.3) + " l28 0");
-    			add_location(path1, file$1, 171, 12, 4933);
+    			attr_dev(path1, "d", path1_d_value = "M" + /*mobileCircleX*/ ctx[4] + " " + (/*circle3height*/ ctx[6] + 9.3) + " l28 0");
+    			add_location(path1, file$1, 171, 12, 5000);
     			attr_dev(g, "fill", "none");
     			attr_dev(g, "stroke", "black");
     			attr_dev(g, "stroke-width", "1");
-    			add_location(g, file$1, 169, 8, 4779);
+    			add_location(g, file$1, 169, 8, 4846);
     			attr_dev(text0, "class", "mobile-number svelte-1rmdiff");
-    			attr_dev(text0, "x", text0_x_value = /*mobileCircleX*/ ctx[3] + 30);
-    			attr_dev(text0, "y", text0_y_value = /*circle2height*/ ctx[2] + 15);
-    			add_location(text0, file$1, 174, 8, 5036);
+    			attr_dev(text0, "x", text0_x_value = /*mobileCircleX*/ ctx[4] + 30);
+    			attr_dev(text0, "y", text0_y_value = /*circle2height*/ ctx[3] + 15);
+    			add_location(text0, file$1, 174, 8, 5103);
     			attr_dev(text1, "class", "mobile-number svelte-1rmdiff");
-    			attr_dev(text1, "x", text1_x_value = /*mobileCircleX*/ ctx[3] + 30);
-    			attr_dev(text1, "y", text1_y_value = /*circle3height*/ ctx[5] + 12);
-    			add_location(text1, file$1, 175, 8, 5133);
+    			attr_dev(text1, "x", text1_x_value = /*mobileCircleX*/ ctx[4] + 30);
+    			attr_dev(text1, "y", text1_y_value = /*circle3height*/ ctx[6] + 12);
+    			add_location(text1, file$1, 175, 8, 5200);
     			attr_dev(svg, "width", /*width*/ ctx[0]);
     			attr_dev(svg, "height", /*height*/ ctx[1]);
     			attr_dev(svg, "class", "svelte-1rmdiff");
-    			add_location(svg, file$1, 163, 4, 4477);
+    			add_location(svg, file$1, 163, 4, 4544);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -7028,43 +7028,43 @@ var app = (function () {
     				set_style(div0, "width", /*width*/ ctx[0] + "px");
     			}
 
-    			if (dirty & /*mobileCircleX*/ 8) {
-    				attr_dev(circle0, "cx", /*mobileCircleX*/ ctx[3]);
+    			if (dirty & /*mobileCircleX*/ 16) {
+    				attr_dev(circle0, "cx", /*mobileCircleX*/ ctx[4]);
     			}
 
-    			if (dirty & /*circle2height*/ 4 && circle0_cy_value !== (circle0_cy_value = /*circle2height*/ ctx[2] + 13.5)) {
+    			if (dirty & /*circle2height*/ 8 && circle0_cy_value !== (circle0_cy_value = /*circle2height*/ ctx[3] + 13.5)) {
     				attr_dev(circle0, "cy", circle0_cy_value);
     			}
 
-    			if (dirty & /*mobileCircleX*/ 8) {
-    				attr_dev(circle1_1, "cx", /*mobileCircleX*/ ctx[3]);
+    			if (dirty & /*mobileCircleX*/ 16) {
+    				attr_dev(circle1_1, "cx", /*mobileCircleX*/ ctx[4]);
     			}
 
-    			if (dirty & /*circle3height*/ 32 && circle1_1_cy_value !== (circle1_1_cy_value = /*circle3height*/ ctx[5] + 20)) {
+    			if (dirty & /*circle3height*/ 64 && circle1_1_cy_value !== (circle1_1_cy_value = /*circle3height*/ ctx[6] + 20)) {
     				attr_dev(circle1_1, "cy", circle1_1_cy_value);
     			}
 
-    			if (dirty & /*mobileCircleX, circle2height*/ 12 && path0_d_value !== (path0_d_value = "M" + /*mobileCircleX*/ ctx[3] + " " + (/*circle2height*/ ctx[2] + 11.5) + " l28 0")) {
+    			if (dirty & /*mobileCircleX, circle2height*/ 24 && path0_d_value !== (path0_d_value = "M" + /*mobileCircleX*/ ctx[4] + " " + (/*circle2height*/ ctx[3] + 11.5) + " l28 0")) {
     				attr_dev(path0, "d", path0_d_value);
     			}
 
-    			if (dirty & /*mobileCircleX, circle3height*/ 40 && path1_d_value !== (path1_d_value = "M" + /*mobileCircleX*/ ctx[3] + " " + (/*circle3height*/ ctx[5] + 9.3) + " l28 0")) {
+    			if (dirty & /*mobileCircleX, circle3height*/ 80 && path1_d_value !== (path1_d_value = "M" + /*mobileCircleX*/ ctx[4] + " " + (/*circle3height*/ ctx[6] + 9.3) + " l28 0")) {
     				attr_dev(path1, "d", path1_d_value);
     			}
 
-    			if (dirty & /*mobileCircleX*/ 8 && text0_x_value !== (text0_x_value = /*mobileCircleX*/ ctx[3] + 30)) {
+    			if (dirty & /*mobileCircleX*/ 16 && text0_x_value !== (text0_x_value = /*mobileCircleX*/ ctx[4] + 30)) {
     				attr_dev(text0, "x", text0_x_value);
     			}
 
-    			if (dirty & /*circle2height*/ 4 && text0_y_value !== (text0_y_value = /*circle2height*/ ctx[2] + 15)) {
+    			if (dirty & /*circle2height*/ 8 && text0_y_value !== (text0_y_value = /*circle2height*/ ctx[3] + 15)) {
     				attr_dev(text0, "y", text0_y_value);
     			}
 
-    			if (dirty & /*mobileCircleX*/ 8 && text1_x_value !== (text1_x_value = /*mobileCircleX*/ ctx[3] + 30)) {
+    			if (dirty & /*mobileCircleX*/ 16 && text1_x_value !== (text1_x_value = /*mobileCircleX*/ ctx[4] + 30)) {
     				attr_dev(text1, "x", text1_x_value);
     			}
 
-    			if (dirty & /*circle3height*/ 32 && text1_y_value !== (text1_y_value = /*circle3height*/ ctx[5] + 12)) {
+    			if (dirty & /*circle3height*/ 64 && text1_y_value !== (text1_y_value = /*circle3height*/ ctx[6] + 12)) {
     				attr_dev(text1, "y", text1_y_value);
     			}
 
@@ -7130,10 +7130,10 @@ var app = (function () {
     			div = element("div");
     			t0 = space();
     			h20 = element("h2");
-    			t1 = text$1(/*decrease_text*/ ctx[13]);
+    			t1 = text$1(/*increase_text*/ ctx[15]);
     			t2 = space();
     			h21 = element("h2");
-    			t3 = text$1(/*increase_text*/ ctx[14]);
+    			t3 = text$1(/*decrease_text*/ ctx[14]);
     			t4 = space();
     			br = element("br");
     			t5 = space();
@@ -7144,60 +7144,64 @@ var app = (function () {
     			path0 = svg_element("path");
     			path1 = svg_element("path");
     			text0 = svg_element("text");
-    			t6 = text$1(/*small*/ ctx[7]);
+    			t6 = text$1(/*small*/ ctx[8]);
     			text1 = svg_element("text");
-    			t7 = text$1(/*large*/ ctx[8]);
+    			t7 = text$1(/*large*/ ctx[9]);
     			set_style(div, "--deg", "90deg");
-    			set_style(div, "--gradient-1", /*colors*/ ctx[15][0]);
-    			set_style(div, "--gradient-2", /*colors*/ ctx[15][1]);
-    			set_style(div, "--gradient-3", /*colors*/ ctx[15][2]);
+    			set_style(div, "--gradient-1", /*colors*/ ctx[16][0]);
+    			set_style(div, "--gradient-2", /*colors*/ ctx[16][1]);
+    			set_style(div, "--gradient-3", /*colors*/ ctx[16][2]);
     			set_style(div, "width", /*width*/ ctx[0] / 2.5 + "px");
     			set_style(div, "height", "10px");
     			set_style(div, "margin-top", "40px");
     			attr_dev(div, "class", "svelte-1rmdiff");
-    			add_location(div, file$1, 118, 4, 2716);
+    			add_location(div, file$1, 118, 4, 2730);
     			attr_dev(h20, "class", "desktop svelte-1rmdiff");
-    			set_style(h20, "left", /*width*/ ctx[0] / 2 - /*width*/ ctx[0] / 2.5 / 2 + "px");
-    			set_style(h20, "color", /*colors*/ ctx[15][0]);
-    			add_location(h20, file$1, 129, 4, 2993);
+
+    			set_style(h20, "right", (/*width*/ ctx[0] < 1200
+    			? /*width*/ ctx[0] / 2 - /*width*/ ctx[0] / 2.5 / 2
+    			: /*headerMargin*/ ctx[2] + /*width*/ ctx[0] / 2 - /*width*/ ctx[0] / 2.5 / 2) + "px");
+
+    			set_style(h20, "color", /*colors*/ ctx[16][2]);
+    			add_location(h20, file$1, 129, 4, 3007);
     			attr_dev(h21, "class", "desktop svelte-1rmdiff");
-    			set_style(h21, "right", /*width*/ ctx[0] / 2 - /*width*/ ctx[0] / 2.5 / 2 + "px");
-    			set_style(h21, "color", /*colors*/ ctx[15][2]);
-    			add_location(h21, file$1, 130, 4, 3099);
+    			set_style(h21, "left", /*width*/ ctx[0] / 2 - /*width*/ ctx[0] / 2.5 / 2 + "px");
+    			set_style(h21, "color", /*colors*/ ctx[16][0]);
+    			add_location(h21, file$1, 130, 4, 3167);
     			set_style(br, "clear", "both");
-    			add_location(br, file$1, 131, 4, 3206);
-    			attr_dev(circle0, "cx", /*circleX*/ ctx[4]);
-    			attr_dev(circle0, "cy", /*circle2height*/ ctx[2]);
-    			attr_dev(circle0, "r", /*circle2*/ ctx[9]);
+    			add_location(br, file$1, 131, 4, 3273);
+    			attr_dev(circle0, "cx", /*circleX*/ ctx[5]);
+    			attr_dev(circle0, "cy", /*circle2height*/ ctx[3]);
+    			attr_dev(circle0, "r", /*circle2*/ ctx[10]);
     			attr_dev(circle0, "class", "svelte-1rmdiff");
-    			add_location(circle0, file$1, 135, 8, 3362);
-    			attr_dev(circle1_1, "cx", /*circleX*/ ctx[4]);
-    			attr_dev(circle1_1, "cy", /*circle3height*/ ctx[5]);
-    			attr_dev(circle1_1, "r", /*circle3*/ ctx[10]);
+    			add_location(circle0, file$1, 135, 8, 3429);
+    			attr_dev(circle1_1, "cx", /*circleX*/ ctx[5]);
+    			attr_dev(circle1_1, "cy", /*circle3height*/ ctx[6]);
+    			attr_dev(circle1_1, "r", /*circle3*/ ctx[11]);
     			attr_dev(circle1_1, "class", "svelte-1rmdiff");
-    			add_location(circle1_1, file$1, 136, 8, 3432);
+    			add_location(circle1_1, file$1, 136, 8, 3499);
     			attr_dev(path0, "stroke-dasharray", "3,3");
-    			attr_dev(path0, "d", path0_d_value = "M" + /*circleX*/ ctx[4] + " " + (/*circle2height*/ ctx[2] - 2.5) + " l28 0");
-    			add_location(path0, file$1, 139, 12, 3563);
+    			attr_dev(path0, "d", path0_d_value = "M" + /*circleX*/ ctx[5] + " " + (/*circle2height*/ ctx[3] - 2.5) + " l28 0");
+    			add_location(path0, file$1, 139, 12, 3630);
     			attr_dev(path1, "stroke-dasharray", "3,3");
-    			attr_dev(path1, "d", path1_d_value = "M" + /*circleX*/ ctx[4] + " " + (/*circle3height*/ ctx[5] - 17.5) + " l28 0");
-    			add_location(path1, file$1, 140, 12, 3650);
+    			attr_dev(path1, "d", path1_d_value = "M" + /*circleX*/ ctx[5] + " " + (/*circle3height*/ ctx[6] - 17.5) + " l28 0");
+    			add_location(path1, file$1, 140, 12, 3717);
     			attr_dev(g, "fill", "none");
     			attr_dev(g, "stroke", "black");
     			attr_dev(g, "stroke-width", "1");
-    			add_location(g, file$1, 138, 8, 3503);
+    			add_location(g, file$1, 138, 8, 3570);
     			attr_dev(text0, "class", "number svelte-1rmdiff");
-    			attr_dev(text0, "x", text0_x_value = /*circleX*/ ctx[4] + 28);
-    			attr_dev(text0, "y", text0_y_value = /*circle2height*/ ctx[2] + 2.5);
-    			add_location(text0, file$1, 143, 8, 3748);
+    			attr_dev(text0, "x", text0_x_value = /*circleX*/ ctx[5] + 28);
+    			attr_dev(text0, "y", text0_y_value = /*circle2height*/ ctx[3] + 2.5);
+    			add_location(text0, file$1, 143, 8, 3815);
     			attr_dev(text1, "class", "number svelte-1rmdiff");
-    			attr_dev(text1, "x", text1_x_value = /*circleX*/ ctx[4] + 28);
-    			attr_dev(text1, "y", text1_y_value = /*circle3height*/ ctx[5] - 12.5);
-    			add_location(text1, file$1, 144, 8, 3833);
+    			attr_dev(text1, "x", text1_x_value = /*circleX*/ ctx[5] + 28);
+    			attr_dev(text1, "y", text1_y_value = /*circle3height*/ ctx[6] - 12.5);
+    			add_location(text1, file$1, 144, 8, 3900);
     			attr_dev(svg, "width", /*width*/ ctx[0]);
     			attr_dev(svg, "height", /*height*/ ctx[1]);
     			attr_dev(svg, "class", "svelte-1rmdiff");
-    			add_location(svg, file$1, 132, 4, 3237);
+    			add_location(svg, file$1, 132, 4, 3304);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -7226,51 +7230,53 @@ var app = (function () {
     				set_style(div, "width", /*width*/ ctx[0] / 2.5 + "px");
     			}
 
-    			if (dirty & /*width*/ 1) {
-    				set_style(h20, "left", /*width*/ ctx[0] / 2 - /*width*/ ctx[0] / 2.5 / 2 + "px");
+    			if (dirty & /*width, headerMargin*/ 5) {
+    				set_style(h20, "right", (/*width*/ ctx[0] < 1200
+    				? /*width*/ ctx[0] / 2 - /*width*/ ctx[0] / 2.5 / 2
+    				: /*headerMargin*/ ctx[2] + /*width*/ ctx[0] / 2 - /*width*/ ctx[0] / 2.5 / 2) + "px");
     			}
 
     			if (dirty & /*width*/ 1) {
-    				set_style(h21, "right", /*width*/ ctx[0] / 2 - /*width*/ ctx[0] / 2.5 / 2 + "px");
+    				set_style(h21, "left", /*width*/ ctx[0] / 2 - /*width*/ ctx[0] / 2.5 / 2 + "px");
     			}
 
-    			if (dirty & /*circleX*/ 16) {
-    				attr_dev(circle0, "cx", /*circleX*/ ctx[4]);
+    			if (dirty & /*circleX*/ 32) {
+    				attr_dev(circle0, "cx", /*circleX*/ ctx[5]);
     			}
 
-    			if (dirty & /*circle2height*/ 4) {
-    				attr_dev(circle0, "cy", /*circle2height*/ ctx[2]);
+    			if (dirty & /*circle2height*/ 8) {
+    				attr_dev(circle0, "cy", /*circle2height*/ ctx[3]);
     			}
 
-    			if (dirty & /*circleX*/ 16) {
-    				attr_dev(circle1_1, "cx", /*circleX*/ ctx[4]);
+    			if (dirty & /*circleX*/ 32) {
+    				attr_dev(circle1_1, "cx", /*circleX*/ ctx[5]);
     			}
 
-    			if (dirty & /*circle3height*/ 32) {
-    				attr_dev(circle1_1, "cy", /*circle3height*/ ctx[5]);
+    			if (dirty & /*circle3height*/ 64) {
+    				attr_dev(circle1_1, "cy", /*circle3height*/ ctx[6]);
     			}
 
-    			if (dirty & /*circleX, circle2height*/ 20 && path0_d_value !== (path0_d_value = "M" + /*circleX*/ ctx[4] + " " + (/*circle2height*/ ctx[2] - 2.5) + " l28 0")) {
+    			if (dirty & /*circleX, circle2height*/ 40 && path0_d_value !== (path0_d_value = "M" + /*circleX*/ ctx[5] + " " + (/*circle2height*/ ctx[3] - 2.5) + " l28 0")) {
     				attr_dev(path0, "d", path0_d_value);
     			}
 
-    			if (dirty & /*circleX, circle3height*/ 48 && path1_d_value !== (path1_d_value = "M" + /*circleX*/ ctx[4] + " " + (/*circle3height*/ ctx[5] - 17.5) + " l28 0")) {
+    			if (dirty & /*circleX, circle3height*/ 96 && path1_d_value !== (path1_d_value = "M" + /*circleX*/ ctx[5] + " " + (/*circle3height*/ ctx[6] - 17.5) + " l28 0")) {
     				attr_dev(path1, "d", path1_d_value);
     			}
 
-    			if (dirty & /*circleX*/ 16 && text0_x_value !== (text0_x_value = /*circleX*/ ctx[4] + 28)) {
+    			if (dirty & /*circleX*/ 32 && text0_x_value !== (text0_x_value = /*circleX*/ ctx[5] + 28)) {
     				attr_dev(text0, "x", text0_x_value);
     			}
 
-    			if (dirty & /*circle2height*/ 4 && text0_y_value !== (text0_y_value = /*circle2height*/ ctx[2] + 2.5)) {
+    			if (dirty & /*circle2height*/ 8 && text0_y_value !== (text0_y_value = /*circle2height*/ ctx[3] + 2.5)) {
     				attr_dev(text0, "y", text0_y_value);
     			}
 
-    			if (dirty & /*circleX*/ 16 && text1_x_value !== (text1_x_value = /*circleX*/ ctx[4] + 28)) {
+    			if (dirty & /*circleX*/ 32 && text1_x_value !== (text1_x_value = /*circleX*/ ctx[5] + 28)) {
     				attr_dev(text1, "x", text1_x_value);
     			}
 
-    			if (dirty & /*circle3height*/ 32 && text1_y_value !== (text1_y_value = /*circle3height*/ ctx[5] - 12.5)) {
+    			if (dirty & /*circle3height*/ 64 && text1_y_value !== (text1_y_value = /*circle3height*/ ctx[6] - 12.5)) {
     				attr_dev(text1, "y", text1_y_value);
     			}
 
@@ -7314,7 +7320,7 @@ var app = (function () {
     	let if_block_anchor;
 
     	function select_block_type(ctx, dirty) {
-    		if (!/*$mobile*/ ctx[6]) return create_if_block$1;
+    		if (!/*$mobile*/ ctx[7]) return create_if_block$1;
     		return create_else_block;
     	}
 
@@ -7402,10 +7408,10 @@ var app = (function () {
     	let mobileCircleX;
     	let $mobile;
     	validate_store(mobile, 'mobile');
-    	component_subscribe($$self, mobile, $$value => $$invalidate(6, $mobile = $$value));
+    	component_subscribe($$self, mobile, $$value => $$invalidate(7, $mobile = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Legend', slots, []);
-    	let { width, height, reference_year } = $$props;
+    	let { width, height, reference_year, headerMargin } = $$props;
     	let small = "$1000";
     	let large = "$10,000";
     	let amount_scale = linear().domain([0, 30000]).range([1, 50]);
@@ -7419,7 +7425,7 @@ var app = (function () {
     	let decrease_text = "↓ from " + reference_year;
     	let increase_text = "↑ from " + reference_year;
     	let colors = ["#a50026", "#ffffbf", "#313695"];
-    	const writable_props = ['width', 'height', 'reference_year'];
+    	const writable_props = ['width', 'height', 'reference_year', 'headerMargin'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Legend> was created with unknown prop '${key}'`);
@@ -7428,7 +7434,8 @@ var app = (function () {
     	$$self.$$set = $$props => {
     		if ('width' in $$props) $$invalidate(0, width = $$props.width);
     		if ('height' in $$props) $$invalidate(1, height = $$props.height);
-    		if ('reference_year' in $$props) $$invalidate(16, reference_year = $$props.reference_year);
+    		if ('reference_year' in $$props) $$invalidate(17, reference_year = $$props.reference_year);
+    		if ('headerMargin' in $$props) $$invalidate(2, headerMargin = $$props.headerMargin);
     	};
 
     	$$self.$capture_state = () => ({
@@ -7437,6 +7444,7 @@ var app = (function () {
     		width,
     		height,
     		reference_year,
+    		headerMargin,
     		small,
     		large,
     		amount_scale,
@@ -7460,24 +7468,25 @@ var app = (function () {
     	$$self.$inject_state = $$props => {
     		if ('width' in $$props) $$invalidate(0, width = $$props.width);
     		if ('height' in $$props) $$invalidate(1, height = $$props.height);
-    		if ('reference_year' in $$props) $$invalidate(16, reference_year = $$props.reference_year);
-    		if ('small' in $$props) $$invalidate(7, small = $$props.small);
-    		if ('large' in $$props) $$invalidate(8, large = $$props.large);
+    		if ('reference_year' in $$props) $$invalidate(17, reference_year = $$props.reference_year);
+    		if ('headerMargin' in $$props) $$invalidate(2, headerMargin = $$props.headerMargin);
+    		if ('small' in $$props) $$invalidate(8, small = $$props.small);
+    		if ('large' in $$props) $$invalidate(9, large = $$props.large);
     		if ('amount_scale' in $$props) amount_scale = $$props.amount_scale;
     		if ('mobile_amount_scale' in $$props) mobile_amount_scale = $$props.mobile_amount_scale;
     		if ('circle1' in $$props) circle1 = $$props.circle1;
-    		if ('circle2' in $$props) $$invalidate(9, circle2 = $$props.circle2);
-    		if ('circle3' in $$props) $$invalidate(10, circle3 = $$props.circle3);
+    		if ('circle2' in $$props) $$invalidate(10, circle2 = $$props.circle2);
+    		if ('circle3' in $$props) $$invalidate(11, circle3 = $$props.circle3);
     		if ('mobileCircle1' in $$props) mobileCircle1 = $$props.mobileCircle1;
-    		if ('mobileCircle2' in $$props) $$invalidate(11, mobileCircle2 = $$props.mobileCircle2);
-    		if ('mobileCircle3' in $$props) $$invalidate(12, mobileCircle3 = $$props.mobileCircle3);
-    		if ('decrease_text' in $$props) $$invalidate(13, decrease_text = $$props.decrease_text);
-    		if ('increase_text' in $$props) $$invalidate(14, increase_text = $$props.increase_text);
-    		if ('colors' in $$props) $$invalidate(15, colors = $$props.colors);
-    		if ('mobileCircleX' in $$props) $$invalidate(3, mobileCircleX = $$props.mobileCircleX);
-    		if ('circleX' in $$props) $$invalidate(4, circleX = $$props.circleX);
-    		if ('circle2height' in $$props) $$invalidate(2, circle2height = $$props.circle2height);
-    		if ('circle3height' in $$props) $$invalidate(5, circle3height = $$props.circle3height);
+    		if ('mobileCircle2' in $$props) $$invalidate(12, mobileCircle2 = $$props.mobileCircle2);
+    		if ('mobileCircle3' in $$props) $$invalidate(13, mobileCircle3 = $$props.mobileCircle3);
+    		if ('decrease_text' in $$props) $$invalidate(14, decrease_text = $$props.decrease_text);
+    		if ('increase_text' in $$props) $$invalidate(15, increase_text = $$props.increase_text);
+    		if ('colors' in $$props) $$invalidate(16, colors = $$props.colors);
+    		if ('mobileCircleX' in $$props) $$invalidate(4, mobileCircleX = $$props.mobileCircleX);
+    		if ('circleX' in $$props) $$invalidate(5, circleX = $$props.circleX);
+    		if ('circle2height' in $$props) $$invalidate(3, circle2height = $$props.circle2height);
+    		if ('circle3height' in $$props) $$invalidate(6, circle3height = $$props.circle3height);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -7486,25 +7495,26 @@ var app = (function () {
 
     	$$self.$$.update = () => {
     		if ($$self.$$.dirty & /*height*/ 2) {
-    			$$invalidate(2, circle2height = height / 6);
+    			$$invalidate(3, circle2height = height / 6);
     		}
 
-    		if ($$self.$$.dirty & /*circle2height*/ 4) {
-    			$$invalidate(5, circle3height = circle2height - 15);
-    		}
-
-    		if ($$self.$$.dirty & /*width*/ 1) {
-    			$$invalidate(4, circleX = width - width / 4);
+    		if ($$self.$$.dirty & /*circle2height*/ 8) {
+    			$$invalidate(6, circle3height = circle2height - 15);
     		}
 
     		if ($$self.$$.dirty & /*width*/ 1) {
-    			$$invalidate(3, mobileCircleX = width / 2 - 100);
+    			$$invalidate(5, circleX = width - width / 4);
+    		}
+
+    		if ($$self.$$.dirty & /*width*/ 1) {
+    			$$invalidate(4, mobileCircleX = width / 2 - 100);
     		}
     	};
 
     	return [
     		width,
     		height,
+    		headerMargin,
     		circle2height,
     		mobileCircleX,
     		circleX,
@@ -7526,7 +7536,13 @@ var app = (function () {
     class Legend extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { width: 0, height: 1, reference_year: 16 });
+
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, {
+    			width: 0,
+    			height: 1,
+    			reference_year: 17,
+    			headerMargin: 2
+    		});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -7546,8 +7562,12 @@ var app = (function () {
     			console.warn("<Legend> was created without expected prop 'height'");
     		}
 
-    		if (/*reference_year*/ ctx[16] === undefined && !('reference_year' in props)) {
+    		if (/*reference_year*/ ctx[17] === undefined && !('reference_year' in props)) {
     			console.warn("<Legend> was created without expected prop 'reference_year'");
+    		}
+
+    		if (/*headerMargin*/ ctx[2] === undefined && !('headerMargin' in props)) {
+    			console.warn("<Legend> was created without expected prop 'headerMargin'");
     		}
     	}
 
@@ -7574,34 +7594,40 @@ var app = (function () {
     	set reference_year(value) {
     		throw new Error("<Legend>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
+
+    	get headerMargin() {
+    		throw new Error("<Legend>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set headerMargin(value) {
+    		throw new Error("<Legend>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
     }
 
     /* src/App.svelte generated by Svelte v3.44.0 */
-
-    const { console: console_1 } = globals;
     const file = "src/App.svelte";
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[22] = list[i];
+    	child_ctx[23] = list[i];
     	return child_ctx;
     }
 
     function get_each_context_1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[25] = list[i].lat;
-    	child_ctx[26] = list[i].lon;
-    	child_ctx[27] = list[i].show;
-    	child_ctx[28] = list[i].amount;
-    	child_ctx[29] = list[i].scaled_amount;
-    	child_ctx[30] = list[i].change;
-    	child_ctx[31] = list[i].id;
-    	child_ctx[32] = list[i].name;
-    	child_ctx[33] = list[i].state;
+    	child_ctx[26] = list[i].lat;
+    	child_ctx[27] = list[i].lon;
+    	child_ctx[28] = list[i].show;
+    	child_ctx[29] = list[i].amount;
+    	child_ctx[30] = list[i].scaled_amount;
+    	child_ctx[31] = list[i].change;
+    	child_ctx[32] = list[i].id;
+    	child_ctx[33] = list[i].name;
+    	child_ctx[34] = list[i].state;
     	return child_ctx;
     }
 
-    // (122:0) {#if $innerWidth}
+    // (124:0) {#if $innerWidth}
     function create_if_block(ctx) {
     	let div;
     	let header;
@@ -7620,7 +7646,8 @@ var app = (function () {
     			props: {
     				width: /*width*/ ctx[0],
     				height: /*height*/ ctx[2],
-    				reference_year: /*reference_year*/ ctx[10]
+    				reference_year: /*reference_year*/ ctx[11],
+    				headerMargin: /*headerMargin*/ ctx[9]
     			},
     			$$inline: true
     		});
@@ -7640,8 +7667,8 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	canvas.$on("mousemove", /*mousemove_handler*/ ctx[16]);
-    	canvas.$on("mouseout", /*mouseout_handler*/ ctx[17]);
+    	canvas.$on("mousemove", /*mousemove_handler*/ ctx[17]);
+    	canvas.$on("mouseout", /*mouseout_handler*/ ctx[18]);
     	let if_block1 = /*us*/ ctx[4] && create_if_block_1(ctx);
 
     	const block = {
@@ -7659,15 +7686,16 @@ var app = (function () {
     			t4 = space();
     			svg = svg_element("svg");
     			if (if_block1) if_block1.c();
-    			attr_dev(h1, "class", "svelte-1wdrlxb");
-    			add_location(h1, file, 125, 16, 3307);
-    			add_location(header, file, 124, 12, 3281);
+    			attr_dev(h1, "class", "svelte-1lrwt17");
+    			add_location(h1, file, 127, 16, 3440);
+    			set_style(header, "margin-right", /*headerMargin*/ ctx[9] + "px");
+    			add_location(header, file, 126, 12, 3376);
     			attr_dev(svg, "width", /*width*/ ctx[0]);
     			attr_dev(svg, "height", /*height*/ ctx[2]);
-    			attr_dev(svg, "class", "svelte-1wdrlxb");
-    			add_location(svg, file, 159, 12, 5043);
-    			add_render_callback(() => /*div_elementresize_handler*/ ctx[18].call(div));
-    			add_location(div, file, 123, 8, 3238);
+    			attr_dev(svg, "class", "svelte-1lrwt17");
+    			add_location(svg, file, 161, 12, 5191);
+    			add_render_callback(() => /*div_elementresize_handler*/ ctx[19].call(div));
+    			add_location(div, file, 125, 8, 3333);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -7682,14 +7710,19 @@ var app = (function () {
     			append_dev(div, t4);
     			append_dev(div, svg);
     			if (if_block1) if_block1.m(svg, null);
-    			div_resize_listener = add_resize_listener(div, /*div_elementresize_handler*/ ctx[18].bind(div));
+    			div_resize_listener = add_resize_listener(div, /*div_elementresize_handler*/ ctx[19].bind(div));
     			current = true;
     		},
     		p: function update(ctx, dirty) {
     			const legend_changes = {};
     			if (dirty[0] & /*width*/ 1) legend_changes.width = /*width*/ ctx[0];
     			if (dirty[0] & /*height*/ 4) legend_changes.height = /*height*/ ctx[2];
+    			if (dirty[0] & /*headerMargin*/ 512) legend_changes.headerMargin = /*headerMargin*/ ctx[9];
     			legend.$set(legend_changes);
+
+    			if (!current || dirty[0] & /*headerMargin*/ 512) {
+    				set_style(header, "margin-right", /*headerMargin*/ ctx[9] + "px");
+    			}
 
     			if (/*$mobile*/ ctx[3]) {
     				if (if_block0) ; else {
@@ -7709,7 +7742,7 @@ var app = (function () {
     			? /*height*/ ctx[2]
     			: /*height*/ ctx[2] + 100;
 
-    			if (dirty[0] & /*points, $mobile, picked, height*/ 78 | dirty[1] & /*$$scope*/ 32) {
+    			if (dirty[0] & /*points, $mobile, picked, height*/ 78 | dirty[1] & /*$$scope*/ 64) {
     				canvas_changes.$$scope = { dirty, ctx };
     			}
 
@@ -7761,14 +7794,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(122:0) {#if $innerWidth}",
+    		source: "(124:0) {#if $innerWidth}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (130:12) {#if $mobile}
+    // (132:12) {#if $mobile}
     function create_if_block_3(ctx) {
     	let div;
 
@@ -7776,7 +7809,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			set_style(div, "clear", "both");
-    			add_location(div, file, 130, 16, 3655);
+    			add_location(div, file, 132, 16, 3803);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -7790,35 +7823,35 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(130:12) {#if $mobile}",
+    		source: "(132:12) {#if $mobile}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (144:20) {#if show}
+    // (146:20) {#if show}
     function create_if_block_2(ctx) {
     	let point;
     	let current;
 
     	point = new Point({
     			props: {
-    				x: /*lat*/ ctx[25],
-    				y: /*lon*/ ctx[26],
+    				x: /*lat*/ ctx[26],
+    				y: /*lon*/ ctx[27],
     				r: !/*$mobile*/ ctx[3]
-    				? /*picked*/ ctx[6] && /*id*/ ctx[31] === /*points*/ ctx[1].at(-1).id && !/*click*/ ctx[11]
-    					? /*scaled_amount*/ ctx[29] + 2
-    					: /*scaled_amount*/ ctx[29]
-    				: /*scaled_amount*/ ctx[29],
+    				? /*picked*/ ctx[6] && /*id*/ ctx[32] === /*points*/ ctx[1].at(-1).id && !/*click*/ ctx[12]
+    					? /*scaled_amount*/ ctx[30] + 2
+    					: /*scaled_amount*/ ctx[30]
+    				: /*scaled_amount*/ ctx[30],
     				stroke: !/*$mobile*/ ctx[3]
-    				? /*picked*/ ctx[6] && /*id*/ ctx[31] === /*points*/ ctx[1].at(-1).id && '#000'
+    				? /*picked*/ ctx[6] && /*id*/ ctx[32] === /*points*/ ctx[1].at(-1).id && '#000'
     				: null,
-    				change: /*change*/ ctx[30],
-    				name: /*name*/ ctx[32],
-    				state: /*state*/ ctx[33],
-    				amount: /*amount*/ ctx[28],
-    				reference_year: /*reference_year*/ ctx[10],
+    				change: /*change*/ ctx[31],
+    				name: /*name*/ ctx[33],
+    				state: /*state*/ ctx[34],
+    				amount: /*amount*/ ctx[29],
+    				reference_year: /*reference_year*/ ctx[11],
     				height: /*height*/ ctx[2]
     			},
     			$$inline: true
@@ -7834,23 +7867,23 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const point_changes = {};
-    			if (dirty[0] & /*points*/ 2) point_changes.x = /*lat*/ ctx[25];
-    			if (dirty[0] & /*points*/ 2) point_changes.y = /*lon*/ ctx[26];
+    			if (dirty[0] & /*points*/ 2) point_changes.x = /*lat*/ ctx[26];
+    			if (dirty[0] & /*points*/ 2) point_changes.y = /*lon*/ ctx[27];
 
     			if (dirty[0] & /*$mobile, picked, points*/ 74) point_changes.r = !/*$mobile*/ ctx[3]
-    			? /*picked*/ ctx[6] && /*id*/ ctx[31] === /*points*/ ctx[1].at(-1).id && !/*click*/ ctx[11]
-    				? /*scaled_amount*/ ctx[29] + 2
-    				: /*scaled_amount*/ ctx[29]
-    			: /*scaled_amount*/ ctx[29];
+    			? /*picked*/ ctx[6] && /*id*/ ctx[32] === /*points*/ ctx[1].at(-1).id && !/*click*/ ctx[12]
+    				? /*scaled_amount*/ ctx[30] + 2
+    				: /*scaled_amount*/ ctx[30]
+    			: /*scaled_amount*/ ctx[30];
 
     			if (dirty[0] & /*$mobile, picked, points*/ 74) point_changes.stroke = !/*$mobile*/ ctx[3]
-    			? /*picked*/ ctx[6] && /*id*/ ctx[31] === /*points*/ ctx[1].at(-1).id && '#000'
+    			? /*picked*/ ctx[6] && /*id*/ ctx[32] === /*points*/ ctx[1].at(-1).id && '#000'
     			: null;
 
-    			if (dirty[0] & /*points*/ 2) point_changes.change = /*change*/ ctx[30];
-    			if (dirty[0] & /*points*/ 2) point_changes.name = /*name*/ ctx[32];
-    			if (dirty[0] & /*points*/ 2) point_changes.state = /*state*/ ctx[33];
-    			if (dirty[0] & /*points*/ 2) point_changes.amount = /*amount*/ ctx[28];
+    			if (dirty[0] & /*points*/ 2) point_changes.change = /*change*/ ctx[31];
+    			if (dirty[0] & /*points*/ 2) point_changes.name = /*name*/ ctx[33];
+    			if (dirty[0] & /*points*/ 2) point_changes.state = /*state*/ ctx[34];
+    			if (dirty[0] & /*points*/ 2) point_changes.amount = /*amount*/ ctx[29];
     			if (dirty[0] & /*height*/ 4) point_changes.height = /*height*/ ctx[2];
     			point.$set(point_changes);
     		},
@@ -7872,19 +7905,19 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(144:20) {#if show}",
+    		source: "(146:20) {#if show}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (143:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}
+    // (145:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}
     function create_each_block_1(key_1, ctx) {
     	let first;
     	let if_block_anchor;
     	let current;
-    	let if_block = /*show*/ ctx[27] && create_if_block_2(ctx);
+    	let if_block = /*show*/ ctx[28] && create_if_block_2(ctx);
 
     	const block = {
     		key: key_1,
@@ -7904,7 +7937,7 @@ var app = (function () {
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
 
-    			if (/*show*/ ctx[27]) {
+    			if (/*show*/ ctx[28]) {
     				if (if_block) {
     					if_block.p(ctx, dirty);
 
@@ -7947,14 +7980,14 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(143:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}",
+    		source: "(145:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (133:12) <Canvas {width} height = {!$mobile ? height : height + 100}                  style= "position: absolute; cursor: pointer; z-index: 6"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >
+    // (135:12) <Canvas {width} height = {!$mobile ? height : height + 100}                  style= "position: absolute; cursor: pointer; z-index: 6"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >
     function create_default_slot(ctx) {
     	let each_blocks = [];
     	let each_1_lookup = new Map();
@@ -7962,7 +7995,7 @@ var app = (function () {
     	let current;
     	let each_value_1 = /*points*/ ctx[1];
     	validate_each_argument(each_value_1);
-    	const get_key = ctx => /*id*/ ctx[31];
+    	const get_key = ctx => /*id*/ ctx[32];
     	validate_each_keys(ctx, each_value_1, get_each_context_1, get_key);
 
     	for (let i = 0; i < each_value_1.length; i += 1) {
@@ -7988,7 +8021,7 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*points, $mobile, picked, click, reference_year, height*/ 3150) {
+    			if (dirty[0] & /*points, $mobile, picked, click, reference_year, height*/ 6222) {
     				each_value_1 = /*points*/ ctx[1];
     				validate_each_argument(each_value_1);
     				group_outros();
@@ -8026,14 +8059,14 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(133:12) <Canvas {width} height = {!$mobile ? height : height + 100}                  style= \\\"position: absolute; cursor: pointer; z-index: 6\\\"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >",
+    		source: "(135:12) <Canvas {width} height = {!$mobile ? height : height + 100}                  style= \\\"position: absolute; cursor: pointer; z-index: 6\\\"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >",
     		ctx
     	});
 
     	return block;
     }
 
-    // (161:16) {#if us}
+    // (163:16) {#if us}
     function create_if_block_1(ctx) {
     	let g;
     	let each_value = /*features*/ ctx[5];
@@ -8053,7 +8086,7 @@ var app = (function () {
     			}
 
     			attr_dev(g, "fill", "rgb(233,233,233)");
-    			add_location(g, file, 161, 20, 5111);
+    			add_location(g, file, 163, 20, 5259);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, g, anchor);
@@ -8097,14 +8130,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(161:16) {#if us}",
+    		source: "(163:16) {#if us}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (163:24) {#each features as feature}
+    // (165:24) {#each features as feature}
     function create_each_block(ctx) {
     	let path_1;
     	let path_1_d_value;
@@ -8112,15 +8145,15 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			path_1 = svg_element("path");
-    			attr_dev(path_1, "d", path_1_d_value = /*path*/ ctx[8](/*feature*/ ctx[22]));
-    			attr_dev(path_1, "class", "svelte-1wdrlxb");
-    			add_location(path_1, file, 163, 28, 5219);
+    			attr_dev(path_1, "d", path_1_d_value = /*path*/ ctx[8](/*feature*/ ctx[23]));
+    			attr_dev(path_1, "class", "svelte-1lrwt17");
+    			add_location(path_1, file, 165, 28, 5367);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, path_1, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*path, features*/ 288 && path_1_d_value !== (path_1_d_value = /*path*/ ctx[8](/*feature*/ ctx[22]))) {
+    			if (dirty[0] & /*path, features*/ 288 && path_1_d_value !== (path_1_d_value = /*path*/ ctx[8](/*feature*/ ctx[23]))) {
     				attr_dev(path_1, "d", path_1_d_value);
     			}
     		},
@@ -8133,7 +8166,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(163:24) {#each features as feature}",
+    		source: "(165:24) {#each features as feature}",
     		ctx
     	});
 
@@ -8145,8 +8178,8 @@ var app = (function () {
     	let current;
     	let mounted;
     	let dispose;
-    	add_render_callback(/*onwindowresize*/ ctx[15]);
-    	let if_block = /*$innerWidth*/ ctx[9] && create_if_block(ctx);
+    	add_render_callback(/*onwindowresize*/ ctx[16]);
+    	let if_block = /*$innerWidth*/ ctx[10] && create_if_block(ctx);
 
     	const block = {
     		c: function create() {
@@ -8162,16 +8195,16 @@ var app = (function () {
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen_dev(window, "resize", /*onwindowresize*/ ctx[15]);
+    				dispose = listen_dev(window, "resize", /*onwindowresize*/ ctx[16]);
     				mounted = true;
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (/*$innerWidth*/ ctx[9]) {
+    			if (/*$innerWidth*/ ctx[10]) {
     				if (if_block) {
     					if_block.p(ctx, dirty);
 
-    					if (dirty[0] & /*$innerWidth*/ 512) {
+    					if (dirty[0] & /*$innerWidth*/ 1024) {
     						transition_in(if_block, 1);
     					}
     				} else {
@@ -8220,6 +8253,7 @@ var app = (function () {
 
     function instance($$self, $$props, $$invalidate) {
     	let height;
+    	let headerMargin;
     	let projection;
     	let albers;
     	let path;
@@ -8229,7 +8263,7 @@ var app = (function () {
     	validate_store(mobile, 'mobile');
     	component_subscribe($$self, mobile, $$value => $$invalidate(3, $mobile = $$value));
     	validate_store(innerWidth, 'innerWidth');
-    	component_subscribe($$self, innerWidth, $$value => $$invalidate(9, $innerWidth = $$value));
+    	component_subscribe($$self, innerWidth, $$value => $$invalidate(10, $innerWidth = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('App', slots, []);
     	let width = 1000;
@@ -8249,14 +8283,14 @@ var app = (function () {
     		const shape = await fetch("https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json");
     		$$invalidate(4, us = await shape.json());
     		$$invalidate(5, features = feature(us, us.objects.states).features);
-    		$$invalidate(12, data = await csv("https://raw.githubusercontent.com/ChampeBarton/nra-donations/main/election_ready.csv"));
+    		$$invalidate(13, data = await csv("https://raw.githubusercontent.com/ChampeBarton/nra-donations/main/election_ready.csv"));
     	});
 
     	let picked, click = false;
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<App> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<App> was created with unknown prop '${key}'`);
     	});
 
     	function onwindowresize() {
@@ -8306,6 +8340,7 @@ var app = (function () {
     		projection,
     		path,
     		height,
+    		headerMargin,
     		$mobile,
     		$innerWidth
     	});
@@ -8313,20 +8348,21 @@ var app = (function () {
     	$$self.$inject_state = $$props => {
     		if ('width' in $$props) $$invalidate(0, width = $$props.width);
     		if ('us' in $$props) $$invalidate(4, us = $$props.us);
-    		if ('data' in $$props) $$invalidate(12, data = $$props.data);
+    		if ('data' in $$props) $$invalidate(13, data = $$props.data);
     		if ('features' in $$props) $$invalidate(5, features = $$props.features);
     		if ('points' in $$props) $$invalidate(1, points = $$props.points);
-    		if ('reference_year' in $$props) $$invalidate(10, reference_year = $$props.reference_year);
-    		if ('amount_scale' in $$props) $$invalidate(19, amount_scale = $$props.amount_scale);
-    		if ('mobile_amount_scale' in $$props) $$invalidate(20, mobile_amount_scale = $$props.mobile_amount_scale);
-    		if ('display' in $$props) $$invalidate(21, display = $$props.display);
+    		if ('reference_year' in $$props) $$invalidate(11, reference_year = $$props.reference_year);
+    		if ('amount_scale' in $$props) $$invalidate(20, amount_scale = $$props.amount_scale);
+    		if ('mobile_amount_scale' in $$props) $$invalidate(21, mobile_amount_scale = $$props.mobile_amount_scale);
+    		if ('display' in $$props) $$invalidate(22, display = $$props.display);
     		if ('picked' in $$props) $$invalidate(6, picked = $$props.picked);
-    		if ('click' in $$props) $$invalidate(11, click = $$props.click);
+    		if ('click' in $$props) $$invalidate(12, click = $$props.click);
     		if ('delaunay' in $$props) $$invalidate(7, delaunay = $$props.delaunay);
-    		if ('albers' in $$props) $$invalidate(13, albers = $$props.albers);
-    		if ('projection' in $$props) $$invalidate(14, projection = $$props.projection);
+    		if ('albers' in $$props) $$invalidate(14, albers = $$props.albers);
+    		if ('projection' in $$props) $$invalidate(15, projection = $$props.projection);
     		if ('path' in $$props) $$invalidate(8, path = $$props.path);
     		if ('height' in $$props) $$invalidate(2, height = $$props.height);
+    		if ('headerMargin' in $$props) $$invalidate(9, headerMargin = $$props.headerMargin);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -8335,26 +8371,30 @@ var app = (function () {
 
     	$$self.$$.update = () => {
     		if ($$self.$$.dirty[0] & /*width*/ 1) {
+    			$$invalidate(0, width = width > 1200 ? 1200 : width);
+    		}
+
+    		if ($$self.$$.dirty[0] & /*width*/ 1) {
     			$$invalidate(2, height = width * .6256);
     		}
 
     		if ($$self.$$.dirty[0] & /*width*/ 1) {
-    			$$invalidate(14, projection = geoIdentity().scale(width / 975));
-    		}
-
-    		if ($$self.$$.dirty[0] & /*width, height*/ 5) {
-    			$$invalidate(13, albers = geoAlbersUsa().scale(width * 1.33).translate([width * 0.5, height * 0.5]));
-    		}
-
-    		if ($$self.$$.dirty[0] & /*projection*/ 16384) {
-    			$$invalidate(8, path = geoPath(projection));
+    			$$invalidate(9, headerMargin = width >= 1200 ? document.body.clientWidth - 1200 : 0);
     		}
 
     		if ($$self.$$.dirty[0] & /*width*/ 1) {
-    			console.log(width);
+    			$$invalidate(15, projection = geoIdentity().scale(width / 975));
     		}
 
-    		if ($$self.$$.dirty[0] & /*data, $mobile*/ 4104) {
+    		if ($$self.$$.dirty[0] & /*width, height*/ 5) {
+    			$$invalidate(14, albers = geoAlbersUsa().scale(width * 1.33).translate([width * 0.5, height * 0.5]));
+    		}
+
+    		if ($$self.$$.dirty[0] & /*projection*/ 32768) {
+    			$$invalidate(8, path = geoPath(projection));
+    		}
+
+    		if ($$self.$$.dirty[0] & /*data, $mobile*/ 8200) {
     			if (data !== undefined) {
     				data.forEach(d => {
     					d.lat = +d.lat;
@@ -8372,7 +8412,7 @@ var app = (function () {
     			}
     		}
 
-    		if ($$self.$$.dirty[0] & /*data, albers*/ 12288) {
+    		if ($$self.$$.dirty[0] & /*data, albers*/ 24576) {
     			$$invalidate(1, points = data !== undefined
     			? data.filter(d => +d.amount != 0 && +d.year == display).map((d, id) => {
     					var latlon = albers([d.lon, d.lat]);
@@ -8417,6 +8457,7 @@ var app = (function () {
     		picked,
     		delaunay,
     		path,
+    		headerMargin,
     		$innerWidth,
     		reference_year,
     		click,

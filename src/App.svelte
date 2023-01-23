@@ -89,7 +89,8 @@
 
 <style>
 	svg {
-		position: absolute;
+		position: relative;
+        z-index: -1;
 	}
 	
 	path {
@@ -121,7 +122,7 @@
 <svelte:window bind:innerWidth={$innerWidth}/>
 {#if $innerWidth}
     <!-- {#if !$mobile} -->
-        <div bind:clientWidth={width} style="height: {height + 150}px; position: relative">
+        <div bind:clientWidth={width}>
             <header >
                 <h1> Change in Amount Donated to the NRA by County from 2020 to 2022</h1>
                 <!-- <h2> For the first time in a decade, the organization failed to out-raise the previous federal election year.</h2> -->
@@ -130,16 +131,6 @@
             {#if $mobile}
                 <div style="clear:both;" />
             {/if}
-            <svg {width} {height}>
-                {#if us}
-                    <g fill="rgb(233,233,233)">
-                        {#each features as feature}
-                            <path d={path(feature)}/>
-                        {/each}
-                    </g>
-                    
-                {/if}
-            </svg>
             <Canvas {width} height = {!$mobile ? height : height + 100} 
                 style= "position: absolute; cursor: pointer"
                 on:mousemove={({ clientX: x, clientY: y }) => {
@@ -166,8 +157,17 @@
                         />
                     {/if}
                 {/each}
-                
             </Canvas>   
+            <svg {width} {height}>
+                {#if us}
+                    <g fill="rgb(233,233,233)">
+                        {#each features as feature}
+                            <path d={path(feature)}/>
+                        {/each}
+                    </g>
+                    
+                {/if}
+            </svg>
         </div>
     <!-- {:else}
         <div {width}>
@@ -175,7 +175,6 @@
         </div>
     {/if} -->
 {/if}
-<p>text is what i do it's how i live it's what i'm all about please don't stop me</p>
 
 <!-- on:click ={() => playing = !playing} -->
 <!-- style = "margin-bottom: {!$mobile ? 0 : 30}px" -->

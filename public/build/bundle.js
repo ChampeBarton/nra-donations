@@ -7583,25 +7583,25 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[22] = list[i].lat;
-    	child_ctx[23] = list[i].lon;
-    	child_ctx[24] = list[i].show;
-    	child_ctx[25] = list[i].amount;
-    	child_ctx[26] = list[i].scaled_amount;
-    	child_ctx[27] = list[i].change;
-    	child_ctx[28] = list[i].id;
-    	child_ctx[29] = list[i].name;
-    	child_ctx[30] = list[i].state;
+    	child_ctx[22] = list[i];
     	return child_ctx;
     }
 
     function get_each_context_1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[33] = list[i];
+    	child_ctx[25] = list[i].lat;
+    	child_ctx[26] = list[i].lon;
+    	child_ctx[27] = list[i].show;
+    	child_ctx[28] = list[i].amount;
+    	child_ctx[29] = list[i].scaled_amount;
+    	child_ctx[30] = list[i].change;
+    	child_ctx[31] = list[i].id;
+    	child_ctx[32] = list[i].name;
+    	child_ctx[33] = list[i].state;
     	return child_ctx;
     }
 
-    // (122:0) {#if $innerWidth}
+    // (123:0) {#if $innerWidth}
     function create_if_block(ctx) {
     	let div;
     	let header;
@@ -7610,9 +7610,9 @@ var app = (function () {
     	let legend;
     	let t2;
     	let t3;
-    	let svg;
-    	let t4;
     	let canvas;
+    	let t4;
+    	let svg;
     	let div_resize_listener;
     	let current;
 
@@ -7626,7 +7626,6 @@ var app = (function () {
     		});
 
     	let if_block0 = /*$mobile*/ ctx[3] && create_if_block_3(ctx);
-    	let if_block1 = /*us*/ ctx[4] && create_if_block_2(ctx);
 
     	canvas = new Canvas({
     			props: {
@@ -7643,6 +7642,7 @@ var app = (function () {
 
     	canvas.$on("mousemove", /*mousemove_handler*/ ctx[16]);
     	canvas.$on("mouseout", /*mouseout_handler*/ ctx[17]);
+    	let if_block1 = /*us*/ ctx[4] && create_if_block_1(ctx);
 
     	const block = {
     		c: function create() {
@@ -7655,21 +7655,19 @@ var app = (function () {
     			t2 = space();
     			if (if_block0) if_block0.c();
     			t3 = space();
+    			create_component(canvas.$$.fragment);
+    			t4 = space();
     			svg = svg_element("svg");
     			if (if_block1) if_block1.c();
-    			t4 = space();
-    			create_component(canvas.$$.fragment);
-    			attr_dev(h1, "class", "svelte-h4j7fl");
-    			add_location(h1, file, 125, 16, 3362);
-    			add_location(header, file, 124, 12, 3336);
+    			attr_dev(h1, "class", "svelte-1whmux6");
+    			add_location(h1, file, 126, 16, 3330);
+    			add_location(header, file, 125, 12, 3304);
     			attr_dev(svg, "width", /*width*/ ctx[0]);
     			attr_dev(svg, "height", /*height*/ ctx[2]);
-    			attr_dev(svg, "class", "svelte-h4j7fl");
-    			add_location(svg, file, 132, 12, 3768);
-    			set_style(div, "height", /*height*/ ctx[2] + 150 + "px");
-    			set_style(div, "position", "relative");
+    			attr_dev(svg, "class", "svelte-1whmux6");
+    			add_location(svg, file, 160, 12, 5054);
     			add_render_callback(() => /*div_elementresize_handler*/ ctx[18].call(div));
-    			add_location(div, file, 123, 8, 3240);
+    			add_location(div, file, 124, 8, 3261);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -7680,10 +7678,10 @@ var app = (function () {
     			append_dev(div, t2);
     			if (if_block0) if_block0.m(div, null);
     			append_dev(div, t3);
+    			mount_component(canvas, div, null);
+    			append_dev(div, t4);
     			append_dev(div, svg);
     			if (if_block1) if_block1.m(svg, null);
-    			append_dev(div, t4);
-    			mount_component(canvas, div, null);
     			div_resize_listener = add_resize_listener(div, /*div_elementresize_handler*/ ctx[18].bind(div));
     			current = true;
     		},
@@ -7704,11 +7702,24 @@ var app = (function () {
     				if_block0 = null;
     			}
 
+    			const canvas_changes = {};
+    			if (dirty[0] & /*width*/ 1) canvas_changes.width = /*width*/ ctx[0];
+
+    			if (dirty[0] & /*$mobile, height*/ 12) canvas_changes.height = !/*$mobile*/ ctx[3]
+    			? /*height*/ ctx[2]
+    			: /*height*/ ctx[2] + 100;
+
+    			if (dirty[0] & /*points, $mobile, picked, height*/ 78 | dirty[1] & /*$$scope*/ 32) {
+    				canvas_changes.$$scope = { dirty, ctx };
+    			}
+
+    			canvas.$set(canvas_changes);
+
     			if (/*us*/ ctx[4]) {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
-    					if_block1 = create_if_block_2(ctx);
+    					if_block1 = create_if_block_1(ctx);
     					if_block1.c();
     					if_block1.m(svg, null);
     				}
@@ -7723,23 +7734,6 @@ var app = (function () {
 
     			if (!current || dirty[0] & /*height*/ 4) {
     				attr_dev(svg, "height", /*height*/ ctx[2]);
-    			}
-
-    			const canvas_changes = {};
-    			if (dirty[0] & /*width*/ 1) canvas_changes.width = /*width*/ ctx[0];
-
-    			if (dirty[0] & /*$mobile, height*/ 12) canvas_changes.height = !/*$mobile*/ ctx[3]
-    			? /*height*/ ctx[2]
-    			: /*height*/ ctx[2] + 100;
-
-    			if (dirty[0] & /*points, $mobile, picked, height*/ 78 | dirty[1] & /*$$scope*/ 32) {
-    				canvas_changes.$$scope = { dirty, ctx };
-    			}
-
-    			canvas.$set(canvas_changes);
-
-    			if (!current || dirty[0] & /*height*/ 4) {
-    				set_style(div, "height", /*height*/ ctx[2] + 150 + "px");
     			}
     		},
     		i: function intro(local) {
@@ -7757,8 +7751,8 @@ var app = (function () {
     			if (detaching) detach_dev(div);
     			destroy_component(legend);
     			if (if_block0) if_block0.d();
-    			if (if_block1) if_block1.d();
     			destroy_component(canvas);
+    			if (if_block1) if_block1.d();
     			div_resize_listener();
     		}
     	};
@@ -7767,14 +7761,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(122:0) {#if $innerWidth}",
+    		source: "(123:0) {#if $innerWidth}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (130:12) {#if $mobile}
+    // (131:12) {#if $mobile}
     function create_if_block_3(ctx) {
     	let div;
 
@@ -7782,7 +7776,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			set_style(div, "clear", "both");
-    			add_location(div, file, 130, 16, 3710);
+    			add_location(div, file, 131, 16, 3678);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -7796,141 +7790,34 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(130:12) {#if $mobile}",
+    		source: "(131:12) {#if $mobile}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (134:16) {#if us}
+    // (145:20) {#if show}
     function create_if_block_2(ctx) {
-    	let g;
-    	let each_value_1 = /*features*/ ctx[5];
-    	validate_each_argument(each_value_1);
-    	let each_blocks = [];
-
-    	for (let i = 0; i < each_value_1.length; i += 1) {
-    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
-    	}
-
-    	const block = {
-    		c: function create() {
-    			g = svg_element("g");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			attr_dev(g, "fill", "rgb(233,233,233)");
-    			add_location(g, file, 134, 20, 3836);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, g, anchor);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(g, null);
-    			}
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*path, features*/ 288) {
-    				each_value_1 = /*features*/ ctx[5];
-    				validate_each_argument(each_value_1);
-    				let i;
-
-    				for (i = 0; i < each_value_1.length; i += 1) {
-    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    					} else {
-    						each_blocks[i] = create_each_block_1(child_ctx);
-    						each_blocks[i].c();
-    						each_blocks[i].m(g, null);
-    					}
-    				}
-
-    				for (; i < each_blocks.length; i += 1) {
-    					each_blocks[i].d(1);
-    				}
-
-    				each_blocks.length = each_value_1.length;
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(g);
-    			destroy_each(each_blocks, detaching);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_2.name,
-    		type: "if",
-    		source: "(134:16) {#if us}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (136:24) {#each features as feature}
-    function create_each_block_1(ctx) {
-    	let path_1;
-    	let path_1_d_value;
-
-    	const block = {
-    		c: function create() {
-    			path_1 = svg_element("path");
-    			attr_dev(path_1, "d", path_1_d_value = /*path*/ ctx[8](/*feature*/ ctx[33]));
-    			attr_dev(path_1, "class", "svelte-h4j7fl");
-    			add_location(path_1, file, 136, 28, 3944);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, path_1, anchor);
-    		},
-    		p: function update(ctx, dirty) {
-    			if (dirty[0] & /*path, features*/ 288 && path_1_d_value !== (path_1_d_value = /*path*/ ctx[8](/*feature*/ ctx[33]))) {
-    				attr_dev(path_1, "d", path_1_d_value);
-    			}
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(path_1);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block_1.name,
-    		type: "each",
-    		source: "(136:24) {#each features as feature}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (154:20) {#if show}
-    function create_if_block_1(ctx) {
     	let point;
     	let current;
 
     	point = new Point({
     			props: {
-    				x: /*lat*/ ctx[22],
-    				y: /*lon*/ ctx[23],
+    				x: /*lat*/ ctx[25],
+    				y: /*lon*/ ctx[26],
     				r: !/*$mobile*/ ctx[3]
-    				? /*picked*/ ctx[6] && /*id*/ ctx[28] === /*points*/ ctx[1].at(-1).id && !/*click*/ ctx[11]
-    					? /*scaled_amount*/ ctx[26] + 2
-    					: /*scaled_amount*/ ctx[26]
-    				: /*scaled_amount*/ ctx[26],
+    				? /*picked*/ ctx[6] && /*id*/ ctx[31] === /*points*/ ctx[1].at(-1).id && !/*click*/ ctx[11]
+    					? /*scaled_amount*/ ctx[29] + 2
+    					: /*scaled_amount*/ ctx[29]
+    				: /*scaled_amount*/ ctx[29],
     				stroke: !/*$mobile*/ ctx[3]
-    				? /*picked*/ ctx[6] && /*id*/ ctx[28] === /*points*/ ctx[1].at(-1).id && '#000'
+    				? /*picked*/ ctx[6] && /*id*/ ctx[31] === /*points*/ ctx[1].at(-1).id && '#000'
     				: null,
-    				change: /*change*/ ctx[27],
-    				name: /*name*/ ctx[29],
-    				state: /*state*/ ctx[30],
-    				amount: /*amount*/ ctx[25],
+    				change: /*change*/ ctx[30],
+    				name: /*name*/ ctx[32],
+    				state: /*state*/ ctx[33],
+    				amount: /*amount*/ ctx[28],
     				reference_year: /*reference_year*/ ctx[10],
     				height: /*height*/ ctx[2]
     			},
@@ -7947,23 +7834,23 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const point_changes = {};
-    			if (dirty[0] & /*points*/ 2) point_changes.x = /*lat*/ ctx[22];
-    			if (dirty[0] & /*points*/ 2) point_changes.y = /*lon*/ ctx[23];
+    			if (dirty[0] & /*points*/ 2) point_changes.x = /*lat*/ ctx[25];
+    			if (dirty[0] & /*points*/ 2) point_changes.y = /*lon*/ ctx[26];
 
     			if (dirty[0] & /*$mobile, picked, points*/ 74) point_changes.r = !/*$mobile*/ ctx[3]
-    			? /*picked*/ ctx[6] && /*id*/ ctx[28] === /*points*/ ctx[1].at(-1).id && !/*click*/ ctx[11]
-    				? /*scaled_amount*/ ctx[26] + 2
-    				: /*scaled_amount*/ ctx[26]
-    			: /*scaled_amount*/ ctx[26];
+    			? /*picked*/ ctx[6] && /*id*/ ctx[31] === /*points*/ ctx[1].at(-1).id && !/*click*/ ctx[11]
+    				? /*scaled_amount*/ ctx[29] + 2
+    				: /*scaled_amount*/ ctx[29]
+    			: /*scaled_amount*/ ctx[29];
 
     			if (dirty[0] & /*$mobile, picked, points*/ 74) point_changes.stroke = !/*$mobile*/ ctx[3]
-    			? /*picked*/ ctx[6] && /*id*/ ctx[28] === /*points*/ ctx[1].at(-1).id && '#000'
+    			? /*picked*/ ctx[6] && /*id*/ ctx[31] === /*points*/ ctx[1].at(-1).id && '#000'
     			: null;
 
-    			if (dirty[0] & /*points*/ 2) point_changes.change = /*change*/ ctx[27];
-    			if (dirty[0] & /*points*/ 2) point_changes.name = /*name*/ ctx[29];
-    			if (dirty[0] & /*points*/ 2) point_changes.state = /*state*/ ctx[30];
-    			if (dirty[0] & /*points*/ 2) point_changes.amount = /*amount*/ ctx[25];
+    			if (dirty[0] & /*points*/ 2) point_changes.change = /*change*/ ctx[30];
+    			if (dirty[0] & /*points*/ 2) point_changes.name = /*name*/ ctx[32];
+    			if (dirty[0] & /*points*/ 2) point_changes.state = /*state*/ ctx[33];
+    			if (dirty[0] & /*points*/ 2) point_changes.amount = /*amount*/ ctx[28];
     			if (dirty[0] & /*height*/ 4) point_changes.height = /*height*/ ctx[2];
     			point.$set(point_changes);
     		},
@@ -7983,21 +7870,21 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1.name,
+    		id: create_if_block_2.name,
     		type: "if",
-    		source: "(154:20) {#if show}",
+    		source: "(145:20) {#if show}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (153:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}
-    function create_each_block(key_1, ctx) {
+    // (144:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}
+    function create_each_block_1(key_1, ctx) {
     	let first;
     	let if_block_anchor;
     	let current;
-    	let if_block = /*show*/ ctx[24] && create_if_block_1(ctx);
+    	let if_block = /*show*/ ctx[27] && create_if_block_2(ctx);
 
     	const block = {
     		key: key_1,
@@ -8017,7 +7904,7 @@ var app = (function () {
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
 
-    			if (/*show*/ ctx[24]) {
+    			if (/*show*/ ctx[27]) {
     				if (if_block) {
     					if_block.p(ctx, dirty);
 
@@ -8025,7 +7912,7 @@ var app = (function () {
     						transition_in(if_block, 1);
     					}
     				} else {
-    					if_block = create_if_block_1(ctx);
+    					if_block = create_if_block_2(ctx);
     					if_block.c();
     					transition_in(if_block, 1);
     					if_block.m(if_block_anchor.parentNode, if_block_anchor);
@@ -8058,30 +7945,30 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block.name,
+    		id: create_each_block_1.name,
     		type: "each",
-    		source: "(153:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}",
+    		source: "(144:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (143:12) <Canvas {width} height = {!$mobile ? height : height + 100}                  style= "position: absolute; cursor: pointer"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >
+    // (134:12) <Canvas {width} height = {!$mobile ? height : height + 100}                  style= "position: absolute; cursor: pointer"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >
     function create_default_slot(ctx) {
     	let each_blocks = [];
     	let each_1_lookup = new Map();
     	let each_1_anchor;
     	let current;
-    	let each_value = /*points*/ ctx[1];
-    	validate_each_argument(each_value);
-    	const get_key = ctx => /*id*/ ctx[28];
-    	validate_each_keys(ctx, each_value, get_each_context, get_key);
+    	let each_value_1 = /*points*/ ctx[1];
+    	validate_each_argument(each_value_1);
+    	const get_key = ctx => /*id*/ ctx[31];
+    	validate_each_keys(ctx, each_value_1, get_each_context_1, get_key);
 
-    	for (let i = 0; i < each_value.length; i += 1) {
-    		let child_ctx = get_each_context(ctx, each_value, i);
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		let child_ctx = get_each_context_1(ctx, each_value_1, i);
     		let key = get_key(child_ctx);
-    		each_1_lookup.set(key, each_blocks[i] = create_each_block(key, child_ctx));
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_1(key, child_ctx));
     	}
 
     	const block = {
@@ -8102,18 +7989,18 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			if (dirty[0] & /*points, $mobile, picked, click, reference_year, height*/ 3150) {
-    				each_value = /*points*/ ctx[1];
-    				validate_each_argument(each_value);
+    				each_value_1 = /*points*/ ctx[1];
+    				validate_each_argument(each_value_1);
     				group_outros();
-    				validate_each_keys(ctx, each_value, get_each_context, get_key);
-    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, each_1_anchor.parentNode, outro_and_destroy_block, create_each_block, each_1_anchor, get_each_context);
+    				validate_each_keys(ctx, each_value_1, get_each_context_1, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_1, each_1_lookup, each_1_anchor.parentNode, outro_and_destroy_block, create_each_block_1, each_1_anchor, get_each_context_1);
     				check_outros();
     			}
     		},
     		i: function intro(local) {
     			if (current) return;
 
-    			for (let i = 0; i < each_value.length; i += 1) {
+    			for (let i = 0; i < each_value_1.length; i += 1) {
     				transition_in(each_blocks[i]);
     			}
 
@@ -8139,7 +8026,114 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(143:12) <Canvas {width} height = {!$mobile ? height : height + 100}                  style= \\\"position: absolute; cursor: pointer\\\"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >",
+    		source: "(134:12) <Canvas {width} height = {!$mobile ? height : height + 100}                  style= \\\"position: absolute; cursor: pointer\\\"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (162:16) {#if us}
+    function create_if_block_1(ctx) {
+    	let g;
+    	let each_value = /*features*/ ctx[5];
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			g = svg_element("g");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			attr_dev(g, "fill", "rgb(233,233,233)");
+    			add_location(g, file, 162, 20, 5122);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, g, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(g, null);
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*path, features*/ 288) {
+    				each_value = /*features*/ ctx[5];
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(g, null);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value.length;
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(g);
+    			destroy_each(each_blocks, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1.name,
+    		type: "if",
+    		source: "(162:16) {#if us}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (164:24) {#each features as feature}
+    function create_each_block(ctx) {
+    	let path_1;
+    	let path_1_d_value;
+
+    	const block = {
+    		c: function create() {
+    			path_1 = svg_element("path");
+    			attr_dev(path_1, "d", path_1_d_value = /*path*/ ctx[8](/*feature*/ ctx[22]));
+    			attr_dev(path_1, "class", "svelte-1whmux6");
+    			add_location(path_1, file, 164, 28, 5230);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, path_1, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*path, features*/ 288 && path_1_d_value !== (path_1_d_value = /*path*/ ctx[8](/*feature*/ ctx[22]))) {
+    				attr_dev(path_1, "d", path_1_d_value);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(path_1);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block.name,
+    		type: "each",
+    		source: "(164:24) {#each features as feature}",
     		ctx
     	});
 
@@ -8147,8 +8141,7 @@ var app = (function () {
     }
 
     function create_fragment(ctx) {
-    	let t0;
-    	let p;
+    	let if_block_anchor;
     	let current;
     	let mounted;
     	let dispose;
@@ -8158,18 +8151,14 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			if (if_block) if_block.c();
-    			t0 = space();
-    			p = element("p");
-    			p.textContent = "text is what i do it's how i live it's what i'm all about please don't stop me";
-    			add_location(p, file, 177, 0, 5741);
+    			if_block_anchor = empty();
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
     			if (if_block) if_block.m(target, anchor);
-    			insert_dev(target, t0, anchor);
-    			insert_dev(target, p, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
     			current = true;
 
     			if (!mounted) {
@@ -8189,7 +8178,7 @@ var app = (function () {
     					if_block = create_if_block(ctx);
     					if_block.c();
     					transition_in(if_block, 1);
-    					if_block.m(t0.parentNode, t0);
+    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
     				}
     			} else if (if_block) {
     				group_outros();
@@ -8212,8 +8201,7 @@ var app = (function () {
     		},
     		d: function destroy(detaching) {
     			if (if_block) if_block.d(detaching);
-    			if (detaching) detach_dev(t0);
-    			if (detaching) detach_dev(p);
+    			if (detaching) detach_dev(if_block_anchor);
     			mounted = false;
     			dispose();
     		}
@@ -8457,8 +8445,8 @@ var app = (function () {
     }
 
     const app = new App({
-      // target: document.querySelector('#nradonations')
-      target: document.body
+      target: document.querySelector('#nradonations')
+      // target: document.body
     });
 
     return app;

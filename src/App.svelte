@@ -1,5 +1,5 @@
 <script>
-    import { mobile, innerWidth } from './store.js'
+    import { mobile, innerWidth, scrollY} from './store.js'
 	import { onMount } from 'svelte'
 	import { Canvas } from 'svelte-canvas'
 	import { feature } from "topojson-client"
@@ -120,7 +120,7 @@
 
 </style>
 
-<svelte:window bind:innerWidth={$innerWidth}/>
+<svelte:window bind:innerWidth={$innerWidth} bind:scrollY={$scrollY}/>
 {#if $innerWidth}
     <!-- {#if !$mobile} -->
         <div bind:clientWidth={width}>
@@ -136,7 +136,7 @@
                 style= "position: absolute; cursor: pointer; z-index: 6"
                 on:mousemove={({ clientX: x, clientY: y }) => {
                     if (!$mobile) {
-                        if (picked = delaunay.find(x - 410, y - 120))
+                        if (picked = delaunay.find(x - headerMargin - 10, y + $scrollY - 120))
                         points = [...points.filter((_, i) => i !== picked), points[picked]]
                     }}
                 }
@@ -176,6 +176,7 @@
         </div>
     {/if} -->
 {/if}
+<svg {width} {height}></svg>
 
 <!-- on:click ={() => playing = !playing} -->
 <!-- style = "margin-bottom: {!$mobile ? 0 : 30}px" -->

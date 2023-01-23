@@ -4,4 +4,6 @@ export const innerWidth = writable(0)
 
 export const outerWidth = writable(960)
 
+export const scrollY = writable(0)
+
 export const mobile = derived(innerWidth, $innerWidth => $innerWidth < 480)

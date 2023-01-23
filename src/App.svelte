@@ -115,12 +115,13 @@
         margin-bottom: 10px ;
 	} */
 
+
 </style>
 
 <svelte:window bind:innerWidth={$innerWidth}/>
 {#if $innerWidth}
     <!-- {#if !$mobile} -->
-        <div bind:clientWidth={width}>
+        <div bind:clientWidth={width} style="margin-bottom: {height + 20}px">
             <header >
                 <h1> Change in Amount Donated to the NRA by County from 2020 to 2022</h1>
                 <!-- <h2> For the first time in a decade, the organization failed to out-raise the previous federal election year.</h2> -->
@@ -174,6 +175,8 @@
         </div>
     {/if} -->
 {/if}
+<p> TEXT</p>
+
 
 <!-- on:click ={() => playing = !playing} -->
 <!-- style = "margin-bottom: {!$mobile ? 0 : 30}px" -->

@@ -7601,7 +7601,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (121:0) {#if $innerWidth}
+    // (122:0) {#if $innerWidth}
     function create_if_block(ctx) {
     	let div;
     	let header;
@@ -7659,15 +7659,16 @@ var app = (function () {
     			if (if_block1) if_block1.c();
     			t4 = space();
     			create_component(canvas.$$.fragment);
-    			attr_dev(h1, "class", "svelte-10qegp1");
-    			add_location(h1, file, 124, 16, 3308);
-    			add_location(header, file, 123, 12, 3282);
+    			attr_dev(h1, "class", "svelte-h4j7fl");
+    			add_location(h1, file, 125, 16, 3348);
+    			add_location(header, file, 124, 12, 3322);
     			attr_dev(svg, "width", /*width*/ ctx[0]);
     			attr_dev(svg, "height", /*height*/ ctx[2]);
-    			attr_dev(svg, "class", "svelte-10qegp1");
-    			add_location(svg, file, 131, 12, 3714);
+    			attr_dev(svg, "class", "svelte-h4j7fl");
+    			add_location(svg, file, 132, 12, 3754);
+    			set_style(div, "margin-bottom", /*height*/ ctx[2] + 20 + "px");
     			add_render_callback(() => /*div_elementresize_handler*/ ctx[18].call(div));
-    			add_location(div, file, 122, 8, 3239);
+    			add_location(div, file, 123, 8, 3240);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -7735,6 +7736,10 @@ var app = (function () {
     			}
 
     			canvas.$set(canvas_changes);
+
+    			if (!current || dirty[0] & /*height*/ 4) {
+    				set_style(div, "margin-bottom", /*height*/ ctx[2] + 20 + "px");
+    			}
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -7761,14 +7766,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(121:0) {#if $innerWidth}",
+    		source: "(122:0) {#if $innerWidth}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (129:12) {#if $mobile}
+    // (130:12) {#if $mobile}
     function create_if_block_3(ctx) {
     	let div;
 
@@ -7776,7 +7781,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			set_style(div, "clear", "both");
-    			add_location(div, file, 129, 16, 3656);
+    			add_location(div, file, 130, 16, 3696);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -7790,14 +7795,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(129:12) {#if $mobile}",
+    		source: "(130:12) {#if $mobile}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (133:16) {#if us}
+    // (134:16) {#if us}
     function create_if_block_2(ctx) {
     	let g;
     	let each_value_1 = /*features*/ ctx[5];
@@ -7817,7 +7822,7 @@ var app = (function () {
     			}
 
     			attr_dev(g, "fill", "rgb(233,233,233)");
-    			add_location(g, file, 133, 20, 3782);
+    			add_location(g, file, 134, 20, 3822);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, g, anchor);
@@ -7861,14 +7866,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(133:16) {#if us}",
+    		source: "(134:16) {#if us}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (135:24) {#each features as feature}
+    // (136:24) {#each features as feature}
     function create_each_block_1(ctx) {
     	let path_1;
     	let path_1_d_value;
@@ -7877,8 +7882,8 @@ var app = (function () {
     		c: function create() {
     			path_1 = svg_element("path");
     			attr_dev(path_1, "d", path_1_d_value = /*path*/ ctx[8](/*feature*/ ctx[33]));
-    			attr_dev(path_1, "class", "svelte-10qegp1");
-    			add_location(path_1, file, 135, 28, 3890);
+    			attr_dev(path_1, "class", "svelte-h4j7fl");
+    			add_location(path_1, file, 136, 28, 3930);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, path_1, anchor);
@@ -7897,14 +7902,14 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(135:24) {#each features as feature}",
+    		source: "(136:24) {#each features as feature}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (153:20) {#if show}
+    // (154:20) {#if show}
     function create_if_block_1(ctx) {
     	let point;
     	let current;
@@ -7979,14 +7984,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(153:20) {#if show}",
+    		source: "(154:20) {#if show}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (152:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}
+    // (153:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}
     function create_each_block(key_1, ctx) {
     	let first;
     	let if_block_anchor;
@@ -8054,14 +8059,14 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(152:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}",
+    		source: "(153:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (142:12) <Canvas {width} height = {!$mobile ? height : height + 100}                  style= "position: absolute; cursor: pointer"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >
+    // (143:12) <Canvas {width} height = {!$mobile ? height : height + 100}                  style= "position: absolute; cursor: pointer"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >
     function create_default_slot(ctx) {
     	let each_blocks = [];
     	let each_1_lookup = new Map();
@@ -8133,7 +8138,7 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(142:12) <Canvas {width} height = {!$mobile ? height : height + 100}                  style= \\\"position: absolute; cursor: pointer\\\"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >",
+    		source: "(143:12) <Canvas {width} height = {!$mobile ? height : height + 100}                  style= \\\"position: absolute; cursor: pointer\\\"                 on:mousemove={({ clientX: x, clientY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x - 10, y - 120))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >",
     		ctx
     	});
 
@@ -8141,7 +8146,8 @@ var app = (function () {
     }
 
     function create_fragment(ctx) {
-    	let if_block_anchor;
+    	let t0;
+    	let p;
     	let current;
     	let mounted;
     	let dispose;
@@ -8151,14 +8157,18 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			if (if_block) if_block.c();
-    			if_block_anchor = empty();
+    			t0 = space();
+    			p = element("p");
+    			p.textContent = "TEXT";
+    			add_location(p, file, 177, 0, 5727);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
     			if (if_block) if_block.m(target, anchor);
-    			insert_dev(target, if_block_anchor, anchor);
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, p, anchor);
     			current = true;
 
     			if (!mounted) {
@@ -8178,7 +8188,7 @@ var app = (function () {
     					if_block = create_if_block(ctx);
     					if_block.c();
     					transition_in(if_block, 1);
-    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    					if_block.m(t0.parentNode, t0);
     				}
     			} else if (if_block) {
     				group_outros();
@@ -8201,7 +8211,8 @@ var app = (function () {
     		},
     		d: function destroy(detaching) {
     			if (if_block) if_block.d(detaching);
-    			if (detaching) detach_dev(if_block_anchor);
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(p);
     			mounted = false;
     			dispose();
     		}
@@ -8445,7 +8456,8 @@ var app = (function () {
     }
 
     const app = new App({
-      target: document.body
+      target: document.querySelector('#nradonations')
+      // target: document.body
     });
 
     return app;

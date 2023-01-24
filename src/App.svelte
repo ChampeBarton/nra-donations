@@ -140,7 +140,7 @@
             <header style="width: {width}px; position: relative;">
                 <h1>Explore How Much the NRA's PAC Raised by County in 2022</h1>
                 {#if $mobile}
-                    <h2 style="margin-bottom: 25px ">The Political Victory Fund saw a decline in total donations for the first time in at least five federal election years — barely half of 2020's total.</h2>
+                    <h2 style="margin-bottom: 25px ">The Political Victory Fund saw a decline in total donations for the first time in at least five federal election years, raising barely half of 2020's total.</h2>
                 {:else}
                     <h2 style="margin-bottom: 15px ">The Political Victory Fund saw a decline in total donations for the first time in at least five federal election years. The drop from 2020 came in some of the organization's fundraising strongholds.</h2>
                 {/if}

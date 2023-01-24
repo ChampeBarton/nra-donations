@@ -143,7 +143,7 @@
                 style= "position: absolute; cursor: pointer; z-index: 6"
                 on:mousemove={({ clientX: x, clientY: y }) => {
                     if (!$mobile) {
-                        if (picked = delaunay.find(x - offset.left, y - offset.top - 300))
+                        if (picked = delaunay.find(x - offset.left, y - offset.top - 320))
                         points = [...points.filter((_, i) => i !== picked), points[picked]]
                     }}
                 }

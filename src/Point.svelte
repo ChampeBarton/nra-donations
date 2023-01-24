@@ -159,7 +159,7 @@
                         var screen_adjust_y = y + box_height + 100 > edge_y ? y - box_height : y
 
                         console.log("x: " + x + ", box_height: " + box_width)
-                        console.log("x + box_height + 100: " + (y + box_width + 100))
+                        console.log("x + box_height + offset: " + (x + box_width + offset.left))
                         console.log("edge_x: " + edge_x)
 
                         context.strokeStyle = stroke;

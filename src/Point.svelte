@@ -144,11 +144,6 @@
                         var edge_x = document.querySelector("Canvas").getBoundingClientRect().right - 10
                         var edge_y = document.querySelector("Canvas").getBoundingClientRect().bottom - 115
 
-                        console.log("edge_x: " + edge_x)
-                        console.log("edge_y: " + edge_y)
-                        console.log("x: " + x)
-                        console.log("y: " + y)
-
                         var box_width = header_text_width >= change_text_width + compared_text_width
                         ? header_text_width + 30
                         : change_text_width + compared_text_width + 30
@@ -161,6 +156,8 @@
 
                         var screen_adjust_x = x + offset.left + 15 + box_width > edge_x ? x - 15 - box_width : x + 15
                         var screen_adjust_y = y + box_height + 100 > edge_y ? y - box_height : y
+
+                        console.log("y: " + y + ", box_height: " + box_height + "y + box_height: " + (y + box_height) + "| edge_y: " + edge_y)
 
                         context.strokeStyle = stroke;
                         context.lineWidth = 2;

@@ -49,7 +49,7 @@
 
         data = await csv("https://raw.githubusercontent.com/ChampeBarton/nra-donations/main/election_ready.csv")
 
-        offset = {left: document.querySelector('.donationContainer').offsetLeft, top: document.querySelector('.donationContainer').offsetTop}
+        offset = {left: document.querySelector('#nradonations').offsetLeft, top: document.querySelector('.donationContainer').offsetTop}
 	})
 
     $: if(data !== undefined) {
@@ -143,7 +143,7 @@
                 style= "position: absolute; cursor: pointer; z-index: 6"
                 on:mousemove={({ clientX: x, clientY: y }) => {
                     if (!$mobile) {
-                        if (picked = delaunay.find(x, y - offset.top - 100))
+                        if (picked = delaunay.find(x - offset.left, y - offset.top - 100))
                         points = [...points.filter((_, i) => i !== picked), points[picked]]
                     }}
                 }

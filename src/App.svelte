@@ -90,7 +90,7 @@
         d => d.lon
     );
 
-    $: console.log(offset)
+    // $: console.log(offset)
 					
 </script>
 
@@ -141,9 +141,9 @@
             {/if}
             <Canvas {width} height = {!$mobile ? height : height + 100} 
                 style= "position: absolute; cursor: pointer; z-index: 6"
-                on:mousemove={({ clientX: x, clientY: y }) => {
+                on:mousemove={({ offsetX: x, offsetY: y }) => {
                     if (!$mobile) {
-                        if (picked = delaunay.find(x - offset.left, y - offset.top - 320))
+                        if (picked = delaunay.find(x, y))
                         points = [...points.filter((_, i) => i !== picked), points[picked]]
                     }}
                 }

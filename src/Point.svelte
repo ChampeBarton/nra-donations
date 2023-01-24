@@ -98,7 +98,7 @@
                         //         context.fillText(header_text, x, height + 25); 
                         // }
 
-                        if (brown) {
+                        if (newcastle) {
                                 context.beginPath();
                                 context.moveTo(x, y);
                                 context.quadraticCurveTo(x + 30, height - 50, x + 5, height + 20 );

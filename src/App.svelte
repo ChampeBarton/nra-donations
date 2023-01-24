@@ -37,7 +37,7 @@
 
     // let amount_scale = !$mobile ? scaleLinear().domain([0, 30000]).range([1, 50]) : scaleLinear().domain([0, 30000]).range([1, 30])
     let amount_scale = scaleLinear().domain([0, 30000]).range([1, 50])
-    let mobile_amount_scale = scaleLinear().domain([0, 30000]).range([1, 30])
+    let mobile_amount_scale = scaleLinear().domain([0, 30000]).range([1, 25])
 
     let display = 2022;
 
@@ -121,7 +121,7 @@
         font-weight: 200;
         text-align: left;
         margin-top: 0;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
 	}
 
     p {

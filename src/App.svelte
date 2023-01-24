@@ -126,7 +126,7 @@
 
     p {
         color: #888;
-        font-size: .5rem;
+        font-size: .6rem;
         font-family: "SpeziaMonoWeb-Medium";
         text-align: left
     }

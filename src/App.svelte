@@ -124,6 +124,13 @@
         margin-bottom: 10px ;
 	} */
 
+    p {
+        color: #888;
+        font-size: .3rem;
+        font-family: "SpeziaMonoWeb-Medium";
+        text-align: right
+    }
+
 
 </style>
 
@@ -178,6 +185,7 @@
                     
                 {/if}
             </svg>
+            <p>Source: Federal Election Commission </p>
         </div>
     <!-- {:else}
         <div {width}>

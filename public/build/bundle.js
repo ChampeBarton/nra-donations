@@ -1626,7 +1626,7 @@ var app = (function () {
     var cos = Math.cos;
     var sin = Math.sin;
     var sign = Math.sign || function(x) { return x > 0 ? 1 : x < 0 ? -1 : 0; };
-    var sqrt = Math.sqrt;
+    var sqrt$1 = Math.sqrt;
 
     function acos(x) {
       return x > 1 ? 0 : x < -1 ? pi : Math.acos(x);
@@ -1736,7 +1736,7 @@ var app = (function () {
 
     // TODO return d
     function cartesianNormalizeInPlace(d) {
-      var l = sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
+      var l = sqrt$1(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
       d[0] /= l, d[1] /= l, d[2] /= l;
     }
 
@@ -2377,7 +2377,7 @@ var app = (function () {
 
         if (t2 < 0) return;
 
-        var t = sqrt(t2),
+        var t = sqrt$1(t2),
             q = cartesianScale(u, (-w - t) / uu);
         cartesianAddInPlace(q, A);
         q = spherical(q);
@@ -2782,7 +2782,7 @@ var app = (function () {
     }
 
     function centroidPointLine(x, y) {
-      var dx = x - x0$1, dy = y - y0$1, z = sqrt(dx * dx + dy * dy);
+      var dx = x - x0$1, dy = y - y0$1, z = sqrt$1(dx * dx + dy * dy);
       X1 += z * (x0$1 + x) / 2;
       Y1 += z * (y0$1 + y) / 2;
       Z1 += z;
@@ -2809,7 +2809,7 @@ var app = (function () {
     function centroidPointRing(x, y) {
       var dx = x - x0$1,
           dy = y - y0$1,
-          z = sqrt(dx * dx + dy * dy);
+          z = sqrt$1(dx * dx + dy * dy);
 
       X1 += z * (x0$1 + x) / 2;
       Y1 += z * (y0$1 + y) / 2;
@@ -2903,7 +2903,7 @@ var app = (function () {
 
     function lengthPoint(x, y) {
       x0 -= x, y0 -= y;
-      lengthSum.add(sqrt(x0 * x0 + y0 * y0));
+      lengthSum.add(sqrt$1(x0 * x0 + y0 * y0));
       x0 = x, y0 = y;
     }
 
@@ -3114,7 +3114,7 @@ var app = (function () {
           var a = a0 + a1,
               b = b0 + b1,
               c = c0 + c1,
-              m = sqrt(a * a + b * b + c * c),
+              m = sqrt$1(a * a + b * b + c * c),
               phi2 = asin(c /= m),
               lambda2 = abs(abs(c) - 1) < epsilon$2 || abs(lambda0 - lambda1) < epsilon$2 ? (lambda0 + lambda1) / 2 : atan2(b, a),
               p = project(lambda2, phi2),
@@ -3309,7 +3309,7 @@ var app = (function () {
       };
 
       projection.precision = function(_) {
-        return arguments.length ? (projectResample = resample(projectTransform, delta2 = _ * _), reset()) : sqrt(delta2);
+        return arguments.length ? (projectResample = resample(projectTransform, delta2 = _ * _), reset()) : sqrt$1(delta2);
       };
 
       projection.fitExtent = function(extent, object) {
@@ -3383,10 +3383,10 @@ var app = (function () {
       // Are the parallels symmetrical around the Equator?
       if (abs(n) < epsilon$2) return cylindricalEqualAreaRaw(y0);
 
-      var c = 1 + sy0 * (2 * n - sy0), r0 = sqrt(c) / n;
+      var c = 1 + sy0 * (2 * n - sy0), r0 = sqrt$1(c) / n;
 
       function project(x, y) {
-        var r = sqrt(c - 2 * n * sin(y)) / n;
+        var r = sqrt$1(c - 2 * n * sin(y)) / n;
         return [r * sin(x *= n), r0 - r * cos(x)];
       }
 
@@ -4013,7 +4013,7 @@ var app = (function () {
 
     var constant = x => () => x;
 
-    function linear$1(a, d) {
+    function linear(a, d) {
       return function(t) {
         return a + t * d;
       };
@@ -4033,7 +4033,7 @@ var app = (function () {
 
     function nogamma(a, b) {
       var d = b - a;
-      return d ? linear$1(a, d) : constant(isNaN(a) ? b : a);
+      return d ? linear(a, d) : constant(isNaN(a) ? b : a);
     }
 
     var rgb = (function rgbGamma(y) {
@@ -4341,10 +4341,6 @@ var app = (function () {
         transform = t, untransform = u;
         return rescale();
       };
-    }
-
-    function continuous() {
-      return transformer$1()(identity$1, identity$1);
     }
 
     function formatDecimal(x) {
@@ -4755,16 +4751,51 @@ var app = (function () {
       return scale;
     }
 
-    function linear() {
-      var scale = continuous();
+    function transformPow(exponent) {
+      return function(x) {
+        return x < 0 ? -Math.pow(-x, exponent) : Math.pow(x, exponent);
+      };
+    }
+
+    function transformSqrt(x) {
+      return x < 0 ? -Math.sqrt(-x) : Math.sqrt(x);
+    }
+
+    function transformSquare(x) {
+      return x < 0 ? -x * x : x * x;
+    }
+
+    function powish(transform) {
+      var scale = transform(identity$1, identity$1),
+          exponent = 1;
+
+      function rescale() {
+        return exponent === 1 ? transform(identity$1, identity$1)
+            : exponent === 0.5 ? transform(transformSqrt, transformSquare)
+            : transform(transformPow(exponent), transformPow(1 / exponent));
+      }
+
+      scale.exponent = function(_) {
+        return arguments.length ? (exponent = +_, rescale()) : exponent;
+      };
+
+      return linearish(scale);
+    }
+
+    function pow$1() {
+      var scale = powish(transformer$1());
 
       scale.copy = function() {
-        return copy$1(scale, linear());
+        return copy$1(scale, pow$1()).exponent(scale.exponent());
       };
 
       initRange.apply(scale, arguments);
 
-      return linearish(scale);
+      return scale;
+    }
+
+    function sqrt() {
+      return pow$1.apply(null, arguments).exponent(0.5);
     }
 
     function transformer() {
@@ -5232,13 +5263,13 @@ var app = (function () {
     						context.quadraticCurveTo(x - 30, height - 20, x - 5, height + 40);
     						context.strokeStyle = color;
     						context.stroke();
-    						context.font = ".6rem Aktiv Grotesk";
+    						context.font = ".6rem aktiv grotesk";
     						context.fillStyle = "#000";
     						context.fillText(amount_text_middle, x, height + 60);
-    						context.font = ".6rem Aktiv Grotesk";
+    						context.font = ".6rem aktiv grotesk";
     						context.fillStyle = color;
     						context.fillText(" (" + change_text + ")", x + context.measureText(amount_text_middle).width, height + 60);
-    						context.font = ".7rem Aktiv Grotesk XBold";
+    						context.font = "800 .7rem aktiv grotesk";
     						context.fillStyle = "#000";
     						context.fillText(header_text, x, height + 45);
     					}
@@ -5265,35 +5296,35 @@ var app = (function () {
     						context.quadraticCurveTo(x + 30, height - 50, x + 5, height + 20);
     						context.strokeStyle = color;
     						context.stroke();
-    						context.font = ".6rem Aktiv Grotesk";
+    						context.font = ".6rem aktiv grotesk";
     						context.fillStyle = "#000";
     						context.fillText(amount_text_middle, x - context.measureText(header_text).width, height + 40);
-    						context.font = ".6rem Aktiv Grotesk";
+    						context.font = ".6rem aktiv grotesk";
     						context.fillStyle = color;
     						context.fillText(" (" + change_text + ")", x - context.measureText(header_text).width + context.measureText(amount_text_middle).width, height + 40);
-    						context.font = ".7rem Aktiv Grotesk XBold";
+    						context.font = "800 .7rem aktiv grotesk";
     						context.fillStyle = "#000";
     						context.fillText(header_text, x - context.measureText(header_text).width, height + 25);
     					}
     				}
 
     				if (stroke) {
-    					context.font = "15px Aktiv Grotesk";
+    					context.font = "15px aktiv grotesk";
     					context.fillStyle = "rgba(1, 1, 1, 0)";
     					context.fillText(amount_text_beginning + amount_text_end, x + 30, y + 70);
-    					context.font = "15px Aktiv Grotesk XBold";
+    					context.font = "800 15px aktiv grotesk";
     					context.fillStyle = "rgba(1, 1, 1, 0)";
     					context.fillText(amount_text_middle, x + 30, y + 70);
     					var amount_text_width = context.measureText(amount_text_beginning + amount_text_middle + amount_text_end).width;
-    					context.font = "15px Aktiv Grotesk";
+    					context.font = "15px aktiv grotesk";
     					context.fillStyle = "rgba(1, 1, 1, 0)";
     					context.fillText(change_text, x + 30, y + 100);
     					var change_text_width = context.measureText(change_text).width;
-    					context.font = "15px Aktiv Grotesk";
+    					context.font = "15px aktiv grotesk";
     					context.fillStyle = "rgba(1, 1, 1, 0)";
     					context.fillText(" compared to 2020", x + 30 + context.measureText(change_text).width, y + 100);
     					var compared_text_width = context.measureText(" compared to " + reference_year).width;
-    					context.font = "20px Aktiv Grotesk XBold";
+    					context.font = "800 20px aktiv grotesk";
     					context.fillStyle = "rgba(1, 1, 1, 0)";
     					context.fillText(header_text, x + 30, y + 30);
     					var header_text_width = context.measureText(header_text).width;
@@ -5354,22 +5385,22 @@ var app = (function () {
 
     					context.stroke();
     					context.fill();
-    					context.font = "15px Aktiv Grotesk";
+    					context.font = "15px aktiv grotesk";
     					context.fillStyle = "#FFFFFF";
     					context.fillText(amount_text_beginning, screen_adjust_x + 15, screen_adjust_y + 70);
-    					context.font = "15px Aktiv Grotesk XBold";
+    					context.font = "800 15px aktiv grotesk";
     					context.fillStyle = "#FFFFFF";
     					context.fillText(amount_text_middle, screen_adjust_x + 15 + context.measureText(amount_text_beginning).width, screen_adjust_y + 70);
-    					context.font = "15px Aktiv Grotesk";
+    					context.font = "15px aktiv grotesk";
     					context.fillStyle = "#FFFFFF";
     					context.fillText(amount_text_end, screen_adjust_x + 15 + context.measureText(amount_text_beginning).width + context.measureText(amount_text_middle).width, screen_adjust_y + 70);
-    					context.font = "15px Aktiv Grotesk XBold";
+    					context.font = "800 15px aktiv grotesk";
     					context.fillStyle = color;
     					context.fillText(change_text, screen_adjust_x + 15, screen_adjust_y + 100);
-    					context.font = "15px Aktiv Grotesk";
+    					context.font = "15px aktiv grotesk";
     					context.fillStyle = "#FFFFFF";
     					context.fillText(" compared to " + reference_year, screen_adjust_x + 15 + context.measureText(change_text).width, screen_adjust_y + 100);
-    					context.font = "20px Aktiv Grotesk XBold";
+    					context.font = "800 20px aktiv grotesk";
     					context.fillStyle = "#FFFFFF";
     					context.fillText(header_text, screen_adjust_x + 15, screen_adjust_y + 30);
     				}
@@ -6930,7 +6961,7 @@ var app = (function () {
     /* src/Legend.svelte generated by Svelte v3.44.0 */
     const file$1 = "src/Legend.svelte";
 
-    // (159:0) {:else}
+    // (160:0) {:else}
     function create_else_block$1(ctx) {
     	let div0;
     	let t0;
@@ -6988,50 +7019,50 @@ var app = (function () {
     			set_style(div0, "--gradient-3", /*colors*/ ctx[15][2]);
     			set_style(div0, "width", /*width*/ ctx[0] + "px");
     			set_style(div0, "height", "10px");
-    			attr_dev(div0, "class", "svelte-v1cxth");
-    			add_location(div0, file$1, 159, 4, 4399);
-    			attr_dev(h20, "class", "mobile svelte-v1cxth");
+    			attr_dev(div0, "class", "svelte-1ip4s56");
+    			add_location(div0, file$1, 160, 4, 4439);
+    			attr_dev(h20, "class", "mobile svelte-1ip4s56");
     			set_style(h20, "float", "right");
     			set_style(h20, "color", /*colors*/ ctx[15][2]);
-    			add_location(h20, file$1, 170, 8, 4677);
-    			attr_dev(h21, "class", "mobile svelte-v1cxth");
+    			add_location(h20, file$1, 171, 8, 4717);
+    			attr_dev(h21, "class", "mobile svelte-1ip4s56");
     			set_style(h21, "float", "left");
     			set_style(h21, "color", /*colors*/ ctx[15][0]);
-    			add_location(h21, file$1, 171, 8, 4768);
-    			attr_dev(div1, "class", "legend-text svelte-v1cxth");
-    			add_location(div1, file$1, 169, 4, 4642);
+    			add_location(h21, file$1, 172, 8, 4808);
+    			attr_dev(div1, "class", "legend-text svelte-1ip4s56");
+    			add_location(div1, file$1, 170, 4, 4682);
     			attr_dev(circle0, "cx", /*mobileCircleX*/ ctx[3]);
     			attr_dev(circle0, "cy", circle0_cy_value = /*circle2height*/ ctx[2] + 13.5);
     			attr_dev(circle0, "r", /*mobileCircle2*/ ctx[11]);
-    			attr_dev(circle0, "class", "svelte-v1cxth");
-    			add_location(circle0, file$1, 177, 8, 5073);
+    			attr_dev(circle0, "class", "svelte-1ip4s56");
+    			add_location(circle0, file$1, 178, 8, 5113);
     			attr_dev(circle1_1, "cx", /*mobileCircleX*/ ctx[3]);
-    			attr_dev(circle1_1, "cy", circle1_1_cy_value = /*circle3height*/ ctx[5] + 20);
+    			attr_dev(circle1_1, "cy", circle1_1_cy_value = /*circle3height*/ ctx[5] + 19);
     			attr_dev(circle1_1, "r", /*mobileCircle3*/ ctx[12]);
-    			attr_dev(circle1_1, "class", "svelte-v1cxth");
-    			add_location(circle1_1, file$1, 178, 8, 5162);
+    			attr_dev(circle1_1, "class", "svelte-1ip4s56");
+    			add_location(circle1_1, file$1, 179, 8, 5202);
     			attr_dev(path0, "stroke-dasharray", "3,3");
-    			attr_dev(path0, "d", path0_d_value = "M" + /*mobileCircleX*/ ctx[3] + " " + (/*circle2height*/ ctx[2] + 11.5) + " l28 0");
-    			add_location(path0, file$1, 181, 12, 5310);
+    			attr_dev(path0, "d", path0_d_value = "M" + /*mobileCircleX*/ ctx[3] + " " + (/*circle2height*/ ctx[2] + 10.5) + " l28 0");
+    			add_location(path0, file$1, 182, 12, 5350);
     			attr_dev(path1, "stroke-dasharray", "3,3");
     			attr_dev(path1, "d", path1_d_value = "M" + /*mobileCircleX*/ ctx[3] + " " + (/*circle3height*/ ctx[5] + 9.3) + " l28 0");
-    			add_location(path1, file$1, 182, 12, 5404);
+    			add_location(path1, file$1, 183, 12, 5444);
     			attr_dev(g, "fill", "none");
     			attr_dev(g, "stroke", "black");
     			attr_dev(g, "stroke-width", "1");
-    			add_location(g, file$1, 180, 8, 5250);
-    			attr_dev(text0, "class", "mobile-number svelte-v1cxth");
+    			add_location(g, file$1, 181, 8, 5290);
+    			attr_dev(text0, "class", "mobile-number svelte-1ip4s56");
     			attr_dev(text0, "x", text0_x_value = /*mobileCircleX*/ ctx[3] + 30);
-    			attr_dev(text0, "y", text0_y_value = /*circle2height*/ ctx[2] + 15);
-    			add_location(text0, file$1, 185, 8, 5507);
-    			attr_dev(text1, "class", "mobile-number svelte-v1cxth");
+    			attr_dev(text0, "y", text0_y_value = /*circle2height*/ ctx[2] + 14);
+    			add_location(text0, file$1, 186, 8, 5547);
+    			attr_dev(text1, "class", "mobile-number svelte-1ip4s56");
     			attr_dev(text1, "x", text1_x_value = /*mobileCircleX*/ ctx[3] + 30);
     			attr_dev(text1, "y", text1_y_value = /*circle3height*/ ctx[5] + 12);
-    			add_location(text1, file$1, 186, 8, 5604);
+    			add_location(text1, file$1, 187, 8, 5644);
     			attr_dev(svg, "width", svg_width_value = /*width*/ ctx[0] / 2);
     			attr_dev(svg, "height", /*height*/ ctx[1]);
-    			attr_dev(svg, "class", "svelte-v1cxth");
-    			add_location(svg, file$1, 174, 4, 4938);
+    			attr_dev(svg, "class", "svelte-1ip4s56");
+    			add_location(svg, file$1, 175, 4, 4978);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -7071,11 +7102,11 @@ var app = (function () {
     				attr_dev(circle1_1, "cx", /*mobileCircleX*/ ctx[3]);
     			}
 
-    			if (dirty & /*circle3height*/ 32 && circle1_1_cy_value !== (circle1_1_cy_value = /*circle3height*/ ctx[5] + 20)) {
+    			if (dirty & /*circle3height*/ 32 && circle1_1_cy_value !== (circle1_1_cy_value = /*circle3height*/ ctx[5] + 19)) {
     				attr_dev(circle1_1, "cy", circle1_1_cy_value);
     			}
 
-    			if (dirty & /*mobileCircleX, circle2height*/ 12 && path0_d_value !== (path0_d_value = "M" + /*mobileCircleX*/ ctx[3] + " " + (/*circle2height*/ ctx[2] + 11.5) + " l28 0")) {
+    			if (dirty & /*mobileCircleX, circle2height*/ 12 && path0_d_value !== (path0_d_value = "M" + /*mobileCircleX*/ ctx[3] + " " + (/*circle2height*/ ctx[2] + 10.5) + " l28 0")) {
     				attr_dev(path0, "d", path0_d_value);
     			}
 
@@ -7087,7 +7118,7 @@ var app = (function () {
     				attr_dev(text0, "x", text0_x_value);
     			}
 
-    			if (dirty & /*circle2height*/ 4 && text0_y_value !== (text0_y_value = /*circle2height*/ ctx[2] + 15)) {
+    			if (dirty & /*circle2height*/ 4 && text0_y_value !== (text0_y_value = /*circle2height*/ ctx[2] + 14)) {
     				attr_dev(text0, "y", text0_y_value);
     			}
 
@@ -7120,14 +7151,14 @@ var app = (function () {
     		block,
     		id: create_else_block$1.name,
     		type: "else",
-    		source: "(159:0) {:else}",
+    		source: "(160:0) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (127:0) {#if !$mobile}
+    // (128:0) {#if !$mobile}
     function create_if_block$1(ctx) {
     	let div;
     	let t0;
@@ -7185,50 +7216,50 @@ var app = (function () {
     			set_style(div, "width", /*width*/ ctx[0] / 2.5 + "px");
     			set_style(div, "height", "10px");
     			set_style(div, "margin-top", "40px");
-    			attr_dev(div, "class", "svelte-v1cxth");
-    			add_location(div, file$1, 127, 4, 2938);
-    			attr_dev(h20, "class", "desktop svelte-v1cxth");
+    			attr_dev(div, "class", "svelte-1ip4s56");
+    			add_location(div, file$1, 128, 4, 2978);
+    			attr_dev(h20, "class", "desktop svelte-1ip4s56");
     			set_style(h20, "right", /*width*/ ctx[0] / 2 - /*width*/ ctx[0] / 2.5 / 2 + "px");
     			set_style(h20, "color", /*colors*/ ctx[15][2]);
-    			add_location(h20, file$1, 138, 4, 3215);
-    			attr_dev(h21, "class", "desktop svelte-v1cxth");
+    			add_location(h20, file$1, 139, 4, 3255);
+    			attr_dev(h21, "class", "desktop svelte-1ip4s56");
     			set_style(h21, "left", /*width*/ ctx[0] / 2 - /*width*/ ctx[0] / 2.5 / 2 + "px");
     			set_style(h21, "color", /*colors*/ ctx[15][0]);
-    			add_location(h21, file$1, 139, 4, 3322);
+    			add_location(h21, file$1, 140, 4, 3362);
     			set_style(br, "clear", "both");
-    			add_location(br, file$1, 140, 4, 3428);
+    			add_location(br, file$1, 141, 4, 3468);
     			attr_dev(circle0, "cx", /*circleX*/ ctx[4]);
     			attr_dev(circle0, "cy", /*circle2height*/ ctx[2]);
     			attr_dev(circle0, "r", /*circle2*/ ctx[9]);
-    			attr_dev(circle0, "class", "svelte-v1cxth");
-    			add_location(circle0, file$1, 144, 8, 3584);
+    			attr_dev(circle0, "class", "svelte-1ip4s56");
+    			add_location(circle0, file$1, 145, 8, 3624);
     			attr_dev(circle1_1, "cx", /*circleX*/ ctx[4]);
     			attr_dev(circle1_1, "cy", /*circle3height*/ ctx[5]);
     			attr_dev(circle1_1, "r", /*circle3*/ ctx[10]);
-    			attr_dev(circle1_1, "class", "svelte-v1cxth");
-    			add_location(circle1_1, file$1, 145, 8, 3654);
+    			attr_dev(circle1_1, "class", "svelte-1ip4s56");
+    			add_location(circle1_1, file$1, 146, 8, 3694);
     			attr_dev(path0, "stroke-dasharray", "3,3");
-    			attr_dev(path0, "d", path0_d_value = "M" + /*circleX*/ ctx[4] + " " + (/*circle2height*/ ctx[2] - 2.5) + " l28 0");
-    			add_location(path0, file$1, 148, 12, 3785);
+    			attr_dev(path0, "d", path0_d_value = "M" + /*circleX*/ ctx[4] + " " + (/*circle2height*/ ctx[2] - 5.5) + " l28 0");
+    			add_location(path0, file$1, 149, 12, 3825);
     			attr_dev(path1, "stroke-dasharray", "3,3");
     			attr_dev(path1, "d", path1_d_value = "M" + /*circleX*/ ctx[4] + " " + (/*circle3height*/ ctx[5] - 17.5) + " l28 0");
-    			add_location(path1, file$1, 149, 12, 3872);
+    			add_location(path1, file$1, 150, 12, 3912);
     			attr_dev(g, "fill", "none");
     			attr_dev(g, "stroke", "black");
     			attr_dev(g, "stroke-width", "1");
-    			add_location(g, file$1, 147, 8, 3725);
-    			attr_dev(text0, "class", "number svelte-v1cxth");
+    			add_location(g, file$1, 148, 8, 3765);
+    			attr_dev(text0, "class", "number svelte-1ip4s56");
     			attr_dev(text0, "x", text0_x_value = /*circleX*/ ctx[4] + 28);
-    			attr_dev(text0, "y", text0_y_value = /*circle2height*/ ctx[2] + 2.5);
-    			add_location(text0, file$1, 154, 8, 4209);
-    			attr_dev(text1, "class", "number svelte-v1cxth");
+    			attr_dev(text0, "y", text0_y_value = /*circle2height*/ ctx[2] - 0.5);
+    			add_location(text0, file$1, 155, 8, 4249);
+    			attr_dev(text1, "class", "number svelte-1ip4s56");
     			attr_dev(text1, "x", text1_x_value = /*circleX*/ ctx[4] + 28);
     			attr_dev(text1, "y", text1_y_value = /*circle3height*/ ctx[5] - 12.5);
-    			add_location(text1, file$1, 155, 8, 4294);
+    			add_location(text1, file$1, 156, 8, 4334);
     			attr_dev(svg, "width", /*width*/ ctx[0]);
     			attr_dev(svg, "height", /*height*/ ctx[1]);
-    			attr_dev(svg, "class", "svelte-v1cxth");
-    			add_location(svg, file$1, 141, 4, 3459);
+    			attr_dev(svg, "class", "svelte-1ip4s56");
+    			add_location(svg, file$1, 142, 4, 3499);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -7281,7 +7312,7 @@ var app = (function () {
     				attr_dev(circle1_1, "cy", /*circle3height*/ ctx[5]);
     			}
 
-    			if (dirty & /*circleX, circle2height*/ 20 && path0_d_value !== (path0_d_value = "M" + /*circleX*/ ctx[4] + " " + (/*circle2height*/ ctx[2] - 2.5) + " l28 0")) {
+    			if (dirty & /*circleX, circle2height*/ 20 && path0_d_value !== (path0_d_value = "M" + /*circleX*/ ctx[4] + " " + (/*circle2height*/ ctx[2] - 5.5) + " l28 0")) {
     				attr_dev(path0, "d", path0_d_value);
     			}
 
@@ -7293,7 +7324,7 @@ var app = (function () {
     				attr_dev(text0, "x", text0_x_value);
     			}
 
-    			if (dirty & /*circle2height*/ 4 && text0_y_value !== (text0_y_value = /*circle2height*/ ctx[2] + 2.5)) {
+    			if (dirty & /*circle2height*/ 4 && text0_y_value !== (text0_y_value = /*circle2height*/ ctx[2] - 0.5)) {
     				attr_dev(text0, "y", text0_y_value);
     			}
 
@@ -7330,7 +7361,7 @@ var app = (function () {
     		block,
     		id: create_if_block$1.name,
     		type: "if",
-    		source: "(127:0) {#if !$mobile}",
+    		source: "(128:0) {#if !$mobile}",
     		ctx
     	});
 
@@ -7412,9 +7443,9 @@ var app = (function () {
 
     	// let mobile_small = "$1,000 in 2022"
     	// let desktop_title = "2022 Donations"
-    	let amount_scale = linear().domain([0, 30000]).range([1, 50]);
+    	let amount_scale = sqrt().domain([0, 30000]).range([0.1, 30]);
 
-    	let mobile_amount_scale = linear().domain([0, 30000]).range([1, 30]);
+    	let mobile_amount_scale = sqrt().domain([0, 30000]).range([0.1, 17]);
     	let circle1 = amount_scale(100);
     	let circle2 = amount_scale(1000);
     	let circle3 = amount_scale(10000);
@@ -7438,7 +7469,7 @@ var app = (function () {
 
     	$$self.$capture_state = () => ({
     		mobile,
-    		scaleLinear: linear,
+    		scaleSqrt: sqrt,
     		width,
     		height,
     		reference_year,
@@ -7495,7 +7526,7 @@ var app = (function () {
     		}
 
     		if ($$self.$$.dirty & /*circle2height*/ 4) {
-    			$$invalidate(5, circle3height = circle2height - 15);
+    			$$invalidate(5, circle3height = circle2height - 12);
     		}
 
     		if ($$self.$$.dirty & /*width*/ 1) {
@@ -7604,7 +7635,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (137:0) {#if $innerWidth}
+    // (138:0) {#if $innerWidth}
     function create_if_block(ctx) {
     	let div;
     	let header;
@@ -7679,24 +7710,24 @@ var app = (function () {
     			t6 = space();
     			p = element("p");
     			p.textContent = "Source: Federal Election Commission, U.S. Census Bureau";
-    			attr_dev(h1, "class", "svelte-757uvr");
-    			add_location(h1, file, 140, 16, 3926);
+    			attr_dev(h1, "class", "svelte-1fje6pw");
+    			add_location(h1, file, 141, 16, 3970);
     			set_style(header, "width", /*width*/ ctx[3] + "px");
     			set_style(header, "position", "relative");
-    			add_location(header, file, 139, 12, 3855);
+    			add_location(header, file, 140, 12, 3899);
     			attr_dev(svg, "width", /*width*/ ctx[3]);
 
     			attr_dev(svg, "height", svg_height_value = !/*$mobile*/ ctx[4]
     			? /*height*/ ctx[2]
     			: /*height*/ ctx[2] + 100);
 
-    			attr_dev(svg, "class", "svelte-757uvr");
-    			add_location(svg, file, 180, 12, 6119);
-    			attr_dev(p, "class", "svelte-757uvr");
-    			add_location(p, file, 190, 12, 6485);
+    			attr_dev(svg, "class", "svelte-1fje6pw");
+    			add_location(svg, file, 181, 12, 6170);
+    			attr_dev(p, "class", "svelte-1fje6pw");
+    			add_location(p, file, 191, 12, 6536);
     			attr_dev(div, "class", "donationContainer");
     			add_render_callback(() => /*div_elementresize_handler*/ ctx[22].call(div));
-    			add_location(div, file, 138, 8, 3782);
+    			add_location(div, file, 139, 8, 3826);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -7811,14 +7842,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(137:0) {#if $innerWidth}",
+    		source: "(138:0) {#if $innerWidth}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (144:16) {:else}
+    // (145:16) {:else}
     function create_else_block(ctx) {
     	let h2;
 
@@ -7827,8 +7858,8 @@ var app = (function () {
     			h2 = element("h2");
     			h2.textContent = "The Political Victory Fund saw a decline in total donations for the first time in at least five federal election years. The drop from 2020 came in some of the organization's fundraising strongholds.";
     			set_style(h2, "margin-bottom", "15px ");
-    			attr_dev(h2, "class", "svelte-757uvr");
-    			add_location(h2, file, 144, 20, 4273);
+    			attr_dev(h2, "class", "svelte-1fje6pw");
+    			add_location(h2, file, 145, 20, 4324);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h2, anchor);
@@ -7842,24 +7873,24 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(144:16) {:else}",
+    		source: "(145:16) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (142:16) {#if $mobile}
+    // (143:16) {#if $mobile}
     function create_if_block_4(ctx) {
     	let h2;
 
     	const block = {
     		c: function create() {
     			h2 = element("h2");
-    			h2.textContent = "The Political Victory Fund saw a decline in total donations for the first time in at least five federal election years — barely half of 2020's total.";
+    			h2.textContent = "The Political Victory Fund saw a decline in total donations for the first time in at least five federal election years, raising barely half of 2020's total.";
     			set_style(h2, "margin-bottom", "25px ");
-    			attr_dev(h2, "class", "svelte-757uvr");
-    			add_location(h2, file, 142, 20, 4041);
+    			attr_dev(h2, "class", "svelte-1fje6pw");
+    			add_location(h2, file, 143, 20, 4085);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h2, anchor);
@@ -7873,14 +7904,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(142:16) {#if $mobile}",
+    		source: "(143:16) {#if $mobile}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (149:12) {#if $mobile}
+    // (150:12) {#if $mobile}
     function create_if_block_3(ctx) {
     	let div;
 
@@ -7888,7 +7919,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			set_style(div, "clear", "both");
-    			add_location(div, file, 149, 16, 4670);
+    			add_location(div, file, 150, 16, 4721);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -7902,14 +7933,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(149:12) {#if $mobile}",
+    		source: "(150:12) {#if $mobile}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (163:20) {#if show}
+    // (164:20) {#if show}
     function create_if_block_2(ctx) {
     	let point;
     	let current;
@@ -7988,14 +8019,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(163:20) {#if show}",
+    		source: "(164:20) {#if show}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (162:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}
+    // (163:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}
     function create_each_block_1(key_1, ctx) {
     	let first;
     	let if_block_anchor;
@@ -8063,14 +8094,14 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(162:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}",
+    		source: "(163:16) {#each points as {lat, lon, show, amount, scaled_amount, change, id, name, state}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (152:12) <Canvas {width} height = {!$mobile ? height : height + 75}                  style= "position: absolute; cursor: pointer; z-index: 6"                 on:mousemove={({ offsetX: x, offsetY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x, y))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >
+    // (153:12) <Canvas {width} height = {!$mobile ? height : height + 75}                  style= "position: absolute; cursor: pointer; z-index: 6"                 on:mousemove={({ offsetX: x, offsetY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x, y))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >
     function create_default_slot(ctx) {
     	let each_blocks = [];
     	let each_1_lookup = new Map();
@@ -8142,14 +8173,14 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(152:12) <Canvas {width} height = {!$mobile ? height : height + 75}                  style= \\\"position: absolute; cursor: pointer; z-index: 6\\\"                 on:mousemove={({ offsetX: x, offsetY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x, y))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >",
+    		source: "(153:12) <Canvas {width} height = {!$mobile ? height : height + 75}                  style= \\\"position: absolute; cursor: pointer; z-index: 6\\\"                 on:mousemove={({ offsetX: x, offsetY: y }) => {                     if (!$mobile) {                         if (picked = delaunay.find(x, y))                         points = [...points.filter((_, i) => i !== picked), points[picked]]                     }}                 }                 on:mouseout={() => (picked = null)}             >",
     		ctx
     	});
 
     	return block;
     }
 
-    // (182:16) {#if us}
+    // (183:16) {#if us}
     function create_if_block_1(ctx) {
     	let g;
     	let each_value = /*features*/ ctx[7];
@@ -8169,7 +8200,7 @@ var app = (function () {
     			}
 
     			attr_dev(g, "fill", "rgb(233,233,233)");
-    			add_location(g, file, 182, 20, 6220);
+    			add_location(g, file, 183, 20, 6271);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, g, anchor);
@@ -8213,14 +8244,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(182:16) {#if us}",
+    		source: "(183:16) {#if us}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (184:24) {#each features as feature}
+    // (185:24) {#each features as feature}
     function create_each_block(ctx) {
     	let path_1;
     	let path_1_d_value;
@@ -8229,8 +8260,8 @@ var app = (function () {
     		c: function create() {
     			path_1 = svg_element("path");
     			attr_dev(path_1, "d", path_1_d_value = /*path*/ ctx[10](/*feature*/ ctx[26]));
-    			attr_dev(path_1, "class", "svelte-757uvr");
-    			add_location(path_1, file, 184, 28, 6328);
+    			attr_dev(path_1, "class", "svelte-1fje6pw");
+    			add_location(path_1, file, 185, 28, 6379);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, path_1, anchor);
@@ -8249,7 +8280,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(184:24) {#each features as feature}",
+    		source: "(185:24) {#each features as feature}",
     		ctx
     	});
 
@@ -8385,9 +8416,9 @@ var app = (function () {
     	let reference_year = 2020;
 
     	// let amount_scale = !$mobile ? scaleLinear().domain([0, 30000]).range([1, 50]) : scaleLinear().domain([0, 30000]).range([1, 30])
-    	let amount_scale = linear().domain([0, 30000]).range([1, 50]);
+    	let amount_scale = sqrt().domain([0, 30000]).range([0.1, 30]);
 
-    	let mobile_amount_scale = linear().domain([0, 30000]).range([1, 30]);
+    	let mobile_amount_scale = sqrt().domain([0, 30000]).range([0.1, 17]);
     	let display = 2022;
 
     	onMount(async () => {
@@ -8440,7 +8471,7 @@ var app = (function () {
     		geoIdentity,
     		geoPath,
     		geoAlbersUsa,
-    		scaleLinear: linear,
+    		scaleSqrt: sqrt,
     		csv,
     		Point,
     		Delaunay,

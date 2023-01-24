@@ -4,7 +4,7 @@
 	import { Canvas } from 'svelte-canvas'
 	import { feature } from "topojson-client"
 	import { geoIdentity, geoPath, geoAlbersUsa } from "d3-geo"
-    import {scaleLinear} from 'd3-scale';
+    import {scaleSqrt} from 'd3-scale';
     import { csv } from "d3-fetch"
 	import Point from './Point.svelte'
     import { Delaunay } from 'd3-delaunay';
@@ -36,8 +36,8 @@
     let reference_year = 2020;
 
     // let amount_scale = !$mobile ? scaleLinear().domain([0, 30000]).range([1, 50]) : scaleLinear().domain([0, 30000]).range([1, 30])
-    let amount_scale = scaleLinear().domain([0, 30000]).range([1, 50])
-    let mobile_amount_scale = scaleLinear().domain([0, 30000]).range([1, 30])
+    let amount_scale = scaleSqrt().domain([0, 30000]).range([0.1, 30])
+    let mobile_amount_scale = scaleSqrt().domain([0, 30000]).range([0.1, 17])
 
     let display = 2022;
 

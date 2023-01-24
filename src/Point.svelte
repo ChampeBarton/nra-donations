@@ -212,7 +212,7 @@
                         context.fillStyle = color;
                         context.fillText(change_text, screen_adjust_x + 15, screen_adjust_y + 100);
 
-                        context.font = "15px aktiv grotetsk";
+                        context.font = "15px aktiv grotesk";
                         context.fillStyle = "#FFFFFF";
                         context.fillText(" compared to " + reference_year, screen_adjust_x + 15 + context.measureText(change_text).width, screen_adjust_y + 100)
 

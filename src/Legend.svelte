@@ -6,7 +6,7 @@
 
 <script>
     import { mobile } from './store.js'
-    import {scaleLinear} from 'd3-scale';
+    import {scaleSqrt} from 'd3-scale';
 
     export let width, height, reference_year;
 
@@ -16,8 +16,8 @@
     // let mobile_small = "$1,000 in 2022"
     // let desktop_title = "2022 Donations"
 
-    let amount_scale = scaleLinear().domain([0, 30000]).range([1, 50])
-    let mobile_amount_scale = scaleLinear().domain([0, 30000]).range([1, 30])
+    let amount_scale = scaleSqrt().domain([0, 30000]).range([0.1, 30])
+    let mobile_amount_scale = scaleSqrt().domain([0, 30000]).range([0.1, 17])
 
     let circle1 = amount_scale(100)
     let circle2 = amount_scale(1000)
@@ -28,7 +28,7 @@
     let mobileCircle3 = mobile_amount_scale(10000)
 
     $: circle2height = height/6
-    $: circle3height = circle2height - 15
+    $: circle3height = circle2height - 12
 
     $: circleX = width - width/4
     $: mobileCircleX = width/2 - 100
@@ -147,13 +147,13 @@
         <circle cx={circleX} cy={circle3height} r={circle3}></circle>
 
         <g fill="none" stroke="black" stroke-width="1">
-            <path stroke-dasharray="3,3" d="M{circleX} {circle2height - 2.5} l28 0" />
+            <path stroke-dasharray="3,3" d="M{circleX} {circle2height - 5.5} l28 0" />
             <path stroke-dasharray="3,3" d="M{circleX} {circle3height - 17.5} l28 0" />
         </g>
 
         <!-- <text class="header" x={circleX - circle3} y={circle3height - 35}>{desktop_title}</text>
         <line x1={circleX - circle3} y1={circle3height - 33} x2={circleX - circle3 + 107}  y2={circle3height - 33} stroke="black" /> -->
-        <text class="number" x={circleX + 28} y={circle2height + 2.5}>{small}</text>
+        <text class="number" x={circleX + 28} y={circle2height - 0.5}>{small}</text>
         <text class="number" x={circleX + 28} y={circle3height - 12.5}>{large}</text>   
     </svg>
 
@@ -177,14 +177,14 @@
         
         <!-- <circle cx={width/2 + width/2.5/2 + 40} cy=20 r={circle1}></circle> -->
         <circle cx={mobileCircleX} cy={circle2height + 13.5} r={mobileCircle2}></circle>
-        <circle cx={mobileCircleX} cy={circle3height + 20} r={mobileCircle3}></circle>
+        <circle cx={mobileCircleX} cy={circle3height + 19} r={mobileCircle3}></circle>
 
         <g fill="none" stroke="black" stroke-width="1">
-            <path stroke-dasharray="3,3" d="M{mobileCircleX} {circle2height + 11.5} l28 0" />
+            <path stroke-dasharray="3,3" d="M{mobileCircleX} {circle2height + 10.5} l28 0" />
             <path stroke-dasharray="3,3" d="M{mobileCircleX} {circle3height + 9.3} l28 0" />
         </g>
 
-        <text class="mobile-number" x={mobileCircleX + 30} y={circle2height + 15}>{small}</text>
+        <text class="mobile-number" x={mobileCircleX + 30} y={circle2height + 14}>{small}</text>
         <text class="mobile-number" x={mobileCircleX + 30} y={circle3height + 12}>{large}</text>   
     </svg>
     <!-- <svg {width} height=80>

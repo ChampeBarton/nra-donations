@@ -1,6 +1,6 @@
 <svelte:head>
-  <link href="../fonts/Aktiv Grotesk Regular.otf" rel="preload" as="font" type="font/otf" crossorigin>
-  <link href="../fonts/Aktiv Grotesk XBold.otf" rel="preload" as="font" type="font/otf" crossorigin>
+  <!-- <link href="../fonts/Aktiv Grotesk Regular.otf" rel="preload" as="font" type="font/otf" crossorigin>
+  <link href="../fonts/Aktiv Grotesk XBold.otf" rel="preload" as="font" type="font/otf" crossorigin> -->
 </svelte:head>
 
 <script>

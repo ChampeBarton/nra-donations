@@ -41,6 +41,7 @@
         let orange = header_text == "Orange County, CA"
         let harris = header_text == "Harris County, TX"
         let losangeles = header_text == "Los Angeles County, CA"
+        let brown = header_text == "Brown County, WI"
         let newcastle = header_text == "New Castle County, DE"
 		
 	$: render = ({ context }) => {
@@ -97,7 +98,7 @@
                         //         context.fillText(header_text, x, height + 25); 
                         // }
 
-                        if (newcastle) {
+                        if (brown) {
                                 context.beginPath();
                                 context.moveTo(x, y);
                                 context.quadraticCurveTo(x + 30, height - 50, x + 5, height + 20 );

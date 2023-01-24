@@ -158,7 +158,7 @@
                         var screen_adjust_x = x + offset.left + 15 + box_width > edge_x ? x - 15 - box_width : x + 15
                         var screen_adjust_y = y + box_height + 100 > edge_y ? y - box_height : y
 
-                        console.log("x: " + x + ", box_height: " + box_width)
+                        console.log("x: " + x + ", box_width: " + box_width + ", offset_width: " + offset.left)
                         console.log("x + box_height + offset: " + (x + box_width + offset.left))
                         console.log("edge_x: " + edge_x)
 

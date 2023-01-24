@@ -142,7 +142,8 @@
                         var header_text_width = context.measureText(header_text).width
 
                         var edge_x = document.querySelector("Canvas").getBoundingClientRect().right - 10
-                        var edge_y = document.querySelector("Canvas").getBoundingClientRect().bottom - 115
+                        // var edge_y = document.querySelector("Canvas").getBoundingClientRect().bottom - 115
+                        var edge_y = 704
 
                         var box_width = header_text_width >= change_text_width + compared_text_width
                         ? header_text_width + 30
@@ -157,9 +158,9 @@
                         var screen_adjust_x = x + offset.left + 15 + box_width > edge_x ? x - 15 - box_width : x + 15
                         var screen_adjust_y = y + box_height + 100 > edge_y ? y - box_height : y
 
-                        console.log("y: " + y + ", box_height: " + box_height)
-                        console.log("y + box_height + 100: " + (y + box_height + 100))
-                        console.log("edge_y: " + edge_y)
+                        // console.log("y: " + y + ", box_height: " + box_height)
+                        // console.log("y + box_height + 100: " + (y + box_height + 100))
+                        // console.log("edge_y: " + edge_y)
 
                         context.strokeStyle = stroke;
                         context.lineWidth = 2;

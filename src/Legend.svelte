@@ -71,12 +71,12 @@
 
     text.number {
         font-size: 14px;
-		font-family: "SpeziaMonoWeb-Medium";
+		font-family: "Spezia Mono", monospace;
     }
 
     text.mobile-number {
         font-size: .6rem;
-		font-family: "SpeziaMonoweb-Medium";
+		font-family: "Spezia Mono", monospace;
     }
 
     div {
@@ -90,14 +90,15 @@
 
     h2.desktop {
         font-size: 12px;
-		font-family: "Aktiv Grotesk XBold";
+		font-family: "aktiv-grotesk", sans-serif;
         position: absolute;
         margin-top: 8px;
     }
 
     h2.mobile {
         font-size: 12px;
-		font-family: "Aktiv Grotesk XBold";
+		font-family: "aktiv-grotesk", sans-serif;
+        font-weight: 800;
         margin: 0px 0px 30px 0px;
         padding: 5px 0px 0px 0px;
     }

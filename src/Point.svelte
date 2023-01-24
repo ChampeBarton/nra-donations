@@ -65,15 +65,15 @@
                                 context.strokeStyle = color;
                                 context.stroke()
                                 
-                                context.font = ".6rem Aktiv Grotesk";
+                                context.font = ".6rem aktiv grotesk";
                                 context.fillStyle = "#000";
                                 context.fillText(amount_text_middle, x, height + 60)
 
-                                context.font = ".6rem Aktiv Grotesk";
+                                context.font = ".6rem aktiv grotesk";
                                 context.fillStyle = color;
                                 context.fillText(" (" + change_text + ")", x + context.measureText(amount_text_middle).width, height + 60)
 
-                                context.font = ".7rem Aktiv Grotesk XBold";
+                                context.font = "800 .7rem aktiv grotesk";
                                 context.fillStyle = "#000";
                                 context.fillText(header_text, x, height + 45);
                         }
@@ -105,40 +105,40 @@
                                 context.strokeStyle = color;
                                 context.stroke()
                                 
-                                context.font = ".6rem Aktiv Grotesk";
+                                context.font = ".6rem aktiv grotesk";
                                 context.fillStyle = "#000";
                                 context.fillText(amount_text_middle, x - context.measureText(header_text).width, height + 40)
 
-                                context.font = ".6rem Aktiv Grotesk";
+                                context.font = ".6rem aktiv grotesk";
                                 context.fillStyle = color;
                                 context.fillText(" (" + change_text + ")", x - context.measureText(header_text).width + context.measureText(amount_text_middle).width, height + 40)
 
-                                context.font = ".7rem Aktiv Grotesk XBold";
+                                context.font = "800 .7rem aktiv grotesk";
                                 context.fillStyle = "#000";
                                 context.fillText(header_text, x - context.measureText(header_text).width, height + 25);
                         }
                 }
 
                 if (stroke) {
-                        context.font = "15px Aktiv Grotesk";
+                        context.font = "15px aktiv grotesk";
                         context.fillStyle = "rgba(1, 1, 1, 0)";
                         context.fillText(amount_text_beginning + amount_text_end, x + 30, y + 70)
-                        context.font = "15px Aktiv Grotesk XBold"
+                        context.font = "800 15px aktiv grotesk"
                         context.fillStyle = "rgba(1, 1, 1, 0)"
                         context.fillText(amount_text_middle, x + 30, y + 70)
                         var amount_text_width = context.measureText(amount_text_beginning + amount_text_middle + amount_text_end).width
 
-                        context.font = "15px Aktiv Grotesk";
+                        context.font = "15px aktiv grotesk";
                         context.fillStyle = "rgba(1, 1, 1, 0)";
                         context.fillText(change_text, x + 30, y + 100);
                         var change_text_width = context.measureText(change_text).width
 
-                        context.font = "15px Aktiv Grotesk";
+                        context.font = "15px aktiv grotesk";
                         context.fillStyle = "rgba(1, 1, 1, 0)";
                         context.fillText(" compared to 2020", x + 30 + context.measureText(change_text).width, y + 100)
                         var compared_text_width = context.measureText(" compared to " + reference_year).width
 
-                        context.font = "20px Aktiv Grotesk XBold";
+                        context.font = "800 20px aktiv grotesk";
                         context.fillStyle = "rgba(1, 1, 1, 0)";
                         context.fillText(header_text, x + 30, y + 30);
                         var header_text_width = context.measureText(header_text).width
@@ -196,27 +196,27 @@
                         context.stroke();
                         context.fill();
 
-                        context.font = "15px Aktiv Grotesk";
+                        context.font = "15px aktiv grotesk";
                         context.fillStyle = "#FFFFFF";
                         context.fillText(amount_text_beginning, screen_adjust_x + 15, screen_adjust_y + 70)
 
-                        context.font = "15px Aktiv Grotesk XBold";
+                        context.font = "800 15px aktiv grotesk";
                         context.fillStyle = "#FFFFFF";
                         context.fillText(amount_text_middle, screen_adjust_x + 15 + context.measureText(amount_text_beginning).width, screen_adjust_y + 70)
 
-                        context.font = "15px Aktiv Grotesk";
+                        context.font = "15px aktiv grotesk";
                         context.fillStyle = "#FFFFFF";
                         context.fillText(amount_text_end, screen_adjust_x + 15 + context.measureText(amount_text_beginning).width + context.measureText(amount_text_middle).width, screen_adjust_y + 70)
                         
-                        context.font = "15px Aktiv Grotesk XBold";
+                        context.font = "800 15px aktiv grotesk";
                         context.fillStyle = color;
                         context.fillText(change_text, screen_adjust_x + 15, screen_adjust_y + 100);
 
-                        context.font = "15px Aktiv Grotesk";
+                        context.font = "15px aktiv grotetsk";
                         context.fillStyle = "#FFFFFF";
                         context.fillText(" compared to " + reference_year, screen_adjust_x + 15 + context.measureText(change_text).width, screen_adjust_y + 100)
 
-                        context.font = "20px Aktiv Grotesk XBold";
+                        context.font = "800 20px aktiv grotesk";
                         context.fillStyle = "#FFFFFF";
                         context.fillText(header_text, screen_adjust_x + 15, screen_adjust_y + 30);
                   

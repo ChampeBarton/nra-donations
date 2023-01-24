@@ -109,7 +109,8 @@
     h1 {
 		color: #333;
 		font-size: 25px;
-		font-family: "Aktiv Grotesk XBold";
+		font-family: "aktiv grotesk", sans-serif;
+        font-weight: 800;
         margin-bottom: 5px;
         text-align: left;
 	}
@@ -117,7 +118,7 @@
     h2 {
 		color: #777;
 		font-size: 18px;
-		font-family: "Aktiv Grotesk";
+		font-family: "aktiv grotesk", sans-serif;
         font-weight: 200;
         text-align: left;
         margin-top: 0;
@@ -126,7 +127,7 @@
     p {
         color: #888;
         font-size: .6rem;
-        font-family: "SpeziaMonoWeb-Medium";
+        font-family: "Spezia Mono", monospace;
         text-align: left
     }
 

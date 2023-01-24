@@ -138,9 +138,13 @@
     <!-- {#if !$mobile} -->
         <div bind:clientWidth={bodyWidth} class="donationContainer">
             <header style="width: {width}px; position: relative;">
-                <h1> Amount Donated to the NRA by County in 2022 Compared to 2020</h1>
-                <h2 style="margin-bottom: {!$mobile ? 15 : 25}px "> For the first time in a decade, the organization failed to raise more money than in the previous federal election year.</h2>
-                <Legend {width} {height} {reference_year}></Legend>
+                <h1>Explore How Much the NRA's PAC Raised by County in 2022</h1>
+                {#if $mobile}
+                    <h2 style="margin-bottom: 25px ">The Political Victory Fund saw a decline in total donations for the first time in at least five federal election years — barely half of 2020's total.</h2>
+                {:else}
+                    <h2 style="margin-bottom: 15px ">The Political Victory Fund saw a decline in total donations for the first time in at least five federal election years. The drop from 2020 came in some of the organization's fundraising strongholds.</h2>
+                {/if}
+                    <Legend {width} {height} {reference_year}></Legend>
             </header>  
             {#if $mobile}
                 <div style="clear:both;" />
@@ -184,7 +188,7 @@
                     
                 {/if}
             </svg>
-            <p>Source: Federal Election Commission </p>
+            <p>Source: Federal Election Commission, U.S. Census Bureau </p>
         </div>
     <!-- {:else}
         <div {width}>

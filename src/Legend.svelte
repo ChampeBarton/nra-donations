@@ -13,6 +13,9 @@
 	let small = "$1000"
     let large = "$10,000"
 
+    // let mobile_small = "$1,000 in 2022"
+    // let desktop_title = "2022 Donations"
+
     let amount_scale = scaleLinear().domain([0, 30000]).range([1, 50])
     let mobile_amount_scale = scaleLinear().domain([0, 30000]).range([1, 30])
 
@@ -109,6 +112,11 @@
         padding: 30px 0px 0px 0px;
     } */
 
+    /* text.header {
+        font-size: 14px;
+		font-family: "Aktiv Grotesk XBold";
+    } */
+
     .legend-text {
         position: relative;
     }
@@ -142,6 +150,8 @@
             <path stroke-dasharray="3,3" d="M{circleX} {circle3height - 17.5} l28 0" />
         </g>
 
+        <!-- <text class="header" x={circleX - circle3} y={circle3height - 35}>{desktop_title}</text>
+        <line x1={circleX - circle3} y1={circle3height - 33} x2={circleX - circle3 + 107}  y2={circle3height - 33} stroke="black" /> -->
         <text class="number" x={circleX + 28} y={circle2height + 2.5}>{small}</text>
         <text class="number" x={circleX + 28} y={circle3height - 12.5}>{large}</text>   
     </svg>

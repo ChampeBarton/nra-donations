@@ -144,8 +144,8 @@
                         var edge_x = document.querySelector("Canvas").getBoundingClientRect().right - 10
                         var edge_y = document.querySelector("Canvas").getBoundingClientRect().bottom - 115
 
-                        // console.log("edge_x: " + edge_x)
-                        // console.log("edge_y: " + edge_y)
+                        console.log("edge_x: " + edge_x)
+                        console.log("edge_y: " + edge_y)
                         console.log("x: " + x)
                         console.log("y: " + y)
 

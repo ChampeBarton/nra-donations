@@ -18,6 +18,7 @@
                 state, 
                 amount, 
                 reference_year,
+                width,
                 height,
                 offset;
 
@@ -162,7 +163,8 @@
                         // console.log("x + box_width + offset: " + (x + box_width + offset.left))
                         // console.log("edge_x: " + edge_x)
 
-                        console.log(width)
+                        console.log("height: " + height)
+                        console.log("width:" + width)
 
                         context.strokeStyle = stroke;
                         context.lineWidth = 2;

@@ -161,6 +161,7 @@
                             {state}
                             {amount}
                             {reference_year}
+                            {width}
                             {height}
                             {offset}
                         />

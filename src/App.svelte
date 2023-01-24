@@ -37,7 +37,7 @@
 
     // let amount_scale = !$mobile ? scaleLinear().domain([0, 30000]).range([1, 50]) : scaleLinear().domain([0, 30000]).range([1, 30])
     let amount_scale = scaleLinear().domain([0, 30000]).range([1, 50])
-    let mobile_amount_scale = scaleLinear().domain([0, 30000]).range([1, 25])
+    let mobile_amount_scale = scaleLinear().domain([0, 30000]).range([1, 30])
 
     let display = 2022;
 
@@ -121,7 +121,6 @@
         font-weight: 200;
         text-align: left;
         margin-top: 0;
-        margin-bottom: 15px;
 	}
 
     p {
@@ -140,13 +139,13 @@
         <div bind:clientWidth={bodyWidth} class="donationContainer">
             <header style="width: {width}px; position: relative;">
                 <h1> Amount Donated to the NRA by County in 2022 Compared to 2020</h1>
-                <h2> For the first time in a decade, the organization failed to raise more money than in the previous federal election year.</h2>
+                <h2 style="margin-bottom: {!$mobile ? 15 : 25}px "> For the first time in a decade, the organization failed to raise more money than in the previous federal election year.</h2>
                 <Legend {width} {height} {reference_year}></Legend>
             </header>  
             {#if $mobile}
                 <div style="clear:both;" />
             {/if}
-            <Canvas {width} height = {!$mobile ? height : height + 100} 
+            <Canvas {width} height = {!$mobile ? height : height + 75} 
                 style= "position: absolute; cursor: pointer; z-index: 6"
                 on:mousemove={({ offsetX: x, offsetY: y }) => {
                     if (!$mobile) {

@@ -110,19 +110,19 @@
 		color: #333;
 		font-size: 25px;
 		font-family: "Aktiv Grotesk XBold";
-        margin-bottom: 20px;
-        text-align: center;
+        margin-bottom: 5px;
+        text-align: left;
 	}
 
-    /* h2 {
+    h2 {
 		color: #777;
 		font-size: 18px;
 		font-family: "Aktiv Grotesk";
         font-weight: 200;
         text-align: left;
         margin-top: 0;
-        margin-bottom: 10px ;
-	} */
+        margin-bottom: 10px;
+	}
 
     p {
         color: #888;
@@ -140,7 +140,7 @@
         <div bind:clientWidth={bodyWidth} class="donationContainer">
             <header style="width: {width}px; position: relative;">
                 <h1> Amount Donated to the NRA by County in 2022 Compared to 2020</h1>
-                <!-- <h2> For the first time in a decade, the organization failed to out-raise the previous federal election year.</h2> -->
+                <h2> For the first time in a decade, the organization failed to raise more money than in the previous federal election year.</h2>
                 <Legend {width} {height} {reference_year}></Legend>
             </header>  
             {#if $mobile}

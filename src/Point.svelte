@@ -156,15 +156,18 @@
 
                         var box_height = 120
 
-                        var screen_adjust_x = x + offset.left + 15 + box_width > edge_x ? x - 15 - box_width : x + 15
-                        var screen_adjust_y = y + box_height + 100 > edge_y ? y - box_height : y
+                        // var screen_adjust_x = x + offset.left + 15 + box_width > edge_x ? x - 15 - box_width : x + 15
+                        // var screen_adjust_y = y + box_height + 100 > edge_y ? y - box_height : y
+
+                        var screen_adjust_x = x + offset.left + 15 + box_width > width + offset.left ? x - 15 - box_width : x + 15
+                        var screen_adjust_y = y + box_height + 100 > height ? y - box_height : y
 
                         // console.log("x: " + x + ", box_width: " + box_width + ", offset_width: " + offset.left)
                         // console.log("x + box_width + offset: " + (x + box_width + offset.left))
                         // console.log("edge_x: " + edge_x)
 
                         console.log("height: " + height)
-                        console.log("width:" + width)
+                        console.log("width + offset:" + (width + offset.left))
 
                         context.strokeStyle = stroke;
                         context.lineWidth = 2;

@@ -18,7 +18,8 @@
                 state, 
                 amount, 
                 reference_year,
-                height;
+                height,
+                offset;
 
         let colorScale = scaleSequential(piecewise(interpolate, ["#d73027", "#ffffbf", "#4575b4"])).domain([-10000, 10000])
 
@@ -158,8 +159,8 @@
 
                         var box_height = 120
 
-                        var screen_adjust_x = x + 15 + box_width > edge_x ? x - 15 - box_width : x + 15
-                        var screen_adjust_y = y + box_height > edge_y ? y - box_height : y
+                        var screen_adjust_x = x + offset.left + 15 + box_width > edge_x ? x - 15 - box_width : x + 15
+                        var screen_adjust_y = y + offset.top + box_height > edge_y ? y - box_height : y
 
                         context.strokeStyle = stroke;
                         context.lineWidth = 2;

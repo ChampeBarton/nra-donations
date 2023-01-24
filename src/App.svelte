@@ -162,6 +162,7 @@
                             {amount}
                             {reference_year}
                             {height}
+                            {offset}
                         />
                     {/if}
                 {/each}

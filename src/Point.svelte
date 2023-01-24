@@ -160,7 +160,7 @@
                         var box_height = 120
 
                         var screen_adjust_x = x + offset.left + 15 + box_width > edge_x ? x - 15 - box_width : x + 15
-                        var screen_adjust_y = y + box_height > edge_y ? y - box_height : y
+                        var screen_adjust_y = y + box_height + 50 > edge_y ? y - box_height : y
 
                         context.strokeStyle = stroke;
                         context.lineWidth = 2;

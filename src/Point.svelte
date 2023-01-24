@@ -218,7 +218,7 @@
 </script>
 
 <style>
-        @font-face {
+        /* @font-face {
                 font-family: "Aktiv Grotesk";
                 src: url('../fonts/Aktiv Grotesk Regular.otf');
         }
@@ -226,7 +226,7 @@
         @font-face {
                 font-family: "Aktiv Grotesk XBold";
                 src: url('../fonts/Aktiv Grotesk XBold.otf');
-        }
+        } */
 </style>
 
 

@@ -162,7 +162,7 @@
         <h2 class="mobile" style="float: left; color: {colors[0]};">{decrease_text}</h2>
         <!-- <h3> Cirlce size is proportional to donation amount</h3> -->
     </div>
-    <svg {width} {height}>
+    <svg width = {width/2} {height}>
         
         <!-- <circle cx={width/2 + width/2.5/2 + 40} cy=20 r={circle1}></circle> -->
         <circle cx={mobileCircleX} cy={circle2height + 13.5} r={mobileCircle2}></circle>

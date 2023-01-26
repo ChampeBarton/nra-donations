@@ -141,9 +141,9 @@
             <header style="width: {width}px; position: relative;">
                 <h1>Explore How Much the NRA's PAC Raised by County in 2022</h1>
                 {#if $mobile}
-                    <h2 style="margin-bottom: 25px ">The Political Victory Fund saw a decline in total donations for the first time in at least five federal election years, raising barely half of 2020's total.</h2>
+                    <h2 style="margin-bottom: 25px ">The Political Victory Fund saw a decline in total itemized donations for the first time in at least five federal election years, raising barely half of 2020's total.</h2>
                 {:else}
-                    <h2 style="margin-bottom: 15px ">The Political Victory Fund saw a decline in total donations for the first time in at least five federal election years. The drop from 2020 came in some of the organization's fundraising strongholds.</h2>
+                    <h2 style="margin-bottom: 15px ">The Political Victory Fund saw a decline in total itemized donations for the first time in at least five federal election years. The drop from 2020 came in some of the organization's fundraising strongholds.</h2>
                 {/if}
                     <Legend {width} {height} {reference_year}></Legend>
             </header>  
@@ -189,7 +189,14 @@
                     
                 {/if}
             </svg>
-            <p>Source: Federal Election Commission, U.S. Census Bureau </p>
+            <div style="width: {width}px">
+                <p>Source: Federal Election Commission, U.S. Census Bureau </p>
+                {#if !$mobile}
+                    <p>Note: The FEC only itemizes individual contributions exceeding $200 and contributions from donors who gave $200 during a given election cycle. Contributions from donors that failed to exceed either of these thresholds during the 2021-2022 cycle were not included in this analysis. Smaller donation amounts visible in the data indicate contributions from donors who gave at least $200 in 2021. </p>
+                {:else}
+                    <p>Note: The FEC only itemizes individual contributions exceeding $200 and contributions from donors who gave $200 during a given election cycle. Contributions from donors that failed to exceed either of these thresholds during the 2021-2022 cycle were not included in this analysis.</p>
+                {/if}
+            </div>
         </div>
     <!-- {:else}
         <div {width}>

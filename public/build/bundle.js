@@ -7637,7 +7637,7 @@ var app = (function () {
 
     // (138:0) {#if $innerWidth}
     function create_if_block(ctx) {
-    	let div;
+    	let div1;
     	let header;
     	let h1;
     	let t1;
@@ -7650,13 +7650,15 @@ var app = (function () {
     	let svg;
     	let svg_height_value;
     	let t6;
+    	let div0;
     	let p;
-    	let div_resize_listener;
+    	let t8;
+    	let div1_resize_listener;
     	let current;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*$mobile*/ ctx[4]) return create_if_block_4;
-    		return create_else_block;
+    		if (/*$mobile*/ ctx[4]) return create_if_block_5;
+    		return create_else_block_1;
     	}
 
     	let current_block_type = select_block_type(ctx);
@@ -7671,7 +7673,7 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	let if_block1 = /*$mobile*/ ctx[4] && create_if_block_3(ctx);
+    	let if_block1 = /*$mobile*/ ctx[4] && create_if_block_4(ctx);
 
     	canvas = new Canvas({
     			props: {
@@ -7688,11 +7690,19 @@ var app = (function () {
 
     	canvas.$on("mousemove", /*mousemove_handler*/ ctx[20]);
     	canvas.$on("mouseout", /*mouseout_handler*/ ctx[21]);
-    	let if_block2 = /*us*/ ctx[5] && create_if_block_1(ctx);
+    	let if_block2 = /*us*/ ctx[5] && create_if_block_2(ctx);
+
+    	function select_block_type_1(ctx, dirty) {
+    		if (!/*$mobile*/ ctx[4]) return create_if_block_1;
+    		return create_else_block;
+    	}
+
+    	let current_block_type_1 = select_block_type_1(ctx);
+    	let if_block3 = current_block_type_1(ctx);
 
     	const block = {
     		c: function create() {
-    			div = element("div");
+    			div1 = element("div");
     			header = element("header");
     			h1 = element("h1");
     			h1.textContent = "Explore How Much the NRA's PAC Raised by County in 2022";
@@ -7708,8 +7718,11 @@ var app = (function () {
     			svg = svg_element("svg");
     			if (if_block2) if_block2.c();
     			t6 = space();
+    			div0 = element("div");
     			p = element("p");
     			p.textContent = "Source: Federal Election Commission, U.S. Census Bureau";
+    			t8 = space();
+    			if_block3.c();
     			attr_dev(h1, "class", "svelte-1fje6pw");
     			add_location(h1, file, 141, 16, 3970);
     			set_style(header, "width", /*width*/ ctx[3] + "px");
@@ -7722,31 +7735,36 @@ var app = (function () {
     			: /*height*/ ctx[2] + 100);
 
     			attr_dev(svg, "class", "svelte-1fje6pw");
-    			add_location(svg, file, 181, 12, 6170);
+    			add_location(svg, file, 181, 12, 6188);
     			attr_dev(p, "class", "svelte-1fje6pw");
-    			add_location(p, file, 191, 12, 6536);
-    			attr_dev(div, "class", "donationContainer");
-    			add_render_callback(() => /*div_elementresize_handler*/ ctx[22].call(div));
-    			add_location(div, file, 139, 8, 3826);
+    			add_location(p, file, 192, 16, 6601);
+    			set_style(div0, "width", /*width*/ ctx[3] + "px");
+    			add_location(div0, file, 191, 12, 6554);
+    			attr_dev(div1, "class", "donationContainer");
+    			add_render_callback(() => /*div1_elementresize_handler*/ ctx[22].call(div1));
+    			add_location(div1, file, 139, 8, 3826);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			append_dev(div, header);
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, header);
     			append_dev(header, h1);
     			append_dev(header, t1);
     			if_block0.m(header, null);
     			append_dev(header, t2);
     			mount_component(legend, header, null);
-    			append_dev(div, t3);
-    			if (if_block1) if_block1.m(div, null);
-    			append_dev(div, t4);
-    			mount_component(canvas, div, null);
-    			append_dev(div, t5);
-    			append_dev(div, svg);
+    			append_dev(div1, t3);
+    			if (if_block1) if_block1.m(div1, null);
+    			append_dev(div1, t4);
+    			mount_component(canvas, div1, null);
+    			append_dev(div1, t5);
+    			append_dev(div1, svg);
     			if (if_block2) if_block2.m(svg, null);
-    			append_dev(div, t6);
-    			append_dev(div, p);
-    			div_resize_listener = add_resize_listener(div, /*div_elementresize_handler*/ ctx[22].bind(div));
+    			append_dev(div1, t6);
+    			append_dev(div1, div0);
+    			append_dev(div0, p);
+    			append_dev(div0, t8);
+    			if_block3.m(div0, null);
+    			div1_resize_listener = add_resize_listener(div1, /*div1_elementresize_handler*/ ctx[22].bind(div1));
     			current = true;
     		},
     		p: function update(ctx, dirty) {
@@ -7771,9 +7789,9 @@ var app = (function () {
 
     			if (/*$mobile*/ ctx[4]) {
     				if (if_block1) ; else {
-    					if_block1 = create_if_block_3(ctx);
+    					if_block1 = create_if_block_4(ctx);
     					if_block1.c();
-    					if_block1.m(div, t4);
+    					if_block1.m(div1, t4);
     				}
     			} else if (if_block1) {
     				if_block1.d(1);
@@ -7797,7 +7815,7 @@ var app = (function () {
     				if (if_block2) {
     					if_block2.p(ctx, dirty);
     				} else {
-    					if_block2 = create_if_block_1(ctx);
+    					if_block2 = create_if_block_2(ctx);
     					if_block2.c();
     					if_block2.m(svg, null);
     				}
@@ -7815,6 +7833,20 @@ var app = (function () {
     			: /*height*/ ctx[2] + 100)) {
     				attr_dev(svg, "height", svg_height_value);
     			}
+
+    			if (current_block_type_1 !== (current_block_type_1 = select_block_type_1(ctx))) {
+    				if_block3.d(1);
+    				if_block3 = current_block_type_1(ctx);
+
+    				if (if_block3) {
+    					if_block3.c();
+    					if_block3.m(div0, null);
+    				}
+    			}
+
+    			if (!current || dirty[0] & /*width*/ 8) {
+    				set_style(div0, "width", /*width*/ ctx[3] + "px");
+    			}
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -7828,13 +7860,14 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
+    			if (detaching) detach_dev(div1);
     			if_block0.d();
     			destroy_component(legend);
     			if (if_block1) if_block1.d();
     			destroy_component(canvas);
     			if (if_block2) if_block2.d();
-    			div_resize_listener();
+    			if_block3.d();
+    			div1_resize_listener();
     		}
     	};
 
@@ -7850,16 +7883,16 @@ var app = (function () {
     }
 
     // (145:16) {:else}
-    function create_else_block(ctx) {
+    function create_else_block_1(ctx) {
     	let h2;
 
     	const block = {
     		c: function create() {
     			h2 = element("h2");
-    			h2.textContent = "The Political Victory Fund saw a decline in total donations for the first time in at least five federal election years. The drop from 2020 came in some of the organization's fundraising strongholds.";
+    			h2.textContent = "The Political Victory Fund saw a decline in total itemized donations for the first time in at least five federal election years. The drop from 2020 came in some of the organization's fundraising strongholds.";
     			set_style(h2, "margin-bottom", "15px ");
     			attr_dev(h2, "class", "svelte-1fje6pw");
-    			add_location(h2, file, 145, 20, 4324);
+    			add_location(h2, file, 145, 20, 4333);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h2, anchor);
@@ -7871,7 +7904,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block.name,
+    		id: create_else_block_1.name,
     		type: "else",
     		source: "(145:16) {:else}",
     		ctx
@@ -7881,13 +7914,13 @@ var app = (function () {
     }
 
     // (143:16) {#if $mobile}
-    function create_if_block_4(ctx) {
+    function create_if_block_5(ctx) {
     	let h2;
 
     	const block = {
     		c: function create() {
     			h2 = element("h2");
-    			h2.textContent = "The Political Victory Fund saw a decline in total donations for the first time in at least five federal election years, raising barely half of 2020's total.";
+    			h2.textContent = "The Political Victory Fund saw a decline in total itemized donations for the first time in at least five federal election years, raising barely half of 2020's total.";
     			set_style(h2, "margin-bottom", "25px ");
     			attr_dev(h2, "class", "svelte-1fje6pw");
     			add_location(h2, file, 143, 20, 4085);
@@ -7902,7 +7935,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_4.name,
+    		id: create_if_block_5.name,
     		type: "if",
     		source: "(143:16) {#if $mobile}",
     		ctx
@@ -7912,14 +7945,14 @@ var app = (function () {
     }
 
     // (150:12) {#if $mobile}
-    function create_if_block_3(ctx) {
+    function create_if_block_4(ctx) {
     	let div;
 
     	const block = {
     		c: function create() {
     			div = element("div");
     			set_style(div, "clear", "both");
-    			add_location(div, file, 150, 16, 4721);
+    			add_location(div, file, 150, 16, 4739);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -7931,7 +7964,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_3.name,
+    		id: create_if_block_4.name,
     		type: "if",
     		source: "(150:12) {#if $mobile}",
     		ctx
@@ -7941,7 +7974,7 @@ var app = (function () {
     }
 
     // (164:20) {#if show}
-    function create_if_block_2(ctx) {
+    function create_if_block_3(ctx) {
     	let point;
     	let current;
 
@@ -8017,7 +8050,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2.name,
+    		id: create_if_block_3.name,
     		type: "if",
     		source: "(164:20) {#if show}",
     		ctx
@@ -8031,7 +8064,7 @@ var app = (function () {
     	let first;
     	let if_block_anchor;
     	let current;
-    	let if_block = /*show*/ ctx[31] && create_if_block_2(ctx);
+    	let if_block = /*show*/ ctx[31] && create_if_block_3(ctx);
 
     	const block = {
     		key: key_1,
@@ -8059,7 +8092,7 @@ var app = (function () {
     						transition_in(if_block, 1);
     					}
     				} else {
-    					if_block = create_if_block_2(ctx);
+    					if_block = create_if_block_3(ctx);
     					if_block.c();
     					transition_in(if_block, 1);
     					if_block.m(if_block_anchor.parentNode, if_block_anchor);
@@ -8181,7 +8214,7 @@ var app = (function () {
     }
 
     // (183:16) {#if us}
-    function create_if_block_1(ctx) {
+    function create_if_block_2(ctx) {
     	let g;
     	let each_value = /*features*/ ctx[7];
     	validate_each_argument(each_value);
@@ -8200,7 +8233,7 @@ var app = (function () {
     			}
 
     			attr_dev(g, "fill", "rgb(233,233,233)");
-    			add_location(g, file, 183, 20, 6271);
+    			add_location(g, file, 183, 20, 6289);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, g, anchor);
@@ -8242,7 +8275,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1.name,
+    		id: create_if_block_2.name,
     		type: "if",
     		source: "(183:16) {#if us}",
     		ctx
@@ -8261,7 +8294,7 @@ var app = (function () {
     			path_1 = svg_element("path");
     			attr_dev(path_1, "d", path_1_d_value = /*path*/ ctx[10](/*feature*/ ctx[26]));
     			attr_dev(path_1, "class", "svelte-1fje6pw");
-    			add_location(path_1, file, 185, 28, 6379);
+    			add_location(path_1, file, 185, 28, 6397);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, path_1, anchor);
@@ -8281,6 +8314,66 @@ var app = (function () {
     		id: create_each_block.name,
     		type: "each",
     		source: "(185:24) {#each features as feature}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (196:16) {:else}
+    function create_else_block(ctx) {
+    	let p;
+
+    	const block = {
+    		c: function create() {
+    			p = element("p");
+    			p.textContent = "Note: The FEC only itemizes individual contributions exceeding $200 and contributions from donors who gave $200 during a given election cycle. Contributions from donors that failed to exceed either of these thresholds during the 2021-2022 cycle were not included in this analysis.";
+    			attr_dev(p, "class", "svelte-1fje6pw");
+    			add_location(p, file, 196, 20, 7161);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, p, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(p);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block.name,
+    		type: "else",
+    		source: "(196:16) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (194:16) {#if !$mobile}
+    function create_if_block_1(ctx) {
+    	let p;
+
+    	const block = {
+    		c: function create() {
+    			p = element("p");
+    			p.textContent = "Note: The FEC only itemizes individual contributions exceeding $200 and contributions from donors who gave $200 during a given election cycle. Contributions from donors that failed to exceed either of these thresholds during the 2021-2022 cycle were not included in this analysis. Smaller donation amounts visible in the data indicate contributions from donors who gave at least $200 in 2021.";
+    			attr_dev(p, "class", "svelte-1fje6pw");
+    			add_location(p, file, 194, 20, 6716);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, p, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(p);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1.name,
+    		type: "if",
+    		source: "(194:16) {#if !$mobile}",
     		ctx
     	});
 
@@ -8456,7 +8549,7 @@ var app = (function () {
 
     	const mouseout_handler = () => $$invalidate(8, picked = null);
 
-    	function div_elementresize_handler() {
+    	function div1_elementresize_handler() {
     		bodyWidth = this.clientWidth;
     		$$invalidate(0, bodyWidth);
     	}
@@ -8622,7 +8715,7 @@ var app = (function () {
     		onwindowscroll,
     		mousemove_handler,
     		mouseout_handler,
-    		div_elementresize_handler
+    		div1_elementresize_handler
     	];
     }
 
